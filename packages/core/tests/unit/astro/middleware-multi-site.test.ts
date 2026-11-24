@@ -186,6 +186,21 @@ describe("multi-site request routing", () => {
 		expect(mockGetDb).not.toHaveBeenCalled();
 	});
 
+	it("generates types from the default database when the dev server asks on its own address", async () => {
+		router.resolve.mockResolvedValue(null);
+		const next = vi.fn(async () => new Response("types"));
+
+		const response = await onRequest(
+			contextFor("http://127.0.0.1:4321/_emdash/api/typegen", { method: "POST" }) as never,
+			next,
+		);
+
+		expect(response.status).not.toBe(404);
+		expect(
+			mockRuntimeCreate.mock.calls.map(([deps]) => (deps as { siteId?: string }).siteId),
+		).toEqual([undefined]);
+	});
+
 	it("renders a site's page on that site's runtime and database", async () => {
 		router.resolve.mockImplementation(async (hostname: string) =>
 			hostname === "brand-a.com" ? siteFor("site-a", "brand-a") : siteFor("site-b", "brand-b"),

@@ -55,7 +55,8 @@ describe("OrganizationsPage", () => {
 	it("lists organizations with their size and the user's role", async () => {
 		const screen = await renderPage();
 		await expect.element(screen.getByText("Acme")).toBeInTheDocument();
-		await expect.element(screen.getByText("2 sites, 3 members")).toBeInTheDocument();
+		await expect.element(screen.getByText("2 sites")).toBeInTheDocument();
+		await expect.element(screen.getByText("3 members")).toBeInTheDocument();
 		await expect.element(screen.getByText("Admin")).toBeInTheDocument();
 	});
 

@@ -12,6 +12,7 @@ import {
 	Loader,
 	useKumoToastManager,
 } from "@cloudflare/kumo";
+import { plural } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react/macro";
 import { Plus } from "@phosphor-icons/react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -117,8 +118,9 @@ export function OrganizationsPage() {
 									>
 										{org.name}
 									</Link>
-									<div className="text-sm text-kumo-subtle">
-										{t`${org.siteCount} sites, ${org.memberCount} members`}
+									<div className="flex gap-3 text-sm text-kumo-subtle">
+										<span>{plural(org.siteCount, { one: "# site", other: "# sites" })}</span>
+										<span>{plural(org.memberCount, { one: "# member", other: "# members" })}</span>
 									</div>
 								</div>
 								{org.role !== null && <Badge variant="neutral">{getRoleLabel(org.role)}</Badge>}

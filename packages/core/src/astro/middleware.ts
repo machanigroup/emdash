@@ -1301,6 +1301,11 @@ async function routeToSite(
 		return siteUnavailableResponse();
 	}
 	if (!site) {
+		// The dev server generates types by calling this route on its own
+		// address, which no site lists; generate them from the default database.
+		if (import.meta.env.DEV && context.url.pathname === "/_emdash/api/typegen") {
+			return run(config);
+		}
 		return finalizeResponse(
 			new Response("Site not found", { status: 404, headers: SITE_NOT_FOUND_HEADERS }),
 		);

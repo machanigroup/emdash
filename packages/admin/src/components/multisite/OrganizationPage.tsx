@@ -15,6 +15,7 @@ import {
 	Switch,
 	useKumoToastManager,
 } from "@cloudflare/kumo";
+import { plural } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react/macro";
 import { ArrowSquareOut, Pencil, Plus, Trash, UserGear } from "@phosphor-icons/react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -567,8 +568,8 @@ function RoleSelect({
 	]);
 	return (
 		<Select
-			label={label}
-			hideLabel
+			size="sm"
+			aria-label={label}
 			value={value}
 			onValueChange={(next) => next !== null && onChange(String(next))}
 			items={items}
@@ -638,7 +639,10 @@ function MembersSection({ org }: { org: OrganizationDetail }) {
 								)}
 								{member.siteRoles.length > 0 && (
 									<div className="text-sm text-kumo-subtle">
-										{t`Different role on ${member.siteRoles.length} sites`}
+										{plural(member.siteRoles.length, {
+											one: "Different role on # site",
+											other: "Different role on # sites",
+										})}
 									</div>
 								)}
 							</div>
