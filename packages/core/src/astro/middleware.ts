@@ -76,6 +76,7 @@ import {
 } from "../request-context.js";
 import type { PublishedRef } from "../scheduled-publish.js";
 import { parseCollectionSitemapName } from "../seo/sitemap-name.js";
+import { currentSiteId } from "../site-scope.js";
 import { EmDashStorageError } from "../storage/types.js";
 import { isMissingTableError } from "../utils/db-errors.js";
 import { initWithLock } from "../utils/init-lock.js";
@@ -86,6 +87,7 @@ import {
 	finishScoped,
 	requestEndedAuthenticated,
 } from "./middleware/scoped-db.js";
+import { getSiteRouter, type RequestSite } from "./middleware/site.js";
 import { wrapBodyForStreamMetrics } from "./middleware/stream-end-metrics.js";
 import { prefetchLayoutData } from "./prefetch.js";
 import {
@@ -137,11 +139,30 @@ let lastRuntimeInitErrorLogAt = 0;
 const SETUP_VERIFIED_KEY = Symbol.for("emdash:setup-verified");
 const setupFlagStore = globalThis as Record<symbol, unknown>;
 
+const SETUP_VERIFIED_SITES_KEY = Symbol.for("emdash:setup-verified-sites");
+
+function verifiedSites(): Set<string> {
+	// eslint-disable-next-line typescript/no-unsafe-type-assertion -- private globalThis symbol slot, written only below
+	let sites = setupFlagStore[SETUP_VERIFIED_SITES_KEY] as Set<string> | undefined;
+	if (!sites) {
+		sites = new Set();
+		setupFlagStore[SETUP_VERIFIED_SITES_KEY] = sites;
+	}
+	return sites;
+}
+
 function isSetupVerified(): boolean {
+	const siteId = currentSiteId();
+	if (siteId !== undefined) return verifiedSites().has(siteId);
 	return setupFlagStore[SETUP_VERIFIED_KEY] === true;
 }
 
 function markSetupVerified(): void {
+	const siteId = currentSiteId();
+	if (siteId !== undefined) {
+		verifiedSites().add(siteId);
+		return;
+	}
 	setupFlagStore[SETUP_VERIFIED_KEY] = true;
 }
 
@@ -210,6 +231,7 @@ function buildDependencies(
 	const sandboxModule = virtualSandboxRunnerModule as Record<string, unknown>;
 	return {
 		config,
+		siteId: currentSiteId(),
 		migrationMode,
 		plugins: getPlugins(),
 		createDialect: virtualCreateDialect as RuntimeDependencies["createDialect"],
@@ -248,7 +270,7 @@ async function getRuntime(
 	// anchored init keeps running under waitUntil and populates the cache;
 	// failing that, the stale lock is reclaimed after a deadline instead of
 	// hanging every subsequent request in the isolate until eviction.
-	const holder = getRuntimeHolder();
+	const holder = getRuntimeHolder(currentSiteId());
 	return initWithLock(
 		holder.lock,
 		() => {
@@ -310,7 +332,29 @@ export async function runScheduledTasks(
 ): Promise<{ published: PublishedRef[] }> {
 	const config = getConfig();
 	if (!config) return { published: [] };
-	return runOutsideRequest(config, (runtime) => runtime.runScheduledTasks(options));
+	if (!config.multiSite) {
+		return runOutsideRequest(config, (runtime) => runtime.runScheduledTasks(options));
+	}
+	if (typeof virtualCreateDialect !== "function") {
+		throw new Error("multiSite requires a database adapter");
+	}
+	const router = getSiteRouter({ ...config, multiSite: config.multiSite }, virtualCreateDialect);
+	const published: PublishedRef[] = [];
+	// oxlint-disable-next-line no-await-in-loop -- sites run one at a time to bound the event's load
+	for (const site of await router.activeSites()) {
+		try {
+			// oxlint-disable-next-line no-await-in-loop -- sequential on purpose, see above
+			const result = await runOutsideRequest(
+				site.config,
+				(runtime) => runtime.runScheduledTasks(options),
+				site.siteId,
+			);
+			published.push(...result.published);
+		} catch (error) {
+			console.error(`[emdash:multisite] scheduled tasks failed for site ${site.siteId}:`, error);
+		}
+	}
+	return { published };
 }
 
 /**
@@ -377,11 +421,21 @@ export async function withEmDashRuntime<T>(
 async function runOutsideRequest<T>(
 	config: EmDashConfig,
 	fn: (runtime: EmDashRuntime) => Promise<T>,
+	siteId?: string,
 ): Promise<T> {
 	const migrationMode = resolveConfiguredMigrationMode(config);
-	if (getRequestContext()) {
-		const runtime = await getRuntime(config, migrationMode);
-		return runOutsideRequestWithRuntime(config, runtime, fn);
+	const parent = getRequestContext();
+	if (parent) {
+		if (siteId === undefined) {
+			const runtime = await getRuntime(config, migrationMode);
+			return runOutsideRequestWithRuntime(config, runtime, fn);
+		}
+		return runWithContext({ ...parent, siteId }, async () => {
+			const runtime = await getRuntime(config, migrationMode);
+			return runWithContext({ ...parent, siteId, db: runtime.db }, () =>
+				runOutsideRequestWithRuntime(config, runtime, fn),
+			);
+		});
 	}
 
 	const deferredTasks = createDeferredTaskTracker(() => {});
@@ -389,6 +443,7 @@ async function runOutsideRequest<T>(
 		editMode: false,
 		metrics: createRequestMetrics(performance.now()),
 		deferredTasks,
+		siteId,
 	};
 	return runWithContext(context, async () => {
 		const runtime = await (async () => {
@@ -399,7 +454,10 @@ async function runOutsideRequest<T>(
 				await deferredTasks.settled;
 			}
 		})();
-		return runOutsideRequestWithRuntime(config, runtime, fn);
+		if (siteId === undefined) return runOutsideRequestWithRuntime(config, runtime, fn);
+		return runWithContext({ ...context, db: runtime.db }, () =>
+			runOutsideRequestWithRuntime(config, runtime, fn),
+		);
 	});
 }
 
@@ -819,6 +877,74 @@ function canReuseAnonymousRender(context: APIContext): boolean {
 	return true;
 }
 
+const SITE_NOT_FOUND_HEADERS = {
+	"Content-Type": "text/plain; charset=utf-8",
+	"Cache-Control": "private, no-store",
+};
+
+/**
+ * In a multi-site deployment, run the request as the site its hostname names:
+ * with that site's config, its runtime, and its database in the request
+ * context, so every cache and query below sees only that site. The site's
+ * runtime is initialized before anything reads the database, because the
+ * loader's `getDb()` would otherwise fall back to the default database.
+ */
+async function routeToSite(
+	context: APIContext,
+	run: (config: EmDashConfig | null) => Promise<Response>,
+): Promise<Response> {
+	const config = getConfig();
+	if (!config?.multiSite || context.isPrerendered) return run(config);
+	if (typeof virtualCreateDialect !== "function") {
+		throw new Error("multiSite requires a database adapter");
+	}
+
+	let site: RequestSite | null;
+	try {
+		const multiSiteConfig = { ...config, multiSite: config.multiSite };
+		site = await getSiteRouter(multiSiteConfig, virtualCreateDialect).resolve(context.url.hostname);
+	} catch (error) {
+		console.error("[emdash:multisite] resolving the request's site failed:", error);
+		return finalizeResponse(
+			new Response("Site temporarily unavailable", {
+				status: 503,
+				headers: SITE_NOT_FOUND_HEADERS,
+			}),
+		);
+	}
+	if (!site) {
+		return finalizeResponse(
+			new Response("Site not found", { status: 404, headers: SITE_NOT_FOUND_HEADERS }),
+		);
+	}
+
+	const siteConfig = site.config;
+	const migrationMode = resolveConfiguredMigrationMode(siteConfig);
+	const parent = getRequestContext();
+	const siteContext = parent
+		? { ...parent, siteId: site.siteId }
+		: { editMode: false, siteId: site.siteId };
+	return runWithContext(siteContext, async () => {
+		let runtime: EmDashRuntime;
+		try {
+			runtime = await getRuntime(siteConfig, migrationMode);
+		} catch (error) {
+			if (isMigrationRequiredError(error)) return migrationRequiredErrorResponse(error);
+			if (migrationMode === "manual" && isMissingTableError(error)) {
+				return migrationRequiredResponse();
+			}
+			console.error("[emdash:multisite] site runtime init failed:", error);
+			return finalizeResponse(
+				new Response("Site temporarily unavailable", {
+					status: 503,
+					headers: SITE_NOT_FOUND_HEADERS,
+				}),
+			);
+		}
+		return runWithContext({ ...siteContext, db: runtime.db }, () => run(siteConfig));
+	});
+}
+
 export const onRequest = defineMiddleware(async (context, next) => {
 	const { request, locals, cookies } = context;
 	const url = context.url;
@@ -847,8 +973,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
 
 	const metrics = createRequestMetrics(performance.now());
 
-	const run = async (): Promise<Response> => {
-		const config = getConfig();
+	const run = async (config: EmDashConfig | null): Promise<Response> => {
 		const migrationMode = config ? resolveConfiguredMigrationMode(config) : "auto";
 		const pageSignals = getPublicPageSignals(context);
 		const {
@@ -900,6 +1025,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
 		const isAuthenticated = !!sessionUser || hasBearerAuth;
 		const endedAuthenticated = () => requestEndedAuthenticated(isAuthenticated, cookies);
 		const canUseCachedBinding =
+			currentSiteId() === undefined &&
 			!isAuthenticated &&
 			!isWrite &&
 			!playgroundDb &&
@@ -952,7 +1078,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
 						// same database and would make the visitor wait through a second
 						// timeout. getRuntime anchors it with after(), so it can still
 						// finish for later requests.
-						probeFailed = !getRuntimeHolder().instance;
+						probeFailed = !getRuntimeHolder(currentSiteId()).instance;
 						console.error("Setup probe failed (non-fatal):", error);
 					}
 				}
@@ -1365,7 +1491,9 @@ export const onRequest = defineMiddleware(async (context, next) => {
 	};
 
 	try {
-		const response = await runWithContext({ editMode: false, queryRecorder, metrics }, run);
+		const response = await runWithContext({ editMode: false, queryRecorder, metrics }, () =>
+			routeToSite(context, run),
+		);
 		applyBuildValidator(context);
 		keepUnsharedResponsesOutOfRouteCache(context, response);
 		return response;

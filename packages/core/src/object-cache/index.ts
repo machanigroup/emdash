@@ -533,7 +533,9 @@ function epochsMatch(stored: readonly number[], current: readonly number[]): boo
 /**
  * Requests that must always read live data and never populate the cache:
  * visual edit mode, preview tokens, isolated databases (playground / DO
- * preview, whose schema and content diverge from the configured site), and
+ * preview, whose schema and content diverge from the configured site),
+ * requests for a site other than the default site in a multi-site deployment
+ * (cache keys and epochs are not partitioned by site), and
  * Astro route-cache fills that must not rebuild a purged page from a stale
  * object-cache snapshot.
  */
@@ -544,6 +546,7 @@ function shouldBypass(): boolean {
 		ctx.editMode === true ||
 		ctx.preview !== undefined ||
 		ctx.dbIsIsolated === true ||
+		ctx.siteId !== undefined ||
 		ctx.routeCacheFill === true
 	);
 }

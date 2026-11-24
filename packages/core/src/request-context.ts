@@ -108,6 +108,12 @@ export interface EmDashRequestContext {
 	 */
 	dbIsIsolated?: boolean;
 	/**
+	 * The site this request belongs to in a multi-site deployment. Unset for
+	 * the default site, which keeps the isolate-wide caches of a single-site
+	 * deployment; set, it gives the request that site's cache slots.
+	 */
+	siteId?: string;
+	/**
 	 * Query recorder attached by middleware when EMDASH_QUERY_LOG=1 is set.
 	 * The Kysely `log` hook appends an event per query; middleware flushes
 	 * to NDJSON after the response.

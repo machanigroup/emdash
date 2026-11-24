@@ -35,6 +35,12 @@ declare module "virtual:emdash/config" {
 		sessionCookieName?: string;
 		/** `routePattern` of the image endpoint EmDash installed; absent when it installed none. */
 		imageEndpointRoute?: string;
+		multiSite?: {
+			controlPlane: Record<string, unknown>;
+			databases: Record<string, Record<string, unknown>>;
+			storages?: Record<string, Record<string, unknown>>;
+			hostRefreshMs?: number;
+		};
 	}
 
 	const config: VirtualConfig;

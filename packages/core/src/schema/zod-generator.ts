@@ -1,5 +1,6 @@
 import { z, type ZodType } from "zod";
 
+import { siteScopedKey } from "../site-scope.js";
 import { hashString } from "../utils/hash.js";
 import { isSafeUrlFieldValue } from "../utils/url.js";
 import type { BlockFieldDefinition } from "./block-types.js";
@@ -298,7 +299,7 @@ export function getCachedSchema(
 	collection: CollectionWithFields,
 	version?: string,
 ): z.ZodObject<any> {
-	const cacheKey = collection.slug;
+	const cacheKey = siteScopedKey(collection.slug);
 	const cached = schemaCache.get(cacheKey);
 
 	// If version matches, return cached schema
@@ -322,7 +323,7 @@ export function getCachedSchema(
  * Invalidate cached schema for a collection
  */
 export function invalidateSchemaCache(slug: string): void {
-	schemaCache.delete(slug);
+	schemaCache.delete(siteScopedKey(slug));
 }
 
 /**

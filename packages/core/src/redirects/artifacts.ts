@@ -20,6 +20,7 @@ import { RedirectRepository } from "../database/repositories/redirect.js";
 import { withTransaction } from "../database/transaction.js";
 import type { Database } from "../database/types.js";
 import { normalizeSiteSettingsVersion, siteSettingsVersionQuery } from "../settings/version.js";
+import { siteScopedGlobal } from "../site-scope.js";
 import { chunks, SQL_BATCH_SIZE } from "../utils/chunks.js";
 import { isMissingTableError } from "../utils/db-errors.js";
 import {
@@ -395,15 +396,12 @@ interface RepairState {
 }
 
 const REPAIR_STATE_KEY = Symbol.for("emdash:redirect-artifact-repair");
-const g = globalThis as Record<symbol, unknown>;
-const repairState: RepairState =
-	// eslint-disable-next-line typescript/no-unsafe-type-assertion -- globalThis singleton pattern (see request-context.ts)
-	(g[REPAIR_STATE_KEY] as RepairState | undefined) ??
-	(() => {
+function getRepairState(): RepairState {
+	return siteScopedGlobal(REPAIR_STATE_KEY, () => {
 		const state: RepairState = { runningUntil: 0 };
-		g[REPAIR_STATE_KEY] = state;
 		return state;
-	})();
+	});
+}
 
 /**
  * Republishes the artifacts under a database lease so one isolate repairs a
@@ -432,17 +430,18 @@ async function repairRedirectArtifacts(db: Kysely<Database>): Promise<void> {
 }
 
 function scheduleRedirectRepair(db: Kysely<Database>): void {
+	const repair = getRepairState();
 	const now = Date.now();
-	if (repairState.runningUntil > now) return;
+	if (repair.runningUntil > now) return;
 	const runningUntil = now + REPAIR_LEASE_MS;
-	repairState.runningUntil = runningUntil;
+	repair.runningUntil = runningUntil;
 	after(async () => {
 		try {
 			await repairRedirectArtifacts(db);
 		} catch (error) {
 			console.error("[emdash:redirects] repairing redirect artifacts failed:", error);
 		} finally {
-			if (repairState.runningUntil === runningUntil) repairState.runningUntil = 0;
+			if (repair.runningUntil === runningUntil) repair.runningUntil = 0;
 		}
 	});
 }

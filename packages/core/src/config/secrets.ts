@@ -36,6 +36,7 @@ import { after } from "../after.js";
 import { OptionsRepository } from "../database/repositories/options.js";
 import { isRequestScopedDb } from "../database/request-scoped.js";
 import type { Database } from "../database/types.js";
+import { currentSiteId } from "../site-scope.js";
 import { decodeBase64url, encodeBase64url } from "../utils/base64.js";
 import {
 	createSingleFlightCache,
@@ -412,6 +413,7 @@ const SECRETS_CACHE_KEY = Symbol.for("@emdash-cms/core/secrets-cache@2");
 interface SecretsCacheHolder {
 	cache: WeakMap<Kysely<Database>, SingleFlightCache<ResolvedSecrets>>;
 	requestScoped?: SingleFlightCache<ResolvedSecrets>;
+	siteRequestScoped?: Map<string, SingleFlightCache<ResolvedSecrets>>;
 }
 
 function getSecretsCache(db: Kysely<Database>): SingleFlightCache<ResolvedSecrets> {
@@ -423,8 +425,18 @@ function getSecretsCache(db: Kysely<Database>): SingleFlightCache<ResolvedSecret
 		holder[SECRETS_CACHE_KEY] = entry;
 	}
 	if (isRequestScopedDb(db)) {
-		entry.requestScoped ??= createSingleFlightCache<ResolvedSecrets>();
-		return entry.requestScoped;
+		const siteId = currentSiteId();
+		if (siteId === undefined) {
+			entry.requestScoped ??= createSingleFlightCache<ResolvedSecrets>();
+			return entry.requestScoped;
+		}
+		entry.siteRequestScoped ??= new Map();
+		let siteCache = entry.siteRequestScoped.get(siteId);
+		if (!siteCache) {
+			siteCache = createSingleFlightCache<ResolvedSecrets>();
+			entry.siteRequestScoped.set(siteId, siteCache);
+		}
+		return siteCache;
 	}
 	let cache = entry.cache.get(db);
 	if (!cache) {

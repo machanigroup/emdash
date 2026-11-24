@@ -245,6 +245,7 @@ export function buildSerializableConfig(resolvedConfig: EmDashConfig): Record<st
 		toolbar: resolvedConfig.toolbar,
 		updateCheck: resolvedConfig.updateCheck,
 		objectCacheEnabled: resolvedConfig.objectCache !== undefined,
+		multiSite: resolvedConfig.multiSite,
 	};
 }
 

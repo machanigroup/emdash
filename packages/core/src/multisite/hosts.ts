@@ -1,5 +1,6 @@
 import type { Kysely } from "kysely";
 
+import { after } from "../after.js";
 import { MultiSiteError } from "./errors.js";
 import type { ControlPlaneDatabase } from "./types.js";
 
@@ -43,21 +44,34 @@ export interface ResolvedSiteHost {
 
 /**
  * Maps request hostnames to active sites. The whole table is read in one query
- * and held until `invalidate()`, so resolving a host costs no query after the
- * first call. Disabled sites are left out of the map and resolve to null.
+ * and served from memory. Once the table is older than `refreshAfterMs`, the
+ * next lookup still answers from memory and reloads the table in the
+ * background, so hostname changes made by another worker show up without
+ * adding a query to any request. Disabled sites are left out of the map and
+ * resolve to null.
  */
 export class SiteHostResolver {
 	#hosts: Promise<Map<string, ResolvedSiteHost>> | null = null;
+	#loadedAt = 0;
+	#refreshing = false;
+	readonly #refreshAfterMs: number;
 
-	constructor(private readonly db: Kysely<ControlPlaneDatabase>) {}
+	constructor(
+		private readonly db: Kysely<ControlPlaneDatabase>,
+		options: { refreshAfterMs?: number } = {},
+	) {
+		this.#refreshAfterMs = options.refreshAfterMs ?? Number.POSITIVE_INFINITY;
+	}
 
 	async resolve(host: string | null | undefined): Promise<ResolvedSiteHost | null> {
 		const hostname = normalizeHostname(host);
 		if (!hostname) return null;
 		const hosts = await this.#load();
+		if (Date.now() - this.#loadedAt > this.#refreshAfterMs) this.#refreshInBackground();
 		return hosts.get(hostname) ?? null;
 	}
 
+	/** Discards the table so the next lookup reloads it. Call after changing sites or hostnames. */
 	invalidate(): void {
 		this.#hosts = null;
 	}
@@ -73,6 +87,22 @@ export class SiteHostResolver {
 		return this.#hosts;
 	}
 
+	#refreshInBackground(): void {
+		if (this.#refreshing) return;
+		this.#refreshing = true;
+		const current = this.#hosts;
+		after(async () => {
+			try {
+				const fresh = await this.#read();
+				if (this.#hosts === current) this.#hosts = Promise.resolve(fresh);
+			} catch (error) {
+				console.error("[emdash:multisite] refreshing site hostnames failed:", error);
+			} finally {
+				this.#refreshing = false;
+			}
+		});
+	}
+
 	async #read(): Promise<Map<string, ResolvedSiteHost>> {
 		const rows = await this.db
 			.selectFrom("_emdash_site_hosts as h")
@@ -80,6 +110,7 @@ export class SiteHostResolver {
 			.select(["h.hostname", "s.id", "s.org_id", "s.database_ref", "s.storage_ref"])
 			.where("s.status", "=", "active")
 			.execute();
+		this.#loadedAt = Date.now();
 		return new Map(
 			rows.map((row) => [
 				row.hostname,

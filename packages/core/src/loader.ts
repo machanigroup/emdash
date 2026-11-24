@@ -35,6 +35,7 @@ import type { Database } from "./index.js";
 import { primeSeoPanel } from "./page/seo-panel.js";
 import { getRequestContext } from "./request-context.js";
 import { setEntryTitleField } from "./seo/title-field.js";
+import { siteScopedGlobal } from "./site-scope.js";
 import { chunks, SQL_BATCH_SIZE } from "./utils/chunks.js";
 import {
 	isMissingColumnError,
@@ -457,15 +458,12 @@ function getTableName(type: string): string {
 type TaxonomyNames = Map<string, Set<string>>;
 
 const TAXONOMY_NAMES_CACHE_KEY = Symbol.for("emdash:taxonomy-names:swr");
-const taxonomyNamesStore = globalThis as Record<symbol, unknown>;
-const taxonomyNamesCache: RevalidatingCache<TaxonomyNames> =
-	// eslint-disable-next-line typescript/no-unsafe-type-assertion -- globalThis singleton pattern
-	(taxonomyNamesStore[TAXONOMY_NAMES_CACHE_KEY] as RevalidatingCache<TaxonomyNames> | undefined) ??
-	(() => {
+function getTaxonomyNamesCache(): RevalidatingCache<TaxonomyNames> {
+	return siteScopedGlobal(TAXONOMY_NAMES_CACHE_KEY, () => {
 		const cache = createRevalidatingCache<TaxonomyNames>();
-		taxonomyNamesStore[TAXONOMY_NAMES_CACHE_KEY] = cache;
 		return cache;
-	})();
+	});
+}
 
 async function fetchTaxonomyNames(db: Kysely<Database>): Promise<TaxonomyNames> {
 	try {
@@ -489,7 +487,7 @@ async function getTaxonomyNames(db: Kysely<Database>, collection: string): Promi
 	const load = () => fetchTaxonomyNames(db);
 	const names = getRequestContext()?.dbIsIsolated
 		? await load()
-		: await revalidatingCached(taxonomyNamesCache, load, (error) => {
+		: await revalidatingCached(getTaxonomyNamesCache(), load, (error) => {
 				console.error("[emdash:loader] revalidating taxonomy names failed:", error);
 			});
 	return names.get(collection) ?? new Set();
@@ -497,7 +495,7 @@ async function getTaxonomyNames(db: Kysely<Database>, collection: string): Promi
 
 /** Discard mappings after a local taxonomy-definition write. @internal */
 export function resetTaxonomyNamesCache(): void {
-	invalidateRevalidatingCache(taxonomyNamesCache);
+	invalidateRevalidatingCache(getTaxonomyNamesCache());
 }
 
 /**

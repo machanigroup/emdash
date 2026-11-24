@@ -79,6 +79,12 @@ const configShape = {
 	}),
 	astroVersion: z.string(),
 	robotsTxtOverridden: z.boolean(),
+	multiSite: z.object({
+		controlPlane: z.record(z.string(), z.unknown()),
+		databases: z.record(z.string(), z.record(z.string(), z.unknown())),
+		storages: z.record(z.string(), z.record(z.string(), z.unknown())).optional(),
+		hostRefreshMs: z.number({ error: "Expected a number of milliseconds" }).positive().optional(),
+	}),
 } satisfies { [K in keyof Required<EmDashConfig>]: z.ZodType };
 
 const configSchema = z.looseObject(
