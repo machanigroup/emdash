@@ -8,11 +8,17 @@ import {
 	type ControlPlaneUser,
 	ensureSiteSetUp,
 	findControlPlaneUser,
+	refreshSiteAccount,
 	siteRoleFor,
 	syncSiteUser,
 } from "../../../src/multisite/identity.js";
 import { runControlPlaneMigrations } from "../../../src/multisite/migrations.js";
-import { createOrganization, createSite, setOrgMember } from "../../../src/multisite/repository.js";
+import {
+	createOrganization,
+	createSite,
+	removeOrgMember,
+	setOrgMember,
+} from "../../../src/multisite/repository.js";
 import type { ControlPlaneDatabase } from "../../../src/multisite/types.js";
 import {
 	type DialectTestContext,
@@ -140,5 +146,50 @@ describeEachDialect("multi-site identity", (dialect) => {
 		await options.set("emdash:site_title", "Renamed");
 		await ensureSiteSetUp(site.db, "Brand A");
 		expect(await options.get("emdash:site_title")).toBe("Renamed");
+	});
+
+	describe("refreshSiteAccount", () => {
+		const refresh = () => refreshSiteAccount(controlPlane, control.db, site.db, siteId, ravi.id);
+		const orgId = async () =>
+			(await controlPlane.selectFrom("_emdash_orgs").select("id").executeTakeFirstOrThrow()).id;
+
+		it("applies a role change made in the control plane to the site's copy", async () => {
+			await setOrgMember(controlPlane, await orgId(), ravi.id, Role.EDITOR);
+			await syncSiteUser(site.db, ravi, Role.EDITOR);
+			await setOrgMember(controlPlane, await orgId(), ravi.id, Role.CONTRIBUTOR);
+
+			expect(await refresh()).toBe(Role.CONTRIBUTOR);
+			expect((await siteUser(site.db, ravi.id))?.role).toBe(Role.CONTRIBUTOR);
+		});
+
+		it("disables the copy of a removed member and restores it when they are added back", async () => {
+			await setOrgMember(controlPlane, await orgId(), ravi.id, Role.EDITOR);
+			await syncSiteUser(site.db, ravi, Role.EDITOR);
+
+			await removeOrgMember(controlPlane, await orgId(), ravi.id);
+			expect(await refresh()).toBeNull();
+			expect((await siteUser(site.db, ravi.id))?.disabled).toBe(1);
+
+			await setOrgMember(controlPlane, await orgId(), ravi.id, Role.AUTHOR);
+			expect(await refresh()).toBe(Role.AUTHOR);
+			expect(await siteUser(site.db, ravi.id)).toMatchObject({ disabled: 0, role: Role.AUTHOR });
+		});
+
+		it("denies an account the control plane doesn't know without changing the site", async () => {
+			await site.db
+				.insertInto("users")
+				.values({
+					id: "local-only",
+					email: "local@example.com",
+					role: Role.ADMIN,
+					email_verified: 1,
+				})
+				.execute();
+
+			expect(
+				await refreshSiteAccount(controlPlane, control.db, site.db, siteId, "local-only"),
+			).toBeNull();
+			expect((await siteUser(site.db, "local-only"))?.disabled).toBe(0);
+		});
 	});
 });

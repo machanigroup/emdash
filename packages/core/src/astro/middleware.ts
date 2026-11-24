@@ -38,6 +38,7 @@ import { createStorage as virtualCreateStorage } from "virtual:emdash/storage";
 
 import { after } from "../after.js";
 import { apiError } from "../api/error.js";
+import { startUserSession } from "../auth/start-user-session.js";
 import { EmDashConfigurationError } from "../config/errors.js";
 import {
 	createRecorder,
@@ -66,15 +67,17 @@ import { setI18nConfig } from "../i18n/config.js";
 import type { Database, Storage } from "../index.js";
 import { createPublicMediaUrlResolver } from "../media/url.js";
 import { MultiSiteError } from "../multisite/errors.js";
+import { consumeHandoff, createHandoff, safeReturnPath } from "../multisite/handoff.js";
 import { normalizeHostname } from "../multisite/hosts.js";
 import {
 	type ControlPlaneUser,
 	ensureSiteSetUp,
 	findControlPlaneUser,
+	refreshSiteAccount as refreshAccountFromControlPlane,
 	siteRoleFor,
 	syncSiteUser,
 } from "../multisite/identity.js";
-import { listSitesForUser } from "../multisite/repository.js";
+import { acceptOrgInvites, listSitesForUser } from "../multisite/repository.js";
 import { getLastContentWriteAt } from "../object-cache/index.js";
 import type { SandboxRunnerFactory } from "../plugins/sandbox/types.js";
 import type { ResolvedPlugin } from "../plugins/types.js";
@@ -83,11 +86,12 @@ import {
 	createRequestMetrics,
 	getRequestContext,
 	type RequestMetrics,
+	runOutsideRequestContext,
 	runWithContext,
 } from "../request-context.js";
 import type { PublishedRef } from "../scheduled-publish.js";
 import { parseCollectionSitemapName } from "../seo/sitemap-name.js";
-import { currentSiteId } from "../site-scope.js";
+import { currentSiteId, forgetSite, siteScopedGlobal } from "../site-scope.js";
 import { EmDashStorageError } from "../storage/types.js";
 import { isMissingTableError } from "../utils/db-errors.js";
 import { initWithLock } from "../utils/init-lock.js";
@@ -98,6 +102,12 @@ import {
 	finishScoped,
 	requestEndedAuthenticated,
 } from "./middleware/scoped-db.js";
+import {
+	claimEvictionPass,
+	forgetSiteActivity,
+	lastSiteUse,
+	recordSiteUse,
+} from "./middleware/site-lifecycle.js";
 import {
 	CONTROL_PLANE_SITE_ID,
 	getSiteRouter,
@@ -110,7 +120,13 @@ import {
 	createPublicPluginApiRouteHandler,
 	getPublicPluginRouteMeta,
 } from "./public-plugin-api-routes.js";
-import { getRuntimeHolder } from "./runtime-holder.js";
+import {
+	getRuntimeHolder,
+	hasSiteSweepTimer,
+	heldSiteRuntimes,
+	releaseSiteRuntime,
+	setSiteSweepTimer,
+} from "./runtime-holder.js";
 import { resolveSessionUser } from "./session-user.js";
 import type { EmDashHandlers } from "./types.js";
 
@@ -155,28 +171,20 @@ let lastRuntimeInitErrorLogAt = 0;
 const SETUP_VERIFIED_KEY = Symbol.for("emdash:setup-verified");
 const setupFlagStore = globalThis as Record<symbol, unknown>;
 
-const SETUP_VERIFIED_SITES_KEY = Symbol.for("emdash:setup-verified-sites");
+const SITE_SETUP_VERIFIED_KEY = Symbol.for("emdash:setup-verified:site");
 
-function verifiedSites(): Set<string> {
-	// eslint-disable-next-line typescript/no-unsafe-type-assertion -- private globalThis symbol slot, written only below
-	let sites = setupFlagStore[SETUP_VERIFIED_SITES_KEY] as Set<string> | undefined;
-	if (!sites) {
-		sites = new Set();
-		setupFlagStore[SETUP_VERIFIED_SITES_KEY] = sites;
-	}
-	return sites;
+function siteSetupFlag(): { verified: boolean } {
+	return siteScopedGlobal(SITE_SETUP_VERIFIED_KEY, () => ({ verified: false }));
 }
 
 function isSetupVerified(): boolean {
-	const siteId = currentSiteId();
-	if (siteId !== undefined) return verifiedSites().has(siteId);
+	if (currentSiteId() !== undefined) return siteSetupFlag().verified;
 	return setupFlagStore[SETUP_VERIFIED_KEY] === true;
 }
 
 function markSetupVerified(): void {
-	const siteId = currentSiteId();
-	if (siteId !== undefined) {
-		verifiedSites().add(siteId);
+	if (currentSiteId() !== undefined) {
+		siteSetupFlag().verified = true;
 		return;
 	}
 	setupFlagStore[SETUP_VERIFIED_KEY] = true;
@@ -255,7 +263,10 @@ function buildDependencies(
 		createCoalescingDialect:
 			virtualCreateCoalescingDialect as RuntimeDependencies["createCoalescingDialect"],
 		createStorage: virtualCreateStorage as ((config: Record<string, unknown>) => Storage) | null,
-		createScheduler: virtualCreateScheduler as CreateSchedulerFn | null,
+		// Sites in a multi-site deployment run their scheduled work from one
+		// deployment-wide sweep (see ensureSiteSweep), not a timer per site.
+		createScheduler:
+			currentSiteId() === undefined ? (virtualCreateScheduler as CreateSchedulerFn | null) : null,
 		createRoomHost: virtualCreateRoomHost as CreateRoomHostFn | null,
 		sandboxEnabled: sandboxModule.sandboxEnabled as boolean,
 		sandboxBypassed: (sandboxModule.sandboxBypassed as boolean) ?? false,
@@ -356,8 +367,16 @@ export async function runScheduledTasks(
 	}
 	const router = getSiteRouter({ ...config, multiSite: config.multiSite }, virtualCreateDialect);
 	const published: PublishedRef[] = [];
-	// oxlint-disable-next-line no-await-in-loop -- sites run one at a time to bound the event's load
-	for (const site of await router.activeSites()) {
+	const sites = await router.activeSites();
+	if (router.adminConfig) {
+		sites.unshift({
+			siteId: CONTROL_PLANE_SITE_ID,
+			orgId: "",
+			name: "",
+			config: router.adminConfig,
+		});
+	}
+	for (const site of sites) {
 		try {
 			// oxlint-disable-next-line no-await-in-loop -- sequential on purpose, see above
 			const result = await runOutsideRequest(
@@ -901,10 +920,74 @@ const SITE_NOT_FOUND_HEADERS = {
 /** Cookie that remembers which site the shared admin is managing. */
 const ADMIN_SITE_COOKIE = "emdash-site";
 
+/** Header that names the site an API request on the admin host is for. */
+const SITE_HEADER = "X-EmDash-Site";
+
 function siteUnavailableResponse(): Response {
 	return finalizeResponse(
 		new Response("Site temporarily unavailable", { status: 503, headers: SITE_NOT_FOUND_HEADERS }),
 	);
+}
+
+const EVICTION_CHECK_INTERVAL_MS = 60_000;
+const DEFAULT_IDLE_SITE_TTL_MS = 10 * 60_000;
+const SITE_SWEEP_INTERVAL_MS = 60_000;
+
+/**
+ * How long a site may go without requests before it is released. Long-running
+ * servers keep every site loaded by default: their per-minute sweep would
+ * reopen a released site anyway.
+ */
+function idleSiteTtl(config: EmDashConfig): number {
+	const configured = config.multiSite?.idleSiteTtlMs;
+	if (configured !== undefined) return configured;
+	return virtualCreateScheduler ? 0 : DEFAULT_IDLE_SITE_TTL_MS;
+}
+
+/**
+ * Releases sites that have served no request within the idle TTL: their
+ * runtime, database connection, storage adapter, and cache slots. Runs after
+ * the response, at most once a minute per worker.
+ */
+function scheduleIdleSiteEviction(config: EmDashConfig, activeSiteId: string): void {
+	const ttl = idleSiteTtl(config);
+	if (ttl <= 0) return;
+	const now = Date.now();
+	if (!claimEvictionPass(now, EVICTION_CHECK_INTERVAL_MS)) return;
+	after(async () => {
+		for (const siteId of heldSiteRuntimes()) {
+			if (siteId === activeSiteId || siteId === CONTROL_PLANE_SITE_ID) continue;
+			if (now - lastSiteUse(siteId) < ttl) continue;
+			try {
+				// oxlint-disable-next-line no-await-in-loop -- one site at a time keeps shutdown work bounded
+				await releaseSiteRuntime(siteId);
+			} catch (error) {
+				console.error(`[emdash:multisite] shutting down idle site ${siteId} failed:`, error);
+			}
+			EmDashRuntime.releaseSite(siteId);
+			forgetSite(siteId);
+			forgetSiteActivity(siteId);
+		}
+	});
+}
+
+/**
+ * On long-running servers, runs every site's scheduled work once a minute,
+ * as Cloudflare's Cron Trigger does through `runScheduledTasks()`. Site
+ * runtimes start no timers of their own, so a site with no traffic still
+ * publishes on time.
+ */
+function ensureSiteSweep(): void {
+	if (!virtualCreateScheduler || hasSiteSweepTimer()) return;
+	const timer = runOutsideRequestContext(() =>
+		setInterval(() => {
+			runScheduledTasks().catch((error: unknown) => {
+				console.error("[emdash:multisite] scheduled sweep failed:", error);
+			});
+		}, SITE_SWEEP_INTERVAL_MS),
+	);
+	if (typeof timer === "object" && "unref" in timer) timer.unref();
+	setSiteSweepTimer(timer);
 }
 
 /**
@@ -922,6 +1005,10 @@ async function runAsSite(
 	const migrationMode = resolveConfiguredMigrationMode(siteConfig);
 	const parent = getRequestContext();
 	const siteContext = parent ? { ...parent, siteId } : { editMode: false, siteId };
+	if (siteId !== CONTROL_PLANE_SITE_ID) {
+		recordSiteUse(siteId);
+		scheduleIdleSiteEviction(siteConfig, siteId);
+	}
 	return runWithContext(siteContext, async () => {
 		let runtime: EmDashRuntime;
 		try {
@@ -950,8 +1037,117 @@ function isControlPlanePath(pathname: string): boolean {
 	return (
 		pathname.startsWith("/_emdash/api/auth/") ||
 		pathname.startsWith("/_emdash/api/setup") ||
+		pathname.startsWith("/_emdash/api/multisite/") ||
 		pathname.startsWith("/_emdash/admin/setup") ||
 		pathname.startsWith("/_emdash/.well-known/")
+	);
+}
+
+const HANDOFF_START_PATH = "/_emdash/api/multisite/handoff";
+const HANDOFF_COMPLETE_PATH = "/_emdash/api/multisite/handoff/complete";
+const HANDOFF_HEADERS = {
+	"Cache-Control": "private, no-store",
+	"Referrer-Policy": "no-referrer",
+};
+
+function escapeHtml(value: string): string {
+	return value
+		.replaceAll("&", "&amp;")
+		.replaceAll("<", "&lt;")
+		.replaceAll(">", "&gt;")
+		.replaceAll('"', "&quot;")
+		.replaceAll("'", "&#39;");
+}
+
+/**
+ * Issues a single-use token that signs the admin host's user in on a site's
+ * own hostname, for visual editing and previews there. Called by the admin
+ * with a POST, so another website can't start a handoff for the visitor.
+ */
+async function startHandoff(
+	context: APIContext,
+	router: SiteRouter,
+	user: ControlPlaneUser,
+): Promise<Response> {
+	if (context.request.method !== "POST") {
+		return finalizeResponse(apiError("METHOD_NOT_ALLOWED", "Use POST", 405));
+	}
+	if (context.request.headers.get("X-EmDash-Request") !== "1") {
+		return finalizeResponse(apiError("CSRF_REJECTED", "Missing required header", 403));
+	}
+	const siteId = context.url.searchParams.get("site");
+	const site = siteId ? await router.siteById(siteId) : null;
+	const role = site ? await siteRoleFor(router.controlPlane, user, site.siteId) : null;
+	if (!site || role === null || !site.config.siteUrl) {
+		return finalizeResponse(apiError("NOT_FOUND", "Site not found", 404));
+	}
+	const token = await createHandoff(router.controlPlane, { userId: user.id, siteId: site.siteId });
+	const target = new URL(HANDOFF_COMPLETE_PATH, site.config.siteUrl);
+	target.searchParams.set("token", token);
+	target.searchParams.set("redirect", safeReturnPath(context.url.searchParams.get("redirect")));
+	return finalizeResponse(
+		Response.json({ data: { url: target.href } }, { headers: HANDOFF_HEADERS }),
+	);
+}
+
+/**
+ * Redeems a handoff token on a site's hostname and starts the site's own
+ * session. Opening the link shows a page that names the site and asks the
+ * visitor to continue; only that page's POST, from the site's own origin,
+ * redeems the token. A link alone can't sign someone in as another account.
+ */
+async function completeHandoff(
+	context: APIContext,
+	router: SiteRouter,
+	site: RequestSite,
+	siteDb: Kysely<Database>,
+): Promise<Response> {
+	const siteOrigin = site.config.siteUrl ? new URL(site.config.siteUrl).origin : context.url.origin;
+	if (context.request.method === "GET") {
+		const token = context.url.searchParams.get("token") ?? "";
+		const returnPath = safeReturnPath(context.url.searchParams.get("redirect"));
+		const html = `<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Sign in to ${escapeHtml(site.name)}</title></head>
+<body style="font-family:system-ui,sans-serif;max-width:32rem;margin:4rem auto;padding:0 1rem">
+<h1 style="font-size:1.25rem">Sign in to ${escapeHtml(site.name)}</h1>
+<p>Continue to open this site signed in with your EmDash account.</p>
+<form method="post"><input type="hidden" name="token" value="${escapeHtml(token)}"><input type="hidden" name="redirect" value="${escapeHtml(returnPath)}"><button type="submit">Continue</button></form>
+</body></html>`;
+		return finalizeResponse(
+			new Response(html, {
+				headers: { "Content-Type": "text/html; charset=utf-8", ...HANDOFF_HEADERS },
+			}),
+		);
+	}
+	if (context.request.method !== "POST") {
+		return finalizeResponse(apiError("METHOD_NOT_ALLOWED", "Use GET or POST", 405));
+	}
+	if (context.request.headers.get("Origin") !== siteOrigin) {
+		return finalizeResponse(apiError("CSRF_REJECTED", "Sign-in must come from this site", 403));
+	}
+	const form = await context.request.formData().catch(() => null);
+	const token = form?.get("token");
+	const redirect = form?.get("redirect");
+	const returnPath = safeReturnPath(typeof redirect === "string" ? redirect : null);
+	const userId =
+		typeof token === "string" && token
+			? await consumeHandoff(router.controlPlane, token, site.siteId)
+			: null;
+	const role = userId
+		? await refreshAccountFromControlPlane(
+				router.controlPlane,
+				router.controlAccounts,
+				siteDb,
+				site.siteId,
+				userId,
+			)
+		: null;
+	if (!userId || role === null || !context.session) {
+		return finalizeResponse(apiError("INVALID_TOKEN", "Sign-in link is invalid or expired", 400));
+	}
+	await startUserSession(siteDb, context.session, userId);
+	return finalizeResponse(
+		new Response(null, { status: 303, headers: { Location: returnPath, ...HANDOFF_HEADERS } }),
 	);
 }
 
@@ -999,13 +1195,47 @@ async function routeAdminHost(
 	adminConfig: EmDashConfig,
 	run: (config: EmDashConfig | null) => Promise<Response>,
 ): Promise<Response> {
-	if (isControlPlanePath(context.url.pathname)) {
-		return runAsSite(CONTROL_PLANE_SITE_ID, adminConfig, () => run(adminConfig));
+	const { pathname } = context.url;
+	const bearer = (context.request.headers.get("authorization") ?? "")
+		.toLowerCase()
+		.startsWith("bearer ");
+	if (bearer && pathname.startsWith("/_emdash/api/") && !isControlPlanePath(pathname)) {
+		const requested = context.request.headers.get(SITE_HEADER);
+		const site = requested ? await router.siteById(requested) : null;
+		if (!site) {
+			return finalizeResponse(
+				apiError(
+					"SITE_REQUIRED",
+					`Send API requests to the site's hostname, or name the site in the ${SITE_HEADER} header`,
+					400,
+				),
+			);
+		}
+		return runAsSiteCheckingAccess(router, site, run);
+	}
+	if (isControlPlanePath(pathname) && pathname !== HANDOFF_START_PATH) {
+		return runAsSite(CONTROL_PLANE_SITE_ID, adminConfig, () => {
+			context.locals.emdashMultiSite = { router, config: adminConfig };
+			return run(adminConfig);
+		});
 	}
 	return runAsSite(CONTROL_PLANE_SITE_ID, adminConfig, async (controlRuntime) => {
 		const sessionUser = await resolveSessionUser(context.session);
 		const user = sessionUser ? await findControlPlaneUser(controlRuntime.db, sessionUser.id) : null;
+		if (pathname === HANDOFF_START_PATH) {
+			if (!user || user.disabled) {
+				return finalizeResponse(apiError("NOT_AUTHENTICATED", "Not authenticated", 401));
+			}
+			return startHandoff(context, router, user);
+		}
 		if (!user || user.disabled) return run(adminConfig);
+		if (user.emailVerified) {
+			try {
+				await acceptOrgInvites(router.controlPlane, user.id, user.email);
+			} catch (error) {
+				console.error("[emdash:multisite] accepting organization invitations failed:", error);
+			}
+		}
 
 		let site: (RequestSite & { role: RoleLevel }) | null;
 		try {
@@ -1058,6 +1288,7 @@ async function routeToSite(
 	}
 
 	const router = getSiteRouter({ ...config, multiSite: config.multiSite }, virtualCreateDialect);
+	ensureSiteSweep();
 	if (router.adminConfig && normalizeHostname(context.url.hostname) === router.adminHostname) {
 		return routeAdminHost(context, router, router.adminConfig, run);
 	}
@@ -1075,20 +1306,68 @@ async function routeToSite(
 		);
 	}
 	const { pathname } = context.url;
-	if (
-		config.multiSite.adminUrl &&
-		(pathname.startsWith("/_emdash/api/auth/") || pathname.startsWith("/_emdash/api/setup"))
-	) {
+	const adminUrl = config.multiSite.adminUrl;
+	if (adminUrl && isAdminHostOnlyPath(pathname)) {
 		return finalizeResponse(apiError("NOT_FOUND", "Sign in on the admin host", 404));
 	}
-	if (config.multiSite.adminUrl && pathname.startsWith("/_emdash/admin")) {
-		const target = new URL("/_emdash/admin", config.multiSite.adminUrl);
+	if (adminUrl && pathname.startsWith("/_emdash/admin")) {
+		const target = new URL(pathname + context.url.search, adminUrl);
 		target.searchParams.set("site", site.siteId);
 		return finalizeResponse(Response.redirect(target.href, 302));
 	}
 
 	const siteConfig = site.config;
-	return runAsSite(site.siteId, siteConfig, () => run(siteConfig));
+	if (!adminUrl) return runAsSite(site.siteId, siteConfig, () => run(siteConfig));
+	if (pathname === HANDOFF_COMPLETE_PATH) {
+		const siteId = site.siteId;
+		return runAsSite(siteId, siteConfig, (runtime) =>
+			completeHandoff(context, router, site, runtime.db),
+		);
+	}
+	return runAsSiteCheckingAccess(router, site, run);
+}
+
+/**
+ * Account routes a site's own hostname refuses when people sign in on the
+ * shared admin host. Signing out and reading the current user stay available
+ * for sessions started by a handoff.
+ */
+function isAdminHostOnlyPath(pathname: string): boolean {
+	if (pathname.startsWith("/_emdash/api/setup")) return true;
+	if (!pathname.startsWith("/_emdash/api/auth/")) return false;
+	const route = pathname.replace(TRAILING_SLASH_RE, "");
+	return route !== "/_emdash/api/auth/logout" && route !== "/_emdash/api/auth/me";
+}
+
+/**
+ * Runs a request as a site, with every signed-in user's role rechecked
+ * against the control plane before the request trusts the site's copy of
+ * their account.
+ */
+function runAsSiteCheckingAccess(
+	router: SiteRouter,
+	site: RequestSite,
+	run: (config: EmDashConfig | null) => Promise<Response>,
+): Promise<Response> {
+	const { siteId, config: siteConfig } = site;
+	return runAsSite(siteId, siteConfig, (runtime) => {
+		const refreshSiteAccount = (userId: string) =>
+			refreshAccountFromControlPlane(
+				router.controlPlane,
+				router.controlAccounts,
+				runtime.db,
+				siteId,
+				userId,
+			).catch((error: unknown) => {
+				console.error("[emdash:multisite] rechecking a user's site access failed:", error);
+				return null;
+			});
+		const parent = getRequestContext();
+		const ctx = parent
+			? { ...parent, refreshSiteAccount }
+			: { editMode: false, siteId, db: runtime.db, refreshSiteAccount };
+		return runWithContext(ctx, () => run(siteConfig));
+	});
 }
 
 export const onRequest = defineMiddleware(async (context, next) => {
@@ -1171,7 +1450,6 @@ export const onRequest = defineMiddleware(async (context, next) => {
 		const isAuthenticated = !!sessionUser || hasBearerAuth;
 		const endedAuthenticated = () => requestEndedAuthenticated(isAuthenticated, cookies);
 		const canUseCachedBinding =
-			currentSiteId() === undefined &&
 			!isAuthenticated &&
 			!isWrite &&
 			!playgroundDb &&

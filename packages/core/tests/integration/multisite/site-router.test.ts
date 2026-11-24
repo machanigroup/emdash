@@ -68,6 +68,17 @@ describe("siteConfig", () => {
 		expect(config.storage?.config).toEqual({ directory: "./uploads" });
 	});
 
+	it("refuses a site database that is the control-plane database", () => {
+		const shared = deployment({ databases: { same: { url: "file:./control.db" } } });
+		expect(() => siteConfig(shared, { ...host, databaseRef: "same" })).toThrow(
+			/control-plane database/,
+		);
+		const controlIsDefault = deployment({ controlPlane: {} });
+		expect(() => siteConfig(controlIsDefault, { ...host, databaseRef: "default" })).toThrow(
+			/control-plane database/,
+		);
+	});
+
 	it("refuses a database the config does not list", () => {
 		expect(() => siteConfig(deployment(), { ...host, databaseRef: "../../etc/passwd" })).toThrow(
 			/not listed in multiSite.databases/,

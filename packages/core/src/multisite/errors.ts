@@ -4,7 +4,8 @@ export type MultiSiteErrorCode =
 	| "INVALID_ROLE"
 	| "NOT_FOUND"
 	| "NOT_A_MEMBER"
-	| "ACCOUNT_CONFLICT";
+	| "ACCOUNT_CONFLICT"
+	| "INVALID_DATABASE";
 
 export class MultiSiteError extends Error {
 	constructor(

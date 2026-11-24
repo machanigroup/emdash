@@ -46,6 +46,20 @@ export function getRuntimeHolder(siteId?: string): RuntimeHolder {
 	return holder;
 }
 
+/** Shuts down a site's runtime and forgets its holder, so the next request starts it again. */
+export async function releaseSiteRuntime(siteId: string): Promise<void> {
+	const holders = siteHolders();
+	const holder = holders.get(siteId);
+	if (!holder) return;
+	holders.delete(siteId);
+	await shutdownHolder(holder);
+}
+
+/** Ids of the sites whose runtimes this worker holds. */
+export function heldSiteRuntimes(): string[] {
+	return [...siteHolders().keys()];
+}
+
 async function shutdownHolder(holder: RuntimeHolder): Promise<void> {
 	// Detach before awaiting so the next server cannot reuse a closing runtime.
 	holder.closed = true;
@@ -54,8 +68,25 @@ async function shutdownHolder(holder: RuntimeHolder): Promise<void> {
 	await runtime?.shutdown();
 }
 
+const SITE_SWEEP_KEY = Symbol.for("emdash:multi-site-sweep");
+
+/** Remembers the timer that runs every site's scheduled work, so shutdown can stop it. */
+export function setSiteSweepTimer(timer: ReturnType<typeof setInterval>): void {
+	store[SITE_SWEEP_KEY] = timer;
+}
+
+export function hasSiteSweepTimer(): boolean {
+	return store[SITE_SWEEP_KEY] !== undefined;
+}
+
 export async function shutdownRuntime(): Promise<void> {
 	delete store[Symbol.for("emdash:plugins")];
+	const sweep = store[SITE_SWEEP_KEY];
+	if (sweep !== undefined) {
+		// eslint-disable-next-line typescript/no-unsafe-type-assertion -- written only by setSiteSweepTimer
+		clearInterval(sweep as ReturnType<typeof setInterval>);
+		delete store[SITE_SWEEP_KEY];
+	}
 	// eslint-disable-next-line typescript/no-unsafe-type-assertion -- private globalThis symbol slot
 	const holder = store[RUNTIME_HOLDER_KEY] as RuntimeHolder | undefined;
 	// eslint-disable-next-line typescript/no-unsafe-type-assertion -- private globalThis symbol slot

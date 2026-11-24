@@ -797,6 +797,16 @@ export interface MultiSiteConfig {
 	 */
 	adminUrl?: string;
 	/**
+	 * Release a site's runtime, database connection, and caches after it has
+	 * served no request for this many milliseconds; the next request opens
+	 * them again. `0` keeps every site loaded.
+	 *
+	 * Defaults to 10 minutes on serverless hosts such as Cloudflare Workers,
+	 * and to `0` on long-running servers such as Node.js, where a timer runs
+	 * every site's scheduled work each minute.
+	 */
+	idleSiteTtlMs?: number;
+	/**
 	 * How long a worker serves its cached hostname table before refreshing it in
 	 * the background, in milliseconds. Defaults to 30 seconds.
 	 */

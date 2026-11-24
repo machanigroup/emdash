@@ -55,6 +55,8 @@ import { MagicLinkConfirmPage } from "./components/MagicLinkConfirmPage";
 import { MediaLibrary } from "./components/MediaLibrary";
 import { MenuEditor } from "./components/MenuEditor";
 import { MenuList } from "./components/MenuList";
+import { OrganizationPage } from "./components/multisite/OrganizationPage";
+import { OrganizationsPage } from "./components/multisite/OrganizationsPage";
 import { PluginManager } from "./components/PluginManager";
 import { PluginSettings } from "./components/PluginSettings";
 import { Redirects } from "./components/Redirects";
@@ -3559,6 +3561,26 @@ const redirectsRoute = createRoute({
 	staticData: { pageTitle: msg`Redirects` },
 });
 
+const organizationsRoute = createRoute({
+	getParentRoute: () => adminLayoutRoute,
+	path: "/organizations",
+	component: OrganizationsPage,
+	staticData: { pageTitle: msg`Organizations` },
+});
+
+const organizationRoute = createRoute({
+	getParentRoute: () => adminLayoutRoute,
+	path: "/organizations/$orgId",
+	component: function OrganizationRouteComponent() {
+		const { orgId } = organizationRoute.useParams();
+		return <OrganizationPage orgId={orgId} />;
+	},
+	staticData: {
+		pageTitle: msg`Organization`,
+		breadcrumb: { parent: "/organizations", dynamic: true },
+	},
+});
+
 const sectionsListRoute = createRoute({
 	getParentRoute: () => adminLayoutRoute,
 	path: "/sections",
@@ -4076,6 +4098,8 @@ const adminRoutes = adminLayoutRoute.addChildren([
 	themeMarketplaceDetailRoute,
 	pluginRoute,
 	redirectsRoute,
+	organizationsRoute,
+	organizationRoute,
 	sectionsListRoute,
 	sectionEditRoute,
 	taxonomyRoute,

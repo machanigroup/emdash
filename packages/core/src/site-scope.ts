@@ -15,6 +15,19 @@ export function currentSiteId(): string | undefined {
 	return getRequestContext()?.siteId;
 }
 
+const SLOT_REGISTRY_KEY = Symbol.for("emdash:site-scoped@registry");
+
+/** Every per-site slot map created so far, so a site's slots can all be released at once. */
+function slotRegistry(): Set<Map<string, unknown>> {
+	// eslint-disable-next-line typescript/no-unsafe-type-assertion -- private globalThis symbol slot, written only below
+	let registry = store[SLOT_REGISTRY_KEY] as Set<Map<string, unknown>> | undefined;
+	if (!registry) {
+		registry = new Set();
+		store[SLOT_REGISTRY_KEY] = registry;
+	}
+	return registry;
+}
+
 function siteSlots<T>(key: symbol): Map<string, T> {
 	const slotsKey = Symbol.for(`${key.description ?? "emdash:site-scoped"}@sites`);
 	// eslint-disable-next-line typescript/no-unsafe-type-assertion -- private globalThis symbol slot, written only below
@@ -22,8 +35,14 @@ function siteSlots<T>(key: symbol): Map<string, T> {
 	if (!slots) {
 		slots = new Map();
 		store[slotsKey] = slots;
+		slotRegistry().add(slots);
 	}
 	return slots;
+}
+
+/** Releases every per-site value held for `siteId`. */
+export function forgetSite(siteId: string): void {
+	for (const slots of slotRegistry()) slots.delete(siteId);
 }
 
 /**
@@ -49,10 +68,4 @@ export function siteScopedGlobal<T>(key: symbol, create: () => T): T {
 		slots.set(siteId, value);
 	}
 	return value;
-}
-
-/** Appends the current site to a cache key, leaving default-site keys unchanged. */
-export function siteScopedKey(key: string): string {
-	const siteId = currentSiteId();
-	return siteId === undefined ? key : `${key}@site:${siteId}`;
 }

@@ -41,6 +41,7 @@ declare module "virtual:emdash/config" {
 			storages?: Record<string, Record<string, unknown>>;
 			hostRefreshMs?: number;
 			adminUrl?: string;
+			idleSiteTtlMs?: number;
 		};
 	}
 

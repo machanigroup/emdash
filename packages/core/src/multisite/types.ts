@@ -41,8 +41,25 @@ export interface SiteRoleOverrideTable {
 	role: number;
 }
 
+export interface SiteHandoffTable {
+	token_hash: string;
+	user_id: string;
+	site_id: string;
+	expires_at: string;
+}
+
+export interface OrgInviteTable {
+	org_id: string;
+	email: string;
+	role: number;
+	invited_by: string | null;
+	created_at: string;
+}
+
 /** Tables in the control-plane database, which is separate from every site database. */
 export interface ControlPlaneDatabase {
+	_emdash_site_handoffs: SiteHandoffTable;
+	_emdash_org_invites: OrgInviteTable;
 	_emdash_orgs: OrganizationTable;
 	_emdash_sites: SiteTable;
 	_emdash_site_hosts: SiteHostTable;

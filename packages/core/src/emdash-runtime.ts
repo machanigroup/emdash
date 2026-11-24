@@ -325,7 +325,7 @@ import {
 } from "./plugins/storage-indexes.js";
 import { getRegistryConfigInput, resolveManifestRegistryConfig } from "./registry/config.js";
 import { requestCached } from "./request-cache.js";
-import { getRequestContext, runInFreshRequestContext, runWithContext } from "./request-context.js";
+import { getRequestContext } from "./request-context.js";
 import { notifyRoom } from "./rooms/notifications.js";
 import { roomId, RoomSaveError, type EntryRef, type RuntimeRoomHost } from "./rooms/types.js";
 import {
@@ -842,33 +842,6 @@ function getSeedHolder(): SeedHolder {
 }
 const storageCache = new Map<string, Storage>();
 const INSTALLED_PLUGIN_REFRESH_RETRY_MS = 5_000;
-
-/**
- * Runs a site runtime's timer-driven cron work in a fresh request context bound
- * to that site, so the site's database and cache slots are used. A timer fires
- * outside any request and would otherwise inherit whichever request created
- * the runtime.
- */
-class SiteBoundCronExecutor extends CronExecutor {
-	constructor(
-		private readonly runInSite: <T>(fn: () => Promise<T>) => Promise<T>,
-		...args: ConstructorParameters<typeof CronExecutor>
-	) {
-		super(...args);
-	}
-
-	override tick(): Promise<number> {
-		return this.runInSite(() => super.tick());
-	}
-
-	override recoverStaleLocks(): Promise<number> {
-		return this.runInSite(() => super.recoverStaleLocks());
-	}
-
-	override getNextDueTime(): Promise<string | null> {
-		return this.runInSite(() => super.getNextDueTime());
-	}
-}
 
 type MarketplaceManifestEntry = Map<
 	string,
@@ -3206,19 +3179,7 @@ export class EmDashRuntime {
 		// is ≥1s out, well after the synchronous assignment below.
 		await phase("rt.cron", "Cron init", async () => {
 			try {
-				const siteId = deps.siteId;
-				const runInSite =
-					siteId === undefined
-						? <T>(fn: () => Promise<T>) => fn()
-						: <T>(fn: () => Promise<T>) =>
-								runInFreshRequestContext(() => {
-									const ctx = getRequestContext();
-									return ctx ? runWithContext({ ...ctx, siteId, db }, fn) : fn();
-								});
-				cronExecutor =
-					siteId === undefined
-						? new CronExecutor(resolveDb, invokeCronHook, deps.now)
-						: new SiteBoundCronExecutor(runInSite, resolveDb, invokeCronHook, deps.now);
+				cronExecutor = new CronExecutor(resolveDb, invokeCronHook, deps.now);
 				// Plugin schedules are always database-backed. On long-lived runtimes this
 				// callback also wakes the timer; on Cloudflare the external Cron Trigger
 				// drives execution, so rescheduling is intentionally a no-op.
@@ -3240,18 +3201,16 @@ export class EmDashRuntime {
 					// per-minute work stays limited to publishing, cron tasks, and the
 					// heartbeat so cold isolates on tight CPU budgets don't pay for
 					// full cleanup on every quiet-hours tick.
-					scheduler.setSystemCleanup(() =>
-						runInSite(async () => {
-							const runtime = runtimeRef.current;
-							if (!runtime) return;
-							const currentTime = deps.now?.() ?? new Date();
-							try {
-								await runtime.runScheduledMaintenanceTick({}, currentTime);
-							} catch (error) {
-								console.error("[scheduled] Maintenance tick failed:", error);
-							}
-						}),
-					);
+					scheduler.setSystemCleanup(async () => {
+						const runtime = runtimeRef.current;
+						if (!runtime) return;
+						const currentTime = deps.now?.() ?? new Date();
+						try {
+							await runtime.runScheduledMaintenanceTick({}, currentTime);
+						} catch (error) {
+							console.error("[scheduled] Maintenance tick failed:", error);
+						}
+					});
 					// start() is void on the timer scheduler but the interface
 					// allows a promise (alarm-backed schedulers); we don't block on it.
 					void scheduler.start();
@@ -3506,6 +3465,34 @@ export class EmDashRuntime {
 				anchor: (promise) => after(() => promise),
 			},
 		);
+	}
+
+	/**
+	 * Releases the database connection, storage adapter, seed state, and
+	 * plugin caches held for a site in this worker. Call after shutting down
+	 * the site's runtime; the next request for the site opens them again.
+	 */
+	static releaseSite(siteId: string): void {
+		const suffix = siteCacheKey("", siteId);
+		const dbHolder = getDbHolder();
+		for (const [key, db] of dbHolder.cache) {
+			if (!key.endsWith(suffix)) continue;
+			dbHolder.cache.delete(key);
+			db.destroy().catch((error: unknown) => {
+				console.error(`[emdash:multisite] closing site ${siteId}'s database failed:`, error);
+			});
+		}
+		for (const key of dbHolder.failures.keys()) {
+			if (key.endsWith(suffix)) dbHolder.failures.delete(key);
+		}
+		for (const key of storageCache.keys()) {
+			if (key.endsWith(suffix)) storageCache.delete(key);
+		}
+		const seedHolder = getSeedHolder();
+		for (const key of seedHolder.done) {
+			if (key.endsWith(suffix)) seedHolder.done.delete(key);
+		}
+		sitePluginCaches.delete(siteId);
 	}
 
 	/**

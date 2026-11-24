@@ -120,7 +120,9 @@ On the admin host:
 
 On a site's own hostname, `/_emdash/admin` redirects to the admin host with that site selected, and `/_emdash/api/auth/*` and `/_emdash/api/setup*` return 404, so accounts are only created and signed in on the admin host.
 
-A signed-in user on a public site page (for example, a member-only post) gets a site-scoped session through a short-lived, single-use handoff token issued by the admin host and redeemed on the site's hostname. Without a handoff, public pages render as anonymous.
+A signed-in user opens a site's own hostname signed in, for visual editing and previews, through a handoff: the admin issues a single-use token, valid for 60 seconds and bound to one site, from a `POST` that carries `X-EmDash-Request`. The site shows a page naming itself and redeems the token only from that page's own `POST`, whose `Origin` must be the site, then starts the site's session. A link alone can't sign anyone in as another account. Without a handoff, public pages render as anonymous.
+
+Every signed-in or token request on a site's own hostname rechecks the user's role against the control plane before it trusts the site's copy of their account. A removal or role change takes effect on the next request everywhere, including for API tokens; a copy whose account lost access is disabled. API requests through the admin host name their site in the `X-EmDash-Site` header.
 
 OAuth providers and Cloudflare Access keep working; their callback URLs point at the admin host.
 
@@ -136,31 +138,50 @@ effectiveRole(user, site) =
 
 A deployment Admin is a user whose role in the control plane is Admin; the first account created on the admin host is one. A user with no membership in the site's organization can't select the site. Routes keep calling `requirePerm` and `requireOwnerPerm` unchanged, against the role copied into the site. Ownership checks (`author_id`) keep working because user ids are the same everywhere.
 
-Organization management uses new permissions in `rbac.ts`, evaluated against the organization role:
+Organization management uses new permissions in `rbac.ts`. `orgs:read` and `orgs:members` are checked against the member's organization role; `orgs:create` and `sites:manage` need a deployment Admin, because a site is attached to databases the operator configured.
 
-| Permission    | Minimum role |
-| ------------- | ------------ |
-| `org:read`    | `EDITOR`     |
-| `org:members` | `ADMIN`      |
-| `org:sites`   | `ADMIN`      |
+| Permission     | Minimum role |
+| -------------- | ------------ |
+| `orgs:read`    | `SUBSCRIBER` |
+| `orgs:members` | `ADMIN`      |
+| `orgs:create`  | `ADMIN`      |
+| `sites:manage` | `ADMIN`      |
 
-API tokens gain an optional `site_id` and `org_id`. A token without them is valid only on the default site, which matches its meaning today.
+API tokens and OAuth tokens stay in each site's database: a token created while managing a site works on that site's hostname, or on the admin host with `X-EmDash-Site`, and is rechecked against the control plane on every request.
 
 ### Background work
 
-Cron tasks, scheduled publishing, cleanup, and media usage indexing are per-site work. On Cloudflare, `runScheduledTasks()` runs each active site in turn under that site's request context. On Node, each site runtime's timer runs its ticks in a fresh request context bound to that site. Site database migrations run per site on first access, using the existing migration lock in that site's database.
+Cron tasks, scheduled publishing, cleanup, and media usage indexing are per-site work. On Cloudflare, `runScheduledTasks()` runs each active site in turn under that site's request context. On Node, one deployment-wide timer runs `runScheduledTasks()` for every active site each minute, so a site with no traffic still publishes on time; site runtimes start no timers of their own. Site database migrations run per site on first access, using the existing migration lock in that site's database.
 
 ### Admin UI
 
+The manifest reports `multiSite: { siteId }` on the admin host.
+
 - A site switcher in the header lists sites the user can reach, grouped by organization.
 - Organization screens list sites and members and edit roles and per-site overrides.
-- A screen registers a site: name, slug, hostnames, database reference, and storage reference.
+- A screen registers a site: name, slug, hostnames, database reference, and storage reference. Only databases other than the control plane's are offered.
+- **Import accounts** copies a site's existing accounts into the control plane under the same ids, with their site roles as organization roles, for a site that ran on its own before.
+- **View Site** opens the managed site's hostname signed in, through the handoff.
 
 All strings go through Lingui and layouts use logical Tailwind classes.
 
 ### API
 
-New routes under `/_emdash/api/orgs/` follow the existing conventions: thin route files over handlers returning `ApiResult<T>`, `parseBody` with Zod, cursor pagination, and `X-EmDash-Request` on writes.
+Routes under `/_emdash/api/multisite/` answer on the admin host and follow the existing conventions: thin route files over handlers returning `ApiResult<T>`, `parseBody` with Zod, and `X-EmDash-Request` on writes. Lists are bounded by an organization, so they return `{ items }` without a cursor.
+
+| Route                                                                   | Who                                                            |
+| ----------------------------------------------------------------------- | -------------------------------------------------------------- |
+| `GET sites`                                                             | Signed-in users: sites they can switch to                      |
+| `GET, POST orgs`                                                        | Members list their organizations; deployment Admins create one |
+| `GET, PATCH orgs/:orgId`                                                | Members read it; organization Admins rename it                 |
+| `POST orgs/:orgId/sites`, `PATCH sites/:siteId`, `GET refs`             | Deployment Admins                                              |
+| `POST orgs/:orgId/members`, `PATCH, DELETE orgs/:orgId/members/:userId` | Organization Admins; an organization always keeps one Admin    |
+| `DELETE orgs/:orgId/invites/:email`                                     | Organization Admins                                            |
+| `PUT, DELETE sites/:siteId/roles/:userId`                               | Admins of the site's organization                              |
+| `POST sites/:siteId/import-accounts`                                    | Deployment Admins                                              |
+| `POST handoff`                                                          | Signed-in users, for a site they can reach                     |
+
+Adding a member whose email has no account records an invitation, which becomes a membership when a verified account with that email signs in on the admin host.
 
 ## Compatibility and migration
 
@@ -187,8 +208,8 @@ Rollback: removing `multiSite` returns the deployment to single-site mode on the
 
 - Logged-out requests on a site hostname use the cached hostname map; the steady state adds no query. Filling the cache after a cold start costs one control-plane query per isolate, which this RFC proposes as the only accepted addition.
 - Signed-in admin requests add a control-plane read for the session user's effective role, combined into the existing user lookup.
-- Per-site caches and runtimes multiply memory by the number of sites a worker serves. Evicting idle sites' runtimes and cache slots is open work.
-- Non-default sites skip the object cache, so their logged-out reads go to the database until the object cache is partitioned by site.
+- Per-site caches and runtimes multiply memory by the number of sites a worker serves. A site that serves no request for `idleSiteTtlMs` (default 10 minutes on serverless hosts) is released: its runtime, connection, storage adapter, and cache slots.
+- The object cache partitions keys, epochs, and change markers by site.
 - `pnpm query-counts` gains a multi-site fixture.
 
 ## Failure handling

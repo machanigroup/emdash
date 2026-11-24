@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import { runWithContext } from "../../src/request-context.js";
-import { siteScopedGlobal, siteScopedKey } from "../../src/site-scope.js";
+import { forgetSite, siteScopedGlobal } from "../../src/site-scope.js";
 
 const KEY = Symbol.for("emdash:test:site-scope");
 
@@ -28,9 +28,14 @@ describe("siteScopedGlobal", () => {
 	});
 });
 
-describe("siteScopedKey", () => {
-	it("leaves default-site keys unchanged and suffixes other sites", () => {
-		expect(siteScopedKey("posts")).toBe("posts");
-		expect(inSite("site-a", () => siteScopedKey("posts"))).toBe("posts@site:site-a");
+describe("forgetSite", () => {
+	it("releases a site's values and leaves other sites' values in place", () => {
+		const a = inSite("site-a", () => siteScopedGlobal(KEY, () => ({ owner: "a" })));
+		const b = inSite("site-b", () => siteScopedGlobal(KEY, () => ({ owner: "b" })));
+
+		forgetSite("site-a");
+
+		expect(inSite("site-a", () => siteScopedGlobal(KEY, () => ({ owner: "new" })))).not.toBe(a);
+		expect(inSite("site-b", () => siteScopedGlobal(KEY, () => ({ owner: "new" })))).toBe(b);
 	});
 });

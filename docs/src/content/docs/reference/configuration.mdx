@@ -747,6 +747,32 @@ Notes on `"client"` mode:
 
 In every mode, the toolbar can be dismissed in the browser via its × button (per-browser, until the next time an editor opens the admin). Preview and edit-mode responses always render server-side with `Cache-Control: private, no-store`.
 
+### `multiSite`
+
+**Optional.** Serves several sites from this deployment, each chosen by request hostname and kept in its own database and media storage. Organizations, sites, hostnames, and the accounts people sign in with live in a separate control-plane database. See [Multiple sites](/guides/multi-site/).
+
+```js
+emdash({
+	database: d1({ binding: "DB" }),
+	storage: r2({ binding: "MEDIA" }),
+	multiSite: {
+		controlPlane: { binding: "CONTROL_DB" },
+		databases: { "brand-a": { binding: "DB_BRAND_A" } },
+		storages: { "brand-a": { binding: "MEDIA_BRAND_A" } },
+		adminUrl: "https://admin.example.com",
+	},
+})
+```
+
+| Option | Type | Default | Description |
+| ------ | ---- | ------- | ----------- |
+| `controlPlane` | `object` | required | Options merged over `database`'s options to open the control-plane database. It must differ from every site's database. |
+| `databases` | `Record<string, object>` | required | Site databases by name, as options merged over `database`'s options. `default` names `database` unchanged. |
+| `storages` | `Record<string, object>` | — | Site media storage by name, as options merged over `storage`'s options. `default` names `storage` unchanged. |
+| `adminUrl` | `string` | — | Origin of the shared admin host. When set, people sign in there and manage every site they can reach; site hostnames redirect `/_emdash/admin` to it. |
+| `idleSiteTtlMs` | `number` | 10 minutes on serverless hosts, `0` on Node.js | Release a site's runtime and caches after this long without requests. `0` keeps every site loaded. |
+| `hostRefreshMs` | `number` | `30000` | How long a worker uses its cached hostname table before refreshing it in the background. |
+
 ## Database adapters
 
 Import the adapters from `emdash/db`:

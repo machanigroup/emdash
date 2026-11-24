@@ -8,6 +8,7 @@
 import { type Dialect, Kysely } from "kysely";
 
 import { kyselyLogOption } from "../../database/instrumentation.js";
+import type { Database } from "../../database/types.js";
 import { MultiSiteError } from "../../multisite/errors.js";
 import { type ResolvedSiteHost, SiteHostResolver } from "../../multisite/hosts.js";
 import { runControlPlaneMigrations } from "../../multisite/migrations.js";
@@ -36,7 +37,12 @@ export interface RequestSite {
 }
 
 export interface SiteRouter {
+	/** The deployment's own config, before any site's options are applied. */
+	readonly deployment: MultiSiteDeploymentConfig;
+	/** The control-plane database's organizations, sites, and memberships. */
 	readonly controlPlane: Kysely<ControlPlaneDatabase>;
+	/** The same database's accounts, which the admin host signs people in with. */
+	readonly controlAccounts: Kysely<Database>;
 	/**
 	 * The config the admin host runs with: the control-plane database, which
 	 * holds accounts, sign-in, and sessions, and the admin URL as the site URL.
@@ -51,6 +57,12 @@ export interface SiteRouter {
 	siteById(siteId: string): Promise<RequestSite | null>;
 	/** Every active site, for work that runs outside a request such as scheduled publishing. */
 	activeSites(): Promise<RequestSite[]>;
+	/**
+	 * Opens an active site's database outside a request to that site, for
+	 * control-plane work such as importing its accounts. Null when the site
+	 * isn't active.
+	 */
+	siteDatabase(siteId: string): Promise<Kysely<Database> | null>;
 	/** Drops cached hostnames so the next request reloads them. */
 	invalidate(): void;
 }
@@ -97,10 +109,45 @@ export function siteOrigin(hostname: string, adminUrl: string | undefined): stri
 	return `https://${hostname}`;
 }
 
+function stableJson(value: unknown): string {
+	if (!isRecord(value)) return JSON.stringify(value) ?? "";
+	return `{${Object.keys(value)
+		.toSorted()
+		.map((key) => `${JSON.stringify(key)}:${stableJson(value[key])}`)
+		.join(",")}}`;
+}
+
+/**
+ * Whether the named site database is the control-plane database. A site must
+ * not use it: the admin copies each user into the site's `users` table with
+ * their site role, which would overwrite their control-plane role there.
+ */
+export function isControlPlaneDatabase(config: EmDashConfig, databaseRef: string): boolean {
+	const multiSite = config.multiSite;
+	if (!multiSite || !config.database) return false;
+	const named =
+		databaseRef === DEFAULT_SITE_REF
+			? undefined
+			: Object.hasOwn(multiSite.databases, databaseRef)
+				? multiSite.databases[databaseRef]
+				: undefined;
+	if (databaseRef !== DEFAULT_SITE_REF && !named) return false;
+	return (
+		stableJson(mergeOptions(config.database.config, named)) ===
+		stableJson(mergeOptions(config.database.config, multiSite.controlPlane))
+	);
+}
+
 /** Applies a site's named database and storage options and URL to the deployment config. */
 export function siteConfig(config: EmDashConfig, site: ResolvedSiteHost): EmDashConfig {
 	const multiSite = config.multiSite;
 	if (!multiSite) throw new Error("siteConfig requires multiSite to be configured");
+	if (isControlPlaneDatabase(config, site.databaseRef)) {
+		throw new MultiSiteError(
+			"INVALID_DATABASE",
+			`Site database "${site.databaseRef}" is the control-plane database; give the site its own database`,
+		);
+	}
 	const database = config.database && {
 		...config.database,
 		config: mergeOptions(
@@ -135,10 +182,12 @@ export function createSiteRouter(
 		throw new Error("multiSite requires a database adapter to open the control-plane database");
 	}
 	const controlPlaneOptions = mergeOptions(baseDatabase.config, config.multiSite.controlPlane);
+	const controlDialect = createDialect(controlPlaneOptions);
 	const controlPlane = new Kysely<ControlPlaneDatabase>({
-		dialect: createDialect(controlPlaneOptions),
+		dialect: controlDialect,
 		log: kyselyLogOption(),
 	});
+	const controlAccounts = new Kysely<Database>({ dialect: controlDialect, log: kyselyLogOption() });
 	const resolver = new SiteHostResolver(controlPlane, {
 		refreshAfterMs: config.multiSite.hostRefreshMs ?? DEFAULT_HOST_REFRESH_MS,
 	});
@@ -151,6 +200,7 @@ export function createSiteRouter(
 			}
 		: null;
 	const siteConfigs = new Map<string, { host: ResolvedSiteHost; config: EmDashConfig }>();
+	const siteDatabases = new Map<string, { options: string; db: Kysely<Database> }>();
 	let migrated: Promise<unknown> | null = null;
 
 	const ensureMigrated = (): Promise<unknown> => {
@@ -179,7 +229,9 @@ export function createSiteRouter(
 	};
 
 	return {
+		deployment: config,
 		controlPlane,
+		controlAccounts,
 		adminConfig,
 		adminHostname: adminUrl ? new URL(adminUrl).hostname : null,
 		async resolve(hostname) {
@@ -204,6 +256,22 @@ export function createSiteRouter(
 				}
 			}
 			return sites.toSorted((a, b) => a.siteId.localeCompare(b.siteId));
+		},
+		async siteDatabase(siteId) {
+			await ensureMigrated();
+			const host = await resolver.findSite(siteId);
+			if (!host) return null;
+			const options = toRequestSite(host).config.database?.config;
+			const key = stableJson(options);
+			let cached = siteDatabases.get(siteId);
+			if (!cached || cached.options !== key) {
+				cached = {
+					options: key,
+					db: new Kysely<Database>({ dialect: createDialect(options), log: kyselyLogOption() }),
+				};
+				siteDatabases.set(siteId, cached);
+			}
+			return cached.db;
 		},
 		invalidate() {
 			resolver.invalidate();

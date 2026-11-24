@@ -462,3 +462,32 @@ export {
 	releaseEntryLock,
 	entryLockRefusal,
 } from "./entry-lock.js";
+
+// Multi-site organizations and sites
+export {
+	type CreateSiteInput,
+	type OrganizationDetail,
+	type OrganizationInvite,
+	type OrganizationMember,
+	type OrganizationSite,
+	type OrganizationSummary,
+	type SiteAccountImport,
+	type SwitcherSite,
+	type UpdateSiteInput,
+	addMember,
+	cancelInvite,
+	createOrganization,
+	createSite,
+	createSiteSignInLink,
+	fetchOrganization,
+	fetchOrganizations,
+	fetchSiteRefs,
+	fetchSwitcherSites,
+	importSiteAccounts,
+	removeMember,
+	renameOrganization,
+	setSiteRole,
+	switchToSite,
+	updateMemberRole,
+	updateSite,
+} from "./multisite.js";

@@ -12,6 +12,7 @@ const NESTED_PAGES_OUTSIDE_SETTINGS = [
 	"/content-types/$slug",
 	"/plugins-manager/$pluginId/settings",
 	"/plugins/registry/$publisher/$slug",
+	"/organizations/$orgId",
 ];
 
 const routesByPath: Record<string, AnyRoute | undefined> =

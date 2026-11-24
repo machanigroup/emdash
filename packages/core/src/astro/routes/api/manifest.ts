@@ -15,7 +15,9 @@ import { getAuthMode } from "#auth/mode.js";
 import { MediaRepository } from "#db/repositories/media.js";
 import { OptionsRepository } from "#db/repositories/options.js";
 
+import { getRequestContext } from "../../../request-context.js";
 import { COMMIT, VERSION } from "../../../version.js";
+import { CONTROL_PLANE_SITE_ID } from "../../middleware/site.js";
 import type { EmDashManifest } from "../../types.js";
 
 export const prerender = false;
@@ -121,6 +123,13 @@ export const GET: APIRoute = async ({ locals }) => {
 			}
 		}
 
+		// On the shared admin of a multi-site deployment, tell the admin which
+		// site it is managing; null when it shows the control plane itself.
+		const siteId = getRequestContext()?.siteId;
+		const multiSite = emdash?.config.multiSite?.adminUrl
+			? { siteId: siteId === undefined || siteId === CONTROL_PLANE_SITE_ID ? null : siteId }
+			: undefined;
+
 		const manifest: EmDashManifest = emdashManifest
 			? {
 					...emdashManifest,
@@ -132,6 +141,7 @@ export const GET: APIRoute = async ({ locals }) => {
 					providerManagedName,
 					signupEnabled,
 					admin: adminBranding,
+					multiSite,
 				}
 			: {
 					version: VERSION,
@@ -147,6 +157,7 @@ export const GET: APIRoute = async ({ locals }) => {
 					providerManagedName,
 					signupEnabled,
 					admin: adminBranding,
+					multiSite,
 				};
 
 		return apiSuccess(manifest);

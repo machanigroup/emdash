@@ -2,6 +2,7 @@ import type { Kysely } from "kysely";
 import { type Migration, type MigrationProvider, Migrator } from "kysely/migration";
 
 import * as m001 from "./migrations/001_organizations.js";
+import * as m002 from "./migrations/002_site_handoffs.js";
 import type { ControlPlaneDatabase } from "./types.js";
 
 /**
@@ -16,6 +17,7 @@ class ControlPlaneMigrationProvider implements MigrationProvider {
 	async getMigrations(): Promise<Record<string, Migration>> {
 		return {
 			"001_organizations": m001,
+			"002_site_handoffs": m002,
 		};
 	}
 }
