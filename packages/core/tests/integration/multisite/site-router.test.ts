@@ -3,7 +3,7 @@ import { SqliteDialect } from "kysely";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
 import type { EmDashConfig, MultiSiteConfig } from "../../../src/astro/integration/runtime.js";
-import { createSiteRouter, siteConfig } from "../../../src/astro/middleware/site.js";
+import { createSiteRouter, siteConfig, siteOrigin } from "../../../src/astro/middleware/site.js";
 import { openNodeSqliteDatabase } from "../../../src/db/node-sqlite-compat.js";
 import { waitForDeferredTasks } from "../../../src/deferred-tasks.js";
 import {
@@ -33,7 +33,14 @@ function deployment(overrides: Partial<MultiSiteConfig> = {}): MultiSiteDeployme
 }
 
 describe("siteConfig", () => {
-	const host = { siteId: "s1", orgId: "o1", databaseRef: "brand-a", storageRef: "brand-a" };
+	const host = {
+		siteId: "s1",
+		orgId: "o1",
+		name: "Brand A",
+		primaryHostname: "brand-a.com",
+		databaseRef: "brand-a",
+		storageRef: "brand-a",
+	};
 
 	it("merges the named database and storage options over the deployment's", () => {
 		const config = siteConfig(deployment(), host);
@@ -43,6 +50,10 @@ describe("siteConfig", () => {
 			type: "sqlite",
 		});
 		expect(config.storage?.config).toEqual({ directory: "./uploads/brand-a" });
+	});
+
+	it("uses the site's primary hostname as its URL", () => {
+		expect(siteConfig(deployment(), host).siteUrl).toBe("https://brand-a.com");
 	});
 
 	it("uses the deployment's options unchanged for the default ref", () => {
@@ -64,6 +75,16 @@ describe("siteConfig", () => {
 		expect(() => siteConfig(deployment(), { ...host, databaseRef: "toString" })).toThrow(
 			/not listed/,
 		);
+	});
+});
+
+describe("siteOrigin", () => {
+	it("serves sites over https and localhost sites like the admin", () => {
+		expect(siteOrigin("brand-a.com", "http://localhost:4321")).toBe("https://brand-a.com");
+		expect(siteOrigin("brand-a.localhost", "http://localhost:4321")).toBe(
+			"http://brand-a.localhost:4321",
+		);
+		expect(siteOrigin("localhost", undefined)).toBe("https://localhost");
 	});
 });
 
@@ -104,6 +125,24 @@ describe("createSiteRouter", () => {
 		const router = createSiteRouter(deployment(), createDialect);
 		expect(await router.resolve("brand-a.com")).toBeNull();
 		expect(dialectOptions).toEqual([{ url: "file:./control.db" }]);
+	});
+
+	it("runs the admin host on the control-plane database", () => {
+		const router = createSiteRouter(
+			deployment({ adminUrl: "https://admin.example.com/ignored" }),
+			createDialect,
+		);
+		expect(router.adminHostname).toBe("admin.example.com");
+		expect(router.adminConfig?.database?.config).toEqual({ url: "file:./control.db" });
+		expect(router.adminConfig?.siteUrl).toBe("https://admin.example.com");
+		expect(createSiteRouter(deployment(), createDialect).adminConfig).toBeNull();
+	});
+
+	it("finds a site by id", async () => {
+		const router = createSiteRouter(deployment(), createDialect);
+		const site = await registerBrandA(router);
+		expect((await router.siteById(site.id))?.name).toBe("Brand A");
+		expect(await router.siteById("missing")).toBeNull();
 	});
 
 	it("resolves a hostname to the site's config", async () => {

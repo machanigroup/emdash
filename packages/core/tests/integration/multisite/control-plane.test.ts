@@ -95,9 +95,12 @@ describeEachDialect("multi-site control plane", (dialect) => {
 			expect(await resolver.resolve("Brand-A.com:443")).toEqual({
 				siteId: brandA.id,
 				orgId: acme.id,
+				name: "Brand A",
+				primaryHostname: "brand-a.com",
 				databaseRef: "DB_BRAND_A",
 				storageRef: "MEDIA_BRAND_A",
 			});
+			expect((await resolver.resolve("www.brand-a.com"))?.primaryHostname).toBe("brand-a.com");
 			expect((await resolver.resolve("www.brand-a.com"))?.siteId).toBe(brandA.id);
 			expect((await resolver.resolve("brand-b.com"))?.siteId).toBe(brandB.id);
 		});

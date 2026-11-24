@@ -3,7 +3,8 @@ export type MultiSiteErrorCode =
 	| "INVALID_HOSTNAME"
 	| "INVALID_ROLE"
 	| "NOT_FOUND"
-	| "NOT_A_MEMBER";
+	| "NOT_A_MEMBER"
+	| "ACCOUNT_CONFLICT";
 
 export class MultiSiteError extends Error {
 	constructor(

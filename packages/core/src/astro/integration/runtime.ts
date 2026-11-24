@@ -785,6 +785,18 @@ export interface MultiSiteConfig {
 	/** Site media storage by name: options merged over `storage`'s adapter options. */
 	storages?: Record<string, Record<string, unknown>>;
 	/**
+	 * The origin of the shared admin, such as `https://admin.example.com`.
+	 *
+	 * When set, people sign in once on this host, and its admin manages every
+	 * site they can reach, with the role their organization gives them on each
+	 * one. Accounts, passkeys, and sessions live in the control-plane database.
+	 * Opening `/_emdash/admin` on a site's own hostname redirects here.
+	 *
+	 * When unset, each site's admin signs people in against that site's own
+	 * accounts.
+	 */
+	adminUrl?: string;
+	/**
 	 * How long a worker serves its cached hostname table before refreshing it in
 	 * the background, in milliseconds. Defaults to 30 seconds.
 	 */

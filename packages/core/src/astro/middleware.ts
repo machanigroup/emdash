@@ -5,6 +5,7 @@
  * All heavy lifting happens in EmDashRuntime.
  */
 
+import { Role, type RoleLevel } from "@emdash-cms/auth";
 import type { APIContext } from "astro";
 import { defineMiddleware } from "astro:middleware";
 import type { Kysely } from "kysely";
@@ -64,6 +65,16 @@ import {
 import { setI18nConfig } from "../i18n/config.js";
 import type { Database, Storage } from "../index.js";
 import { createPublicMediaUrlResolver } from "../media/url.js";
+import { MultiSiteError } from "../multisite/errors.js";
+import { normalizeHostname } from "../multisite/hosts.js";
+import {
+	type ControlPlaneUser,
+	ensureSiteSetUp,
+	findControlPlaneUser,
+	siteRoleFor,
+	syncSiteUser,
+} from "../multisite/identity.js";
+import { listSitesForUser } from "../multisite/repository.js";
 import { getLastContentWriteAt } from "../object-cache/index.js";
 import type { SandboxRunnerFactory } from "../plugins/sandbox/types.js";
 import type { ResolvedPlugin } from "../plugins/types.js";
@@ -87,7 +98,12 @@ import {
 	finishScoped,
 	requestEndedAuthenticated,
 } from "./middleware/scoped-db.js";
-import { getSiteRouter, type RequestSite } from "./middleware/site.js";
+import {
+	CONTROL_PLANE_SITE_ID,
+	getSiteRouter,
+	type RequestSite,
+	type SiteRouter,
+} from "./middleware/site.js";
 import { wrapBodyForStreamMetrics } from "./middleware/stream-end-metrics.js";
 import { prefetchLayoutData } from "./prefetch.js";
 import {
@@ -882,12 +898,154 @@ const SITE_NOT_FOUND_HEADERS = {
 	"Cache-Control": "private, no-store",
 };
 
+/** Cookie that remembers which site the shared admin is managing. */
+const ADMIN_SITE_COOKIE = "emdash-site";
+
+function siteUnavailableResponse(): Response {
+	return finalizeResponse(
+		new Response("Site temporarily unavailable", { status: 503, headers: SITE_NOT_FOUND_HEADERS }),
+	);
+}
+
 /**
- * In a multi-site deployment, run the request as the site its hostname names:
- * with that site's config, its runtime, and its database in the request
- * context, so every cache and query below sees only that site. The site's
- * runtime is initialized before anything reads the database, because the
- * loader's `getDb()` would otherwise fall back to the default database.
+ * Runs `fn` as the given site: with its id in the request context, its runtime
+ * initialized, and its database in the request context, so every cache and
+ * query below sees only that site. The runtime is initialized before anything
+ * reads the database, because the loader's `getDb()` would otherwise fall back
+ * to the default database.
+ */
+async function runAsSite(
+	siteId: string,
+	siteConfig: EmDashConfig,
+	fn: (runtime: EmDashRuntime) => Promise<Response>,
+): Promise<Response> {
+	const migrationMode = resolveConfiguredMigrationMode(siteConfig);
+	const parent = getRequestContext();
+	const siteContext = parent ? { ...parent, siteId } : { editMode: false, siteId };
+	return runWithContext(siteContext, async () => {
+		let runtime: EmDashRuntime;
+		try {
+			runtime = await getRuntime(siteConfig, migrationMode);
+		} catch (error) {
+			if (isMigrationRequiredError(error)) return migrationRequiredErrorResponse(error);
+			if (migrationMode === "manual" && isMissingTableError(error)) {
+				return migrationRequiredResponse();
+			}
+			console.error("[emdash:multisite] site runtime init failed:", error);
+			return siteUnavailableResponse();
+		}
+		return runWithContext({ ...siteContext, db: runtime.db }, () => fn(runtime));
+	});
+}
+
+/**
+ * Admin-host paths that always run against the control plane: sign-in,
+ * account and passkey management, first-run setup, and anything outside the
+ * admin and API. `/auth/me` reports the user's role on the selected site, so
+ * it runs as that site.
+ */
+function isControlPlanePath(pathname: string): boolean {
+	if (!pathname.startsWith("/_emdash/")) return true;
+	if (pathname === "/_emdash/api/auth/me" || pathname === "/_emdash/api/auth/me/") return false;
+	return (
+		pathname.startsWith("/_emdash/api/auth/") ||
+		pathname.startsWith("/_emdash/api/setup") ||
+		pathname.startsWith("/_emdash/admin/setup") ||
+		pathname.startsWith("/_emdash/.well-known/")
+	);
+}
+
+/**
+ * The site a signed-in user manages on the admin host: the one named by the
+ * `site` query parameter or the site cookie when the user can reach it,
+ * otherwise the first site they can reach. Null when they can reach none.
+ */
+async function selectAdminSite(
+	context: APIContext,
+	router: SiteRouter,
+	user: ControlPlaneUser,
+): Promise<(RequestSite & { role: RoleLevel }) | null> {
+	const requested =
+		(context.url.pathname.startsWith("/_emdash/admin") && context.url.searchParams.get("site")) ||
+		context.cookies.get(ADMIN_SITE_COOKIE)?.value;
+	if (requested) {
+		const site = await router.siteById(requested);
+		const role = site ? await siteRoleFor(router.controlPlane, user, site.siteId) : null;
+		if (site && role !== null) return { ...site, role };
+	}
+	const candidates =
+		user.role >= Role.ADMIN
+			? (await router.activeSites()).map((site) => site.siteId)
+			: (await listSitesForUser(router.controlPlane, user.id)).map((site) => site.id);
+	for (const siteId of candidates) {
+		// oxlint-disable-next-line no-await-in-loop -- stops at the first reachable site
+		const site = await router.siteById(siteId);
+		// oxlint-disable-next-line no-await-in-loop -- see above
+		const role = site ? await siteRoleFor(router.controlPlane, user, siteId) : null;
+		if (site && role !== null) return { ...site, role };
+	}
+	return null;
+}
+
+/**
+ * Requests to the shared admin host. Sign-in and setup run against the control
+ * plane. Admin and API requests from a signed-in user run as the site they
+ * are managing, after copying their account into that site with the role they
+ * hold there, so the rest of EmDash reads the user from the site as usual.
+ */
+async function routeAdminHost(
+	context: APIContext,
+	router: SiteRouter,
+	adminConfig: EmDashConfig,
+	run: (config: EmDashConfig | null) => Promise<Response>,
+): Promise<Response> {
+	if (isControlPlanePath(context.url.pathname)) {
+		return runAsSite(CONTROL_PLANE_SITE_ID, adminConfig, () => run(adminConfig));
+	}
+	return runAsSite(CONTROL_PLANE_SITE_ID, adminConfig, async (controlRuntime) => {
+		const sessionUser = await resolveSessionUser(context.session);
+		const user = sessionUser ? await findControlPlaneUser(controlRuntime.db, sessionUser.id) : null;
+		if (!user || user.disabled) return run(adminConfig);
+
+		let site: (RequestSite & { role: RoleLevel }) | null;
+		try {
+			site = await selectAdminSite(context, router, user);
+		} catch (error) {
+			console.error("[emdash:multisite] selecting the admin site failed:", error);
+			return siteUnavailableResponse();
+		}
+		if (!site) return run(adminConfig);
+		if (context.cookies.get(ADMIN_SITE_COOKIE)?.value !== site.siteId) {
+			context.cookies.set(ADMIN_SITE_COOKIE, site.siteId, {
+				path: "/",
+				httpOnly: true,
+				sameSite: "lax",
+				secure: context.url.protocol === "https:",
+			});
+		}
+
+		const selected = site;
+		return runAsSite(selected.siteId, selected.config, async (siteRuntime) => {
+			try {
+				await syncSiteUser(siteRuntime.db, user, selected.role);
+				await ensureSiteSetUp(siteRuntime.db, selected.name);
+			} catch (error) {
+				if (error instanceof MultiSiteError && error.code === "ACCOUNT_CONFLICT") {
+					return finalizeResponse(
+						apiError("ACCOUNT_CONFLICT", "This site has a separate account with your email", 409),
+					);
+				}
+				console.error("[emdash:multisite] preparing the site for the admin failed:", error);
+				return siteUnavailableResponse();
+			}
+			return run(selected.config);
+		});
+	});
+}
+
+/**
+ * In a multi-site deployment, run the request as the site its hostname names,
+ * or through the shared admin when the hostname is the admin host.
  */
 async function routeToSite(
 	context: APIContext,
@@ -899,50 +1057,38 @@ async function routeToSite(
 		throw new Error("multiSite requires a database adapter");
 	}
 
+	const router = getSiteRouter({ ...config, multiSite: config.multiSite }, virtualCreateDialect);
+	if (router.adminConfig && normalizeHostname(context.url.hostname) === router.adminHostname) {
+		return routeAdminHost(context, router, router.adminConfig, run);
+	}
+
 	let site: RequestSite | null;
 	try {
-		const multiSiteConfig = { ...config, multiSite: config.multiSite };
-		site = await getSiteRouter(multiSiteConfig, virtualCreateDialect).resolve(context.url.hostname);
+		site = await router.resolve(context.url.hostname);
 	} catch (error) {
 		console.error("[emdash:multisite] resolving the request's site failed:", error);
-		return finalizeResponse(
-			new Response("Site temporarily unavailable", {
-				status: 503,
-				headers: SITE_NOT_FOUND_HEADERS,
-			}),
-		);
+		return siteUnavailableResponse();
 	}
 	if (!site) {
 		return finalizeResponse(
 			new Response("Site not found", { status: 404, headers: SITE_NOT_FOUND_HEADERS }),
 		);
 	}
+	const { pathname } = context.url;
+	if (
+		config.multiSite.adminUrl &&
+		(pathname.startsWith("/_emdash/api/auth/") || pathname.startsWith("/_emdash/api/setup"))
+	) {
+		return finalizeResponse(apiError("NOT_FOUND", "Sign in on the admin host", 404));
+	}
+	if (config.multiSite.adminUrl && pathname.startsWith("/_emdash/admin")) {
+		const target = new URL("/_emdash/admin", config.multiSite.adminUrl);
+		target.searchParams.set("site", site.siteId);
+		return finalizeResponse(Response.redirect(target.href, 302));
+	}
 
 	const siteConfig = site.config;
-	const migrationMode = resolveConfiguredMigrationMode(siteConfig);
-	const parent = getRequestContext();
-	const siteContext = parent
-		? { ...parent, siteId: site.siteId }
-		: { editMode: false, siteId: site.siteId };
-	return runWithContext(siteContext, async () => {
-		let runtime: EmDashRuntime;
-		try {
-			runtime = await getRuntime(siteConfig, migrationMode);
-		} catch (error) {
-			if (isMigrationRequiredError(error)) return migrationRequiredErrorResponse(error);
-			if (migrationMode === "manual" && isMissingTableError(error)) {
-				return migrationRequiredResponse();
-			}
-			console.error("[emdash:multisite] site runtime init failed:", error);
-			return finalizeResponse(
-				new Response("Site temporarily unavailable", {
-					status: 503,
-					headers: SITE_NOT_FOUND_HEADERS,
-				}),
-			);
-		}
-		return runWithContext({ ...siteContext, db: runtime.db }, () => run(siteConfig));
-	});
+	return runAsSite(site.siteId, siteConfig, () => run(siteConfig));
 }
 
 export const onRequest = defineMiddleware(async (context, next) => {

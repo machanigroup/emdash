@@ -40,6 +40,7 @@ declare module "virtual:emdash/config" {
 			databases: Record<string, Record<string, unknown>>;
 			storages?: Record<string, Record<string, unknown>>;
 			hostRefreshMs?: number;
+			adminUrl?: string;
 		};
 	}
 

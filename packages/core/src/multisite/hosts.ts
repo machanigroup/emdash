@@ -38,6 +38,9 @@ export function requireHostname(host: string): string {
 export interface ResolvedSiteHost {
 	siteId: string;
 	orgId: string;
+	name: string;
+	/** The hostname links to the site use. */
+	primaryHostname: string;
 	databaseRef: string;
 	storageRef: string | null;
 }
@@ -69,6 +72,23 @@ export class SiteHostResolver {
 		const hosts = await this.#load();
 		if (Date.now() - this.#loadedAt > this.#refreshAfterMs) this.#refreshInBackground();
 		return hosts.get(hostname) ?? null;
+	}
+
+	/** An active site by id, from the same cached table. */
+	async findSite(siteId: string): Promise<ResolvedSiteHost | null> {
+		const hosts = await this.#load();
+		for (const host of hosts.values()) {
+			if (host.siteId === siteId) return host;
+		}
+		return null;
+	}
+
+	/** Every active site, one entry each, from the same cached table. */
+	async allSites(): Promise<ResolvedSiteHost[]> {
+		const hosts = await this.#load();
+		const sites = new Map<string, ResolvedSiteHost>();
+		for (const host of hosts.values()) sites.set(host.siteId, host);
+		return [...sites.values()];
 	}
 
 	/** Discards the table so the next lookup reloads it. Call after changing sites or hostnames. */
@@ -107,16 +127,30 @@ export class SiteHostResolver {
 		const rows = await this.db
 			.selectFrom("_emdash_site_hosts as h")
 			.innerJoin("_emdash_sites as s", "s.id", "h.site_id")
-			.select(["h.hostname", "s.id", "s.org_id", "s.database_ref", "s.storage_ref"])
+			.select([
+				"h.hostname",
+				"h.is_primary",
+				"s.id",
+				"s.org_id",
+				"s.name",
+				"s.database_ref",
+				"s.storage_ref",
+			])
 			.where("s.status", "=", "active")
 			.execute();
 		this.#loadedAt = Date.now();
+		const primary = new Map<string, string>();
+		for (const row of rows) {
+			if (row.is_primary === 1 || !primary.has(row.id)) primary.set(row.id, row.hostname);
+		}
 		return new Map(
 			rows.map((row) => [
 				row.hostname,
 				{
 					siteId: row.id,
 					orgId: row.org_id,
+					name: row.name,
+					primaryHostname: primary.get(row.id) ?? row.hostname,
 					databaseRef: row.database_ref,
 					storageRef: row.storage_ref,
 				},

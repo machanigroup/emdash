@@ -17,19 +17,38 @@ import type { EmDashConfig, MultiSiteConfig } from "../integration/runtime.js";
 /** The ref that names the `database` and `storage` options without overrides. */
 export const DEFAULT_SITE_REF = "default";
 
+/**
+ * Request-context site id of the control plane when it serves the admin host.
+ * Site ids are ULIDs, so this can't collide with one.
+ */
+export const CONTROL_PLANE_SITE_ID = "control-plane";
+
 const DEFAULT_HOST_REFRESH_MS = 30_000;
+
+export type MultiSiteDeploymentConfig = EmDashConfig & { multiSite: MultiSiteConfig };
 
 export interface RequestSite {
 	siteId: string;
 	orgId: string;
-	/** The deployment config with this site's database and storage options applied. */
+	name: string;
+	/** The deployment config with this site's database, storage, and URL applied. */
 	config: EmDashConfig;
 }
 
 export interface SiteRouter {
 	readonly controlPlane: Kysely<ControlPlaneDatabase>;
+	/**
+	 * The config the admin host runs with: the control-plane database, which
+	 * holds accounts, sign-in, and sessions, and the admin URL as the site URL.
+	 * Null when `multiSite.adminUrl` is not set.
+	 */
+	readonly adminConfig: EmDashConfig | null;
+	/** The admin host's hostname, or null when `multiSite.adminUrl` is not set. */
+	readonly adminHostname: string | null;
 	/** The site serving `hostname`, or null when no active site lists it. */
 	resolve(hostname: string): Promise<RequestSite | null>;
+	/** An active site by id, or null. */
+	siteById(siteId: string): Promise<RequestSite | null>;
 	/** Every active site, for work that runs outside a request such as scheduled publishing. */
 	activeSites(): Promise<RequestSite[]>;
 	/** Drops cached hostnames so the next request reloads them. */
@@ -63,7 +82,22 @@ function namedOptions(
 	return named;
 }
 
-/** Applies a site's named database and storage options to the deployment config. */
+const LOCAL_HOSTNAME = /(^|\.)localhost$/;
+
+/**
+ * The public origin of a site's primary hostname. Sites are served over HTTPS;
+ * `localhost` hostnames, used in development, use the admin URL's scheme and
+ * port so links work on a dev server.
+ */
+export function siteOrigin(hostname: string, adminUrl: string | undefined): string {
+	if (LOCAL_HOSTNAME.test(hostname) && adminUrl) {
+		const admin = new URL(adminUrl);
+		return `${admin.protocol}//${hostname}${admin.port ? `:${admin.port}` : ""}`;
+	}
+	return `https://${hostname}`;
+}
+
+/** Applies a site's named database and storage options and URL to the deployment config. */
 export function siteConfig(config: EmDashConfig, site: ResolvedSiteHost): EmDashConfig {
 	const multiSite = config.multiSite;
 	if (!multiSite) throw new Error("siteConfig requires multiSite to be configured");
@@ -84,23 +118,38 @@ export function siteConfig(config: EmDashConfig, site: ResolvedSiteHost): EmDash
 					),
 				}
 			: config.storage;
-	return { ...config, database, storage };
+	return {
+		...config,
+		database,
+		storage,
+		siteUrl: siteOrigin(site.primaryHostname, multiSite.adminUrl),
+	};
 }
 
 export function createSiteRouter(
-	config: EmDashConfig & { multiSite: MultiSiteConfig },
+	config: MultiSiteDeploymentConfig,
 	createDialect: (options: unknown) => Dialect,
 ): SiteRouter {
-	if (!config.database) {
+	const baseDatabase = config.database;
+	if (!baseDatabase) {
 		throw new Error("multiSite requires a database adapter to open the control-plane database");
 	}
+	const controlPlaneOptions = mergeOptions(baseDatabase.config, config.multiSite.controlPlane);
 	const controlPlane = new Kysely<ControlPlaneDatabase>({
-		dialect: createDialect(mergeOptions(config.database.config, config.multiSite.controlPlane)),
+		dialect: createDialect(controlPlaneOptions),
 		log: kyselyLogOption(),
 	});
 	const resolver = new SiteHostResolver(controlPlane, {
 		refreshAfterMs: config.multiSite.hostRefreshMs ?? DEFAULT_HOST_REFRESH_MS,
 	});
+	const adminUrl = config.multiSite.adminUrl;
+	const adminConfig: EmDashConfig | null = adminUrl
+		? {
+				...config,
+				database: { ...baseDatabase, config: controlPlaneOptions },
+				siteUrl: new URL(adminUrl).origin,
+			}
+		: null;
 	const siteConfigs = new Map<string, { host: ResolvedSiteHost; config: EmDashConfig }>();
 	let migrated: Promise<unknown> | null = null;
 
@@ -115,46 +164,46 @@ export function createSiteRouter(
 		return migrated;
 	};
 
+	const toRequestSite = (host: ResolvedSiteHost): RequestSite => {
+		let cached = siteConfigs.get(host.siteId);
+		if (
+			!cached ||
+			cached.host.databaseRef !== host.databaseRef ||
+			cached.host.storageRef !== host.storageRef ||
+			cached.host.primaryHostname !== host.primaryHostname
+		) {
+			cached = { host, config: siteConfig(config, host) };
+			siteConfigs.set(host.siteId, cached);
+		}
+		return { siteId: host.siteId, orgId: host.orgId, name: host.name, config: cached.config };
+	};
+
 	return {
 		controlPlane,
+		adminConfig,
+		adminHostname: adminUrl ? new URL(adminUrl).hostname : null,
 		async resolve(hostname) {
 			await ensureMigrated();
 			const host = await resolver.resolve(hostname);
-			if (!host) return null;
-			let cached = siteConfigs.get(host.siteId);
-			if (
-				!cached ||
-				cached.host.databaseRef !== host.databaseRef ||
-				cached.host.storageRef !== host.storageRef
-			) {
-				cached = { host, config: siteConfig(config, host) };
-				siteConfigs.set(host.siteId, cached);
-			}
-			return { siteId: host.siteId, orgId: host.orgId, config: cached.config };
+			return host ? toRequestSite(host) : null;
+		},
+		async siteById(siteId) {
+			await ensureMigrated();
+			const host = await resolver.findSite(siteId);
+			return host ? toRequestSite(host) : null;
 		},
 		async activeSites() {
 			await ensureMigrated();
-			const rows = await controlPlane
-				.selectFrom("_emdash_sites")
-				.select(["id", "org_id", "database_ref", "storage_ref"])
-				.where("status", "=", "active")
-				.orderBy("id")
-				.execute();
+			resolver.invalidate();
 			const sites: RequestSite[] = [];
-			for (const row of rows) {
-				const host: ResolvedSiteHost = {
-					siteId: row.id,
-					orgId: row.org_id,
-					databaseRef: row.database_ref,
-					storageRef: row.storage_ref,
-				};
+			for (const host of await resolver.allSites()) {
 				try {
-					sites.push({ siteId: row.id, orgId: row.org_id, config: siteConfig(config, host) });
+					sites.push(toRequestSite(host));
 				} catch (error) {
-					console.error(`[emdash:multisite] skipping site ${row.id}:`, error);
+					console.error(`[emdash:multisite] skipping site ${host.siteId}:`, error);
 				}
 			}
-			return sites;
+			return sites.toSorted((a, b) => a.siteId.localeCompare(b.siteId));
 		},
 		invalidate() {
 			resolver.invalidate();
@@ -167,7 +216,7 @@ const store = globalThis as Record<symbol, unknown>;
 
 /** The deployment's site router, created on first use and shared by every request in the worker. */
 export function getSiteRouter(
-	config: EmDashConfig & { multiSite: MultiSiteConfig },
+	config: MultiSiteDeploymentConfig,
 	createDialect: (options: unknown) => Dialect,
 ): SiteRouter {
 	// eslint-disable-next-line typescript/no-unsafe-type-assertion -- private globalThis symbol slot, written only below

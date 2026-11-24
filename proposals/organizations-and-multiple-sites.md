@@ -93,7 +93,7 @@ Migrations for the control plane run from their own migration set, separate from
 | `_emdash_org_members`         | `org_id`, `user_id`, `role`, `created_at`; primary key `(org_id, user_id)`          |
 | `_emdash_site_role_overrides` | `site_id`, `user_id`, `role`; primary key `(site_id, user_id)`                      |
 
-`users`, `credentials`, sessions, invitations, API tokens, and OAuth tables move to the control plane in multi-site mode, using the same schema as the site database. Foreign key columns are indexed.
+The control plane is also a complete EmDash database: its `users`, `credentials`, `auth_tokens`, and OAuth tables hold the accounts people sign in with. Foreign key columns are indexed.
 
 ### Site resolution
 
@@ -109,11 +109,20 @@ Each site has its own runtime. Caches that live outside the runtime (site settin
 
 ### Identity and passkeys
 
-WebAuthn binds a passkey to one registrable domain, so a passkey created on `brand-a.com` cannot sign in on `brand-b.com`. All sign-in, sign-up, invitation, and credential management happen on `adminHost`, which is also the `rpId`. Sessions live in the control plane, so one sign-in covers every site in the admin.
+WebAuthn binds a passkey to one registrable domain, so a passkey created on `brand-a.com` cannot sign in on `brand-b.com`. `multiSite.adminUrl` names one admin host, which is also the `rpId`. The admin host runs on the control-plane database, migrated like any EmDash database, so its existing setup, passkey, magic-link, OAuth, and invite flows hold every account, credential, and session. One sign-in covers every site in the admin.
 
-A signed-in user on a public site page (for example, a member-only post) gets a site-scoped session through a short-lived, single-use handoff token issued by `adminHost` and redeemed on the site's hostname. Without a handoff, public pages render as anonymous.
+On the admin host:
 
-OAuth providers and Cloudflare Access keep working; their callback URLs point at `adminHost`.
+- Sign-in, account, and setup routes (`/_emdash/api/auth/*` except `/auth/me`, `/_emdash/api/setup*`, `/_emdash/admin/setup`) and anything outside `/_emdash` run against the control plane.
+- Other admin and API requests from a signed-in user run as the site they manage: the one named by `?site=` on an admin page or remembered in the `emdash-site` cookie, when the user can reach it, otherwise the first site they can reach. Access is checked on every request; the cookie only records a preference.
+- Before such a request runs, the user's account is copied into the site's `users` table under the same id, with the role they hold on that site. Revisions, bylines, comments, entry locks, and the auth middleware read users from the site's own database, so they work unchanged. A site with a separate account under the same email gets `409 ACCOUNT_CONFLICT` instead of a merge.
+- A site that has never been opened is marked set up, with its name as the title, so the admin skips the first-run wizard.
+
+On a site's own hostname, `/_emdash/admin` redirects to the admin host with that site selected, and `/_emdash/api/auth/*` and `/_emdash/api/setup*` return 404, so accounts are only created and signed in on the admin host.
+
+A signed-in user on a public site page (for example, a member-only post) gets a site-scoped session through a short-lived, single-use handoff token issued by the admin host and redeemed on the site's hostname. Without a handoff, public pages render as anonymous.
+
+OAuth providers and Cloudflare Access keep working; their callback URLs point at the admin host.
 
 ### Role resolution
 
@@ -121,10 +130,11 @@ OAuth providers and Cloudflare Access keep working; their callback URLs point at
 
 ```text
 effectiveRole(user, site) =
-  siteOverride(site, user) ?? orgMembership(site.org, user)?.role ?? none
+  deploymentAdmin(user) ? ADMIN
+  : siteOverride(site, user) ?? orgMembership(site.org, user)?.role ?? none
 ```
 
-A user with no membership in the site's organization gets 403 on every `/_emdash` route for that site. The auth middleware computes the effective role once per request; routes keep calling `requirePerm` and `requireOwnerPerm` unchanged. Ownership checks (`author_id`) keep working because user IDs are global.
+A deployment Admin is a user whose role in the control plane is Admin; the first account created on the admin host is one. A user with no membership in the site's organization can't select the site. Routes keep calling `requirePerm` and `requireOwnerPerm` unchanged, against the role copied into the site. Ownership checks (`author_id`) keep working because user ids are the same everywhere.
 
 Organization management uses new permissions in `rbac.ts`, evaluated against the organization role:
 
