@@ -518,6 +518,43 @@ describe("shared admin host", () => {
 		expect(mockStartSession).not.toHaveBeenCalled();
 	});
 
+	it.each([
+		["the admin host", "https://admin.example.com/_emdash/api/admin/users/u-ravi"],
+		["a site hostname", "https://brand-b.com/_emdash/api/admin/users/u-ravi"],
+	])("refuses changes to a site's own accounts on %s", async (_label, url) => {
+		router.resolve.mockResolvedValue(siteFor("site-b", "brand-b"));
+		identity.refreshSiteAccount.mockResolvedValue(50);
+		const { next } = seen();
+
+		const response = await onRequest(
+			contextFor(url, {
+				userId: ravi.id,
+				method: "PATCH",
+				headers: { "X-EmDash-Request": "1" },
+				cookies: { "emdash-site": "site-b" },
+			}) as never,
+			next,
+		);
+
+		expect(response.status).toBe(409);
+		expect(((await response.json()) as { error: { code: string } }).error.code).toBe(
+			"USERS_MANAGED_BY_ORGANIZATION",
+		);
+		expect(next).not.toHaveBeenCalled();
+	});
+
+	it("still lists a site's accounts on the admin host", async () => {
+		const { contexts, next } = seen();
+		await onRequest(
+			contextFor("https://admin.example.com/_emdash/api/admin/users", {
+				userId: ravi.id,
+				cookies: { "emdash-site": "site-b" },
+			}) as never,
+			next,
+		);
+		expect(contexts.map((c) => c.siteId)).toEqual(["site-b"]);
+	});
+
 	it("keeps sign-out available on a site hostname", async () => {
 		router.resolve.mockResolvedValue(siteFor("site-a", "brand-a"));
 		const { next } = seen();

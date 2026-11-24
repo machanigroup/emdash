@@ -15,7 +15,7 @@ import { isParseError, parseBody } from "#api/parse.js";
 import { orgMemberAddBody } from "#api/schemas.js";
 
 export const POST: APIRoute = async ({ params, request, locals }) => {
-	const multiSite = multiSiteRequest(locals);
+	const multiSite = multiSiteRequest(locals, request);
 	if (multiSite instanceof Response) return multiSite;
 	if (!params.orgId) return apiError("MISSING_PARAM", "Missing organization id", 400);
 	const body = await parseBody(request, orgMemberAddBody);

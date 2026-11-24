@@ -136,4 +136,29 @@ describe("OrganizationPage", () => {
 		expect(screen.getByRole("button", { name: "Add site" }).query()).toBeNull();
 		await expect.element(screen.getByText("Editor")).toBeInTheDocument();
 	});
+
+	it("shows the account invitation link when no email provider is configured", async () => {
+		api.addMember.mockResolvedValue({
+			status: "invited",
+			inviteUrl: "https://admin.example.com/_emdash/admin/invite/accept?token=abc",
+		});
+		const screen = await renderPage();
+		await screen.getByRole("button", { name: "Add member" }).click();
+		await userEvent.fill(screen.getByLabelText("Email"), "sam@example.com");
+		await screen.getByRole("dialog").getByRole("button", { name: "Add member" }).click();
+
+		await expect
+			.element(screen.getByText("https://admin.example.com/_emdash/admin/invite/accept?token=abc"))
+			.toBeVisible();
+		await expect.element(screen.getByRole("heading", { name: "Invitation created" })).toBeVisible();
+	});
+
+	it("opens a member's site roles and closes with Done", async () => {
+		const screen = await renderPage();
+		await screen.getByRole("button", { name: "Site roles of Ravi" }).click();
+		const dialog = screen.getByRole("dialog", { name: "Site roles of Ravi" });
+		await expect.element(dialog.getByText("Brand A")).toBeVisible();
+		await dialog.getByRole("button", { name: "Done" }).click();
+		await expect.element(dialog).not.toBeInTheDocument();
+	});
 });

@@ -113,6 +113,8 @@ export interface EmDashRequestContext {
 	 * deployment; set, it gives the request that site's cache slots.
 	 */
 	siteId?: string;
+	/** The organization of `siteId`, when the request runs as a multi-site site. */
+	siteOrgId?: string;
 	/**
 	 * Rechecks a signed-in user's role on this site against the multi-site
 	 * control plane, updating the site's copy of the account. Resolves the role

@@ -4,13 +4,14 @@
  * Admin-only route for managing users, roles, and invites.
  */
 
-import { useKumoToastManager } from "@cloudflare/kumo";
+import { Banner, useKumoToastManager } from "@cloudflare/kumo";
 import { useLingui } from "@lingui/react/macro";
 import { Trans } from "@lingui/react/macro";
 import { useQuery, useInfiniteQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import * as React from "react";
 
 import { ConfirmDialog } from "../components/ConfirmDialog.js";
+import { RouterLinkButton } from "../components/RouterLinkButton.js";
 import {
 	UserList,
 	UserListSkeleton,
@@ -43,6 +44,30 @@ function useDebounce<T>(value: T, delay: number): T {
 	}, [value, delay]);
 
 	return debouncedValue;
+}
+
+/** Points a site's Users page at the organization that manages its people. */
+function OrganizationManagedNotice({ orgId }: { orgId: string | null }) {
+	const { t } = useLingui();
+	return (
+		<Banner
+			variant="secondary"
+			title={t`People are managed by the organization`}
+			description={t`Everyone in this site's organization can work on it with their organization role. Add or remove people, and change roles, on the organization's page.`}
+			action={
+				orgId ? (
+					<RouterLinkButton
+						to="/organizations/$orgId"
+						params={{ orgId }}
+						variant="secondary"
+						size="sm"
+					>
+						{t`Manage members`}
+					</RouterLinkButton>
+				) : undefined
+			}
+		/>
+	);
 }
 
 export function UsersPage() {
@@ -220,6 +245,25 @@ export function UsersPage() {
 
 	const users = usersQuery.data?.pages.flatMap((p) => p.items) ?? [];
 	const selectedUser = userDetailQuery.data ?? null;
+
+	// On the shared admin of a multi-site deployment, a site's people and roles
+	// come from its organization; the site only keeps copies of their accounts.
+	const managingOrgId = manifest?.multiSite?.siteId ? manifest.multiSite.orgId : undefined;
+	if (managingOrgId !== undefined) {
+		return (
+			<UserList
+				users={users}
+				isLoading={usersQuery.isFetching}
+				hasMore={!!usersQuery.hasNextPage}
+				searchQuery={searchQuery}
+				roleFilter={roleFilter}
+				onSearchChange={setSearchQuery}
+				onRoleFilterChange={setRoleFilter}
+				onLoadMore={() => void usersQuery.fetchNextPage()}
+				notice={<OrganizationManagedNotice orgId={managingOrgId} />}
+			/>
+		);
+	}
 
 	return (
 		<>

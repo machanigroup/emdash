@@ -723,10 +723,16 @@ function AddMemberDialog({
 	const formId = React.useId();
 	const [email, setEmail] = React.useState("");
 	const [role, setRole] = React.useState("30");
+	const [inviteUrl, setInviteUrl] = React.useState<string | null>(null);
+	const [copied, setCopied] = React.useState(false);
 	const mutation = useMutation({
 		mutationFn: () => addMember(org.id, { email: email.trim(), role: Number(role) }),
-		onSuccess: ({ status }) => {
+		onSuccess: ({ status, inviteUrl: link }) => {
 			void queryClient.invalidateQueries({ queryKey: ["multisite"] });
+			if (link) {
+				setInviteUrl(link);
+				return;
+			}
 			toastManager.add({
 				title:
 					status === "added"
@@ -742,6 +748,8 @@ function AddMemberDialog({
 		if (!open) return;
 		setEmail("");
 		setRole("30");
+		setInviteUrl(null);
+		setCopied(false);
 		mutation.reset();
 		// oxlint-disable-next-line react-hooks/exhaustive-deps -- reset when the dialog opens
 	}, [open]);
@@ -752,44 +760,71 @@ function AddMemberDialog({
 			onOpenChange={(next) => !next && !mutation.isPending && onClose()}
 		>
 			<LayerDialog.Content>
-				<LayerDialog.Title>{t`Add member`}</LayerDialog.Title>
+				<LayerDialog.Title>{inviteUrl ? t`Invitation created` : t`Add member`}</LayerDialog.Title>
 				<LayerDialog.Description>
-					{t`If nobody has an account with this email yet, they join ${org.name} the first time they sign in with it.`}
+					{inviteUrl
+						? t`No email provider is configured. Send this link to ${email.trim()} so they can create an account and join ${org.name}.`
+						: t`If nobody has an account with this email yet, they're invited to create one and join ${org.name}.`}
 				</LayerDialog.Description>
 				<LayerDialog.Body>
-					<form
-						id={formId}
-						noValidate
-						className="grid gap-4"
-						onSubmit={(event) => {
-							event.preventDefault();
-							if (email.trim() && !mutation.isPending) mutation.mutate();
-						}}
-					>
-						<Input
-							dir="ltr"
-							type="email"
-							label={t`Email`}
-							value={email}
-							required
-							onChange={(event) => setEmail(event.target.value)}
-						/>
-						<div className="grid gap-1.5">
-							<span className="text-sm font-medium">{t`Role`}</span>
-							<RoleSelect label={t`Role`} value={role} onChange={setRole} />
+					{inviteUrl ? (
+						<div className="grid gap-3">
+							<code dir="ltr" className="block break-all rounded-lg bg-kumo-tint p-3 text-sm">
+								{inviteUrl}
+							</code>
+							<p className="text-xs text-kumo-subtle">
+								{t`This link expires in 7 days and can only be used once.`}
+							</p>
 						</div>
-						<DialogError message={getMutationError(mutation.error)} />
-					</form>
+					) : (
+						<form
+							id={formId}
+							noValidate
+							className="grid gap-4"
+							onSubmit={(event) => {
+								event.preventDefault();
+								if (email.trim() && !mutation.isPending) mutation.mutate();
+							}}
+						>
+							<Input
+								dir="ltr"
+								type="email"
+								label={t`Email`}
+								value={email}
+								required
+								onChange={(event) => setEmail(event.target.value)}
+							/>
+							<div className="grid gap-1.5">
+								<span className="text-sm font-medium">{t`Role`}</span>
+								<RoleSelect label={t`Role`} value={role} onChange={setRole} />
+							</div>
+							<DialogError message={getMutationError(mutation.error)} />
+						</form>
+					)}
 				</LayerDialog.Body>
-				<LayerDialog.Actions dismissLabel={t`Cancel`}>
-					<LayerDialog.Action
-						type="submit"
-						form={formId}
-						disabled={!email.trim() || mutation.isPending}
-					>
-						{mutation.isPending ? t`Adding...` : t`Add member`}
-					</LayerDialog.Action>
-				</LayerDialog.Actions>
+				{inviteUrl ? (
+					<LayerDialog.Actions dismissLabel={t`Done`}>
+						<LayerDialog.Action
+							key="copy-invite-link"
+							autoFocus
+							onClick={() =>
+								void navigator.clipboard.writeText(inviteUrl).then(() => setCopied(true))
+							}
+						>
+							{copied ? t`Copied` : t`Copy invite link`}
+						</LayerDialog.Action>
+					</LayerDialog.Actions>
+				) : (
+					<LayerDialog.Actions dismissLabel={t`Cancel`}>
+						<LayerDialog.Action
+							type="submit"
+							form={formId}
+							disabled={!email.trim() || mutation.isPending}
+						>
+							{mutation.isPending ? t`Adding...` : t`Add member`}
+						</LayerDialog.Action>
+					</LayerDialog.Actions>
+				)}
 			</LayerDialog.Content>
 		</LayerDialog.Root>
 	);
@@ -851,7 +886,9 @@ function SiteRolesDialog({
 						<DialogError message={getMutationError(mutation.error)} />
 					</div>
 				</LayerDialog.Body>
-				<LayerDialog.Actions dismissLabel={t`Done`}>{null}</LayerDialog.Actions>
+				<LayerDialog.Actions>
+					<LayerDialog.Action onClick={onClose}>{t`Done`}</LayerDialog.Action>
+				</LayerDialog.Actions>
 			</LayerDialog.Content>
 		</LayerDialog.Root>
 	);

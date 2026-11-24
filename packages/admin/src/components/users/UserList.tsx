@@ -26,8 +26,12 @@ export interface UserListProps {
 	roleFilter: number | undefined;
 	onSearchChange: (query: string) => void;
 	onRoleFilterChange: (role: number | undefined) => void;
-	onSelectUser: (id: string) => void;
-	onInviteUser: () => void;
+	/** Opens a user's details. Without it, rows are read-only. */
+	onSelectUser?: (id: string) => void;
+	/** Opens the invite dialog. Without it, the list offers no invitations. */
+	onInviteUser?: () => void;
+	/** Shown under the heading, for example to explain where people are managed. */
+	notice?: React.ReactNode;
 	onLoadMore?: () => void;
 }
 
@@ -44,6 +48,7 @@ export function UserList({
 	onRoleFilterChange,
 	onSelectUser,
 	onInviteUser,
+	notice,
 	onLoadMore,
 }: UserListProps) {
 	const { t } = useLingui();
@@ -62,10 +67,13 @@ export function UserList({
 			{/* Header */}
 			<div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-3">
 				<h1 className="min-w-0 text-2xl font-semibold leading-tight">{t`Users`}</h1>
-				<Button onClick={onInviteUser} icon={<UserPlus />}>
-					{t`Invite User`}
-				</Button>
+				{onInviteUser && (
+					<Button onClick={onInviteUser} icon={<UserPlus />}>
+						{t`Invite User`}
+					</Button>
+				)}
 			</div>
+			{notice}
 
 			<TableToolbar>
 				<TableToolbarSearch
@@ -129,15 +137,25 @@ export function UserList({
 							) : (
 								<>
 									{t`No users yet.`}{" "}
-									<button type="button" className="text-kumo-link underline" onClick={onInviteUser}>
-										{t`Invite your first team member`}
-									</button>
+									{onInviteUser && (
+										<button
+											type="button"
+											className="text-kumo-link underline"
+											onClick={onInviteUser}
+										>
+											{t`Invite your first team member`}
+										</button>
+									)}
 								</>
 							)}
 						</DataTableMessage>
 					) : (
 						users.map((user) => (
-							<UserListRow key={user.id} user={user} onSelect={() => onSelectUser(user.id)} />
+							<UserListRow
+								key={user.id}
+								user={user}
+								onSelect={onSelectUser && (() => onSelectUser(user.id))}
+							/>
 						))
 					)}
 					{isLoading && (
@@ -165,7 +183,7 @@ export function UserList({
 
 interface UserListRowProps {
 	user: UserListItem;
-	onSelect: () => void;
+	onSelect?: () => void;
 }
 
 function UserListRow({ user, onSelect }: UserListRowProps) {
@@ -186,9 +204,15 @@ function UserListRow({ user, onSelect }: UserListRowProps) {
 				<div className="flex items-center gap-3">
 					<UserAvatar user={user} size={32} />
 					<div className="wrap-anywhere">
-						<RowTitleButton dir="auto" onClick={onSelect}>
-							{displayName}
-						</RowTitleButton>
+						{onSelect ? (
+							<RowTitleButton dir="auto" onClick={onSelect}>
+								{displayName}
+							</RowTitleButton>
+						) : (
+							<span dir="auto" className="font-medium">
+								{displayName}
+							</span>
+						)}
 						{user.name && (
 							<div className="text-sm text-kumo-subtle">
 								<bdi dir="ltr">{user.email}</bdi>

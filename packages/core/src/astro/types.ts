@@ -189,9 +189,10 @@ export interface EmDashManifest {
 	signupEnabled?: boolean;
 	/**
 	 * Present on the shared admin of a multi-site deployment. `siteId` is the
-	 * site the admin is managing, or null when it shows the control plane.
+	 * site the admin is managing and `orgId` its organization, both null when
+	 * it shows the control plane.
 	 */
-	multiSite?: { siteId: string | null };
+	multiSite?: { siteId: string | null; orgId: string | null };
 	/** Whether the site is in staging (hidden from search engines). */
 	staging?: boolean;
 	/** Whether this host runs co-editing rooms. When false, the editor doesn't ask to join one. */

@@ -1001,10 +1001,13 @@ async function runAsSite(
 	siteId: string,
 	siteConfig: EmDashConfig,
 	fn: (runtime: EmDashRuntime) => Promise<Response>,
+	siteOrgId?: string,
 ): Promise<Response> {
 	const migrationMode = resolveConfiguredMigrationMode(siteConfig);
 	const parent = getRequestContext();
-	const siteContext = parent ? { ...parent, siteId } : { editMode: false, siteId };
+	const siteContext = parent
+		? { ...parent, siteId, siteOrgId }
+		: { editMode: false, siteId, siteOrgId };
 	if (siteId !== CONTROL_PLANE_SITE_ID) {
 		recordSiteUse(siteId);
 		scheduleIdleSiteEviction(siteConfig, siteId);
@@ -1211,7 +1214,7 @@ async function routeAdminHost(
 				),
 			);
 		}
-		return runAsSiteCheckingAccess(router, site, run);
+		return runAsSiteCheckingAccess(context, router, site, run);
 	}
 	if (isControlPlanePath(pathname) && pathname !== HANDOFF_START_PATH) {
 		return runAsSite(CONTROL_PLANE_SITE_ID, adminConfig, () => {
@@ -1255,21 +1258,27 @@ async function routeAdminHost(
 		}
 
 		const selected = site;
-		return runAsSite(selected.siteId, selected.config, async (siteRuntime) => {
-			try {
-				await syncSiteUser(siteRuntime.db, user, selected.role);
-				await ensureSiteSetUp(siteRuntime.db, selected.name);
-			} catch (error) {
-				if (error instanceof MultiSiteError && error.code === "ACCOUNT_CONFLICT") {
-					return finalizeResponse(
-						apiError("ACCOUNT_CONFLICT", "This site has a separate account with your email", 409),
-					);
+		if (isOrgManagedUserChange(context)) return orgManagedUsersResponse();
+		return runAsSite(
+			selected.siteId,
+			selected.config,
+			async (siteRuntime) => {
+				try {
+					await syncSiteUser(siteRuntime.db, user, selected.role);
+					await ensureSiteSetUp(siteRuntime.db, selected.name);
+				} catch (error) {
+					if (error instanceof MultiSiteError && error.code === "ACCOUNT_CONFLICT") {
+						return finalizeResponse(
+							apiError("ACCOUNT_CONFLICT", "This site has a separate account with your email", 409),
+						);
+					}
+					console.error("[emdash:multisite] preparing the site for the admin failed:", error);
+					return siteUnavailableResponse();
 				}
-				console.error("[emdash:multisite] preparing the site for the admin failed:", error);
-				return siteUnavailableResponse();
-			}
-			return run(selected.config);
-		});
+				return run(selected.config);
+			},
+			selected.orgId,
+		);
 	});
 }
 
@@ -1329,7 +1338,7 @@ async function routeToSite(
 			completeHandoff(context, router, site, runtime.db),
 		);
 	}
-	return runAsSiteCheckingAccess(router, site, run);
+	return runAsSiteCheckingAccess(context, router, site, run);
 }
 
 /**
@@ -1345,34 +1354,65 @@ function isAdminHostOnlyPath(pathname: string): boolean {
 }
 
 /**
+ * Whether the request changes a site's own accounts. With a shared admin
+ * host, people and roles come from organizations, and the site's accounts
+ * are copies the next request would overwrite.
+ */
+function isOrgManagedUserChange(context: APIContext): boolean {
+	const { method } = context.request;
+	if (method === "GET" || method === "HEAD" || method === "OPTIONS") return false;
+	const { pathname } = context.url;
+	return (
+		pathname === "/_emdash/api/admin/users" || pathname.startsWith("/_emdash/api/admin/users/")
+	);
+}
+
+function orgManagedUsersResponse(): Response {
+	return finalizeResponse(
+		apiError(
+			"USERS_MANAGED_BY_ORGANIZATION",
+			"People and roles for this site are managed in its organization",
+			409,
+		),
+	);
+}
+
+/**
  * Runs a request as a site, with every signed-in user's role rechecked
  * against the control plane before the request trusts the site's copy of
  * their account.
  */
 function runAsSiteCheckingAccess(
+	context: APIContext,
 	router: SiteRouter,
 	site: RequestSite,
 	run: (config: EmDashConfig | null) => Promise<Response>,
 ): Promise<Response> {
 	const { siteId, config: siteConfig } = site;
-	return runAsSite(siteId, siteConfig, (runtime) => {
-		const refreshSiteAccount = (userId: string) =>
-			refreshAccountFromControlPlane(
-				router.controlPlane,
-				router.controlAccounts,
-				runtime.db,
-				siteId,
-				userId,
-			).catch((error: unknown) => {
-				console.error("[emdash:multisite] rechecking a user's site access failed:", error);
-				return null;
-			});
-		const parent = getRequestContext();
-		const ctx = parent
-			? { ...parent, refreshSiteAccount }
-			: { editMode: false, siteId, db: runtime.db, refreshSiteAccount };
-		return runWithContext(ctx, () => run(siteConfig));
-	});
+	if (isOrgManagedUserChange(context)) return Promise.resolve(orgManagedUsersResponse());
+	return runAsSite(
+		siteId,
+		siteConfig,
+		(runtime) => {
+			const refreshSiteAccount = (userId: string) =>
+				refreshAccountFromControlPlane(
+					router.controlPlane,
+					router.controlAccounts,
+					runtime.db,
+					siteId,
+					userId,
+				).catch((error: unknown) => {
+					console.error("[emdash:multisite] rechecking a user's site access failed:", error);
+					return null;
+				});
+			const parent = getRequestContext();
+			const ctx = parent
+				? { ...parent, refreshSiteAccount }
+				: { editMode: false, siteId, db: runtime.db, refreshSiteAccount };
+			return runWithContext(ctx, () => run(siteConfig));
+		},
+		site.orgId,
+	);
 }
 
 export const onRequest = defineMiddleware(async (context, next) => {

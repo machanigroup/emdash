@@ -154,6 +154,20 @@ describeEachDialect("multi-site management", (dialect) => {
 		});
 	});
 
+	it("invites someone without an account to create one on the admin host", async () => {
+		const inviteAccount = vi.fn(async () => ({ inviteUrl: "https://admin.example.com/invite" }));
+		ctx.inviteAccount = inviteAccount;
+
+		expect(
+			ok(await handleAddMember(ctx, priya, orgId, { email: "New@Example.com", role: Role.AUTHOR })),
+		).toEqual({ status: "invited", inviteUrl: "https://admin.example.com/invite" });
+		expect(inviteAccount).toHaveBeenCalledWith("new@example.com", "Acme", priya.id);
+
+		inviteAccount.mockClear();
+		ok(await handleAddMember(ctx, priya, orgId, { email: "ravi@example.com", role: Role.AUTHOR }));
+		expect(inviteAccount).not.toHaveBeenCalled();
+	});
+
 	it("adds people with an account and invites everyone else", async () => {
 		expect(
 			ok(

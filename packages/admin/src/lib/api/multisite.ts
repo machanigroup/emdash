@@ -150,7 +150,7 @@ export async function updateSite(siteId: string, input: UpdateSiteInput): Promis
 export async function addMember(
 	orgId: string,
 	input: { email: string; role: number },
-): Promise<{ status: "added" | "invited" }> {
+): Promise<{ status: "added" | "invited"; inviteUrl?: string }> {
 	const response = await apiFetch(
 		`${BASE}/orgs/${encodeURIComponent(orgId)}/members`,
 		json("POST", input),

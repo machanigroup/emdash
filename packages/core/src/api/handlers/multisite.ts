@@ -58,6 +58,15 @@ export interface MultiSiteHandlerContext {
 	deployment: EmDashConfig;
 	/** Opens an active site's database, or null when the site isn't active. */
 	siteDatabase: (siteId: string) => Promise<Kysely<Database> | null>;
+	/**
+	 * Invites an email to create an account on the admin host, returning the
+	 * link to share when no email provider is configured.
+	 */
+	inviteAccount?: (
+		email: string,
+		organizationName: string,
+		invitedBy: string,
+	) => Promise<{ inviteUrl?: string }>;
 	/** Drops this worker's cached hostnames after a site or hostname change. */
 	invalidateHosts: () => void;
 }
@@ -414,7 +423,7 @@ export async function handleAddMember(
 	actor: MultiSiteActor,
 	orgId: string,
 	input: { email: string; role: number },
-): Promise<ApiResult<{ status: "added" | "invited" }>> {
+): Promise<ApiResult<{ status: "added" | "invited"; inviteUrl?: string }>> {
 	try {
 		const denied = await checkOrgPermission(ctx, actor, orgId, "orgs:members");
 		if (denied) return denied;
@@ -427,7 +436,11 @@ export async function handleAddMember(
 			.executeTakeFirst();
 		if (!account) {
 			await inviteToOrg(ctx.controlPlane, { orgId, email, role, invitedBy: actor.id });
-			return { success: true, data: { status: "invited" } };
+			const org = await getOrganization(ctx.controlPlane, orgId);
+			const invite = ctx.inviteAccount
+				? await ctx.inviteAccount(email, org?.name ?? "EmDash", actor.id)
+				: {};
+			return { success: true, data: { status: "invited", ...invite } };
 		}
 		if ((await orgRoleFor(ctx.controlPlane, orgId, account.id)) !== null) {
 			return fail("ALREADY_MEMBER", "This person is already a member", 409);

@@ -144,7 +144,7 @@ export interface SidebarNavProps {
 			favicon?: string;
 			hiddenNavItems?: string[];
 		};
-		multiSite?: { siteId: string | null };
+		multiSite?: { siteId: string | null; orgId: string | null };
 	};
 }
 

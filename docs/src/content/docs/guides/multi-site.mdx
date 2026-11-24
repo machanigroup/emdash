@@ -63,7 +63,7 @@ Point the admin hostname and every site hostname at the deployment.
 
 3. On the organization's page, select **Add site**. Enter its name, hostnames (the first is its main address), and the database and media storage it uses. The site's admin opens without a setup wizard, titled with the site's name.
 
-4. Select **Add member** and enter an email and role. Someone with an account joins right away. Anyone else is invited and joins the first time they sign in with that email.
+4. Select **Add member** and enter an email and role. Someone with an account joins right away. Anyone else receives an invitation to create an account on the admin host, and joins once they do. Without an email provider, the dialog shows the invitation link to send yourself.
 
 </Steps>
 
@@ -74,6 +74,8 @@ The site switcher in the admin header lists every site you can reach. Switching 
 **View Site** opens the site's own hostname in a new tab, signed in, so visual editing and previews work there. The site shows a confirmation page before it signs you in.
 
 On a site's own hostname, `/_emdash/admin` redirects to the admin host with that site selected, and its sign-in and setup APIs return 404. Accounts are only created and signed in on the admin host.
+
+A site's **Users** page lists the accounts that have worked on it, read-only. People and roles are changed on the organization's page; the site's user API refuses changes with `409 USERS_MANAGED_BY_ORGANIZATION`.
 
 ## API tokens and the CLI
 

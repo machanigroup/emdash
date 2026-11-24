@@ -125,9 +125,14 @@ export const GET: APIRoute = async ({ locals }) => {
 
 		// On the shared admin of a multi-site deployment, tell the admin which
 		// site it is managing; null when it shows the control plane itself.
-		const siteId = getRequestContext()?.siteId;
+		const requestContext = getRequestContext();
+		const siteId = requestContext?.siteId;
+		const managedSite = siteId !== undefined && siteId !== CONTROL_PLANE_SITE_ID;
 		const multiSite = emdash?.config.multiSite?.adminUrl
-			? { siteId: siteId === undefined || siteId === CONTROL_PLANE_SITE_ID ? null : siteId }
+			? {
+					siteId: managedSite ? siteId : null,
+					orgId: managedSite ? (requestContext?.siteOrgId ?? null) : null,
+				}
 			: undefined;
 
 		const manifest: EmDashManifest = emdashManifest
