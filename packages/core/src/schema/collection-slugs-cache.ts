@@ -42,6 +42,7 @@ import { after } from "../after.js";
 import type { Database } from "../database/types.js";
 import { requestCached } from "../request-cache.js";
 import { getRequestContext } from "../request-context.js";
+import { siteScopedGlobal } from "../site-scope.js";
 import {
 	createSingleFlightCache,
 	invalidateSingleFlightCache,
@@ -56,15 +57,12 @@ interface SlugsHolder {
 }
 
 const HOLDER_KEY = Symbol.for("emdash:collection-slugs@2");
-const g = globalThis as Record<symbol, unknown>;
-const holder: SlugsHolder =
-	// eslint-disable-next-line typescript/no-unsafe-type-assertion -- globalThis singleton pattern (see request-cache.ts)
-	(g[HOLDER_KEY] as SlugsHolder | undefined) ??
-	(() => {
+function getHolder(): SlugsHolder {
+	return siteScopedGlobal(HOLDER_KEY, () => {
 		const h: SlugsHolder = { cache: createSingleFlightCache(), fetchedAt: 0 };
-		g[HOLDER_KEY] = h;
 		return h;
-	})();
+	});
+}
 
 const REVALIDATE_WINDOW_MS = 60_000;
 let revalidateWindowMs = REVALIDATE_WINDOW_MS;
@@ -75,6 +73,7 @@ async function fetchSlugs(db: Kysely<Database>): Promise<Set<string>> {
 }
 
 function loadSlugs(db: Kysely<Database>): Promise<Set<string>> {
+	const holder = getHolder();
 	return singleFlightCached(
 		holder.cache,
 		async () => {
@@ -97,6 +96,7 @@ export async function filterToRegisteredCollections(
 	db: Kysely<Database>,
 	collections: readonly string[],
 ): Promise<string[]> {
+	const holder = getHolder();
 	if (collections.length === 0) return [];
 	if (getRequestContext()?.dbIsIsolated === true) {
 		const slugs = await requestCached("collection-slugs", () => fetchSlugs(db));
@@ -120,6 +120,7 @@ export async function filterToRegisteredCollections(
  * auto-seed gate.
  */
 export function primeRegisteredCollections(slugs: readonly string[]): void {
+	const holder = getHolder();
 	const { cache } = holder;
 	cache.value = new Set(slugs);
 	cache.hasValue = true;
@@ -133,6 +134,7 @@ export function primeRegisteredCollections(slugs: readonly string[]): void {
  * create/delete). Other isolates converge through bounded revalidation.
  */
 export function resetRegisteredCollectionsCache(): void {
+	const holder = getHolder();
 	invalidateSingleFlightCache(holder.cache);
 	holder.fetchedAt = 0;
 }
@@ -146,7 +148,7 @@ export function resetRegisteredCollectionsCache(): void {
  * per render.
  */
 export function noteStaleRegisteredCollections(): void {
-	if (Date.now() - holder.fetchedAt > revalidateWindowMs) {
+	if (Date.now() - getHolder().fetchedAt > revalidateWindowMs) {
 		resetRegisteredCollectionsCache();
 	}
 }

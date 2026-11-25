@@ -226,26 +226,22 @@ const holder: BackendHolder =
 		return h;
 	})();
 
-const epochCache: Map<string, EpochEntry> =
-	// eslint-disable-next-line typescript/no-unsafe-type-assertion -- globalThis singleton pattern (see request-context.ts)
-	(g[EPOCH_KEY] as Map<string, EpochEntry> | undefined) ??
-	(() => {
+function getEpochCache(): Map<string, EpochEntry> {
+	return siteScopedGlobal(EPOCH_KEY, () => {
 		const m = new Map<string, EpochEntry>();
-		g[EPOCH_KEY] = m;
 		return m;
-	})();
+	});
+}
 
 type PendingBumps = Map<string, Promise<void>>;
 
 /** Namespaces with a backend epoch write already scheduled this tick. */
-const pendingBumps: PendingBumps =
-	// eslint-disable-next-line typescript/no-unsafe-type-assertion -- globalThis singleton pattern (see request-context.ts)
-	(g[PENDING_KEY] as PendingBumps | undefined) ??
-	(() => {
+function getPendingBumps(): PendingBumps {
+	return siteScopedGlobal(PENDING_KEY, () => {
 		const m: PendingBumps = new Map();
-		g[PENDING_KEY] = m;
 		return m;
-	})();
+	});
+}
 
 /**
  * Isolate-local ms-epoch of the last content-namespace invalidation, plus a
@@ -262,33 +258,27 @@ interface LastContentWriteState {
 	promiseAt?: number;
 }
 
-const lastContentWrite: LastContentWriteState =
-	// eslint-disable-next-line typescript/no-unsafe-type-assertion -- globalThis singleton pattern (see request-context.ts)
-	(g[LAST_CONTENT_WRITE_KEY] as LastContentWriteState | undefined) ??
-	(() => {
+function getLastContentWrite(): LastContentWriteState {
+	return siteScopedGlobal(LAST_CONTENT_WRITE_KEY, () => {
 		const s: LastContentWriteState = { value: 0, at: 0 };
-		g[LAST_CONTENT_WRITE_KEY] = s;
 		return s;
-	})();
+	});
+}
 
 /** Whether a backend persist of the content-write stamp is already scheduled. */
-const contentWritePersist: { pending: boolean } =
-	// eslint-disable-next-line typescript/no-unsafe-type-assertion -- globalThis singleton pattern (see request-context.ts)
-	(g[PENDING_CONTENT_WRITE_KEY] as { pending: boolean } | undefined) ??
-	(() => {
+function getContentWritePersist(): { pending: boolean } {
+	return siteScopedGlobal(PENDING_CONTENT_WRITE_KEY, () => {
 		const s = { pending: false };
-		g[PENDING_CONTENT_WRITE_KEY] = s;
 		return s;
-	})();
+	});
+}
 
-const changeMarker: ChangeMarkerState =
-	// eslint-disable-next-line typescript/no-unsafe-type-assertion -- globalThis singleton pattern (see request-context.ts)
-	(g[CHANGE_MARKER_KEY] as ChangeMarkerState | undefined) ??
-	(() => {
+function getChangeMarkerState(): ChangeMarkerState {
+	return siteScopedGlobal(CHANGE_MARKER_KEY, () => {
 		const s: ChangeMarkerState = { marker: null, at: 0, failed: false };
-		g[CHANGE_MARKER_KEY] = s;
 		return s;
-	})();
+	});
+}
 
 interface MarkerWriteState {
 	/** Epoch writes scheduled but not yet settled. */
@@ -301,19 +291,17 @@ interface MarkerWriteState {
 	writtenSinceMarker: boolean;
 }
 
-const markerWrite: MarkerWriteState =
-	// eslint-disable-next-line typescript/no-unsafe-type-assertion -- globalThis singleton pattern (see request-context.ts)
-	(g[MARKER_WRITE_KEY] as MarkerWriteState | undefined) ??
-	(() => {
+function getMarkerWrite(): MarkerWriteState {
+	return siteScopedGlobal(MARKER_WRITE_KEY, () => {
 		const s: MarkerWriteState = {
 			epochWritesInFlight: 0,
 			busySince: 0,
 			lastWriteAt: 0,
 			writtenSinceMarker: false,
 		};
-		g[MARKER_WRITE_KEY] = s;
 		return s;
-	})();
+	});
+}
 
 /** Backend writes held by {@link coalesceObjectCacheWrites} until its work ends. */
 interface WriteScope {
@@ -432,6 +420,11 @@ export function __setObjectCacheBackendForTests(
 	backend: ObjectCacheBackend | null,
 	config?: Partial<BackendHolder["config"]>,
 ): void {
+	const markerWrite = getMarkerWrite();
+	const changeMarker = getChangeMarkerState();
+	const contentWritePersist = getContentWritePersist();
+	const lastContentWrite = getLastContentWrite();
+	const epochCache = getEpochCache();
 	holder.initialized = true;
 	holder.initPromise = null;
 	holder.initPromiseAt = undefined;
@@ -465,19 +458,31 @@ export function __setObjectCacheBackendInitForTests(
 	holder.initPromiseAt = startedAt;
 }
 
+/**
+ * The backend key prefix for the current site. Sites other than the default
+ * get their own partition of keys, so epochs, markers, and values of one site
+ * never answer another site's reads.
+ */
+function keyPrefix(): string {
+	const siteId = currentSiteId();
+	return siteId === undefined
+		? holder.config.keyPrefix
+		: `${holder.config.keyPrefix}:site:${siteId}`;
+}
+
 /** Build the backend key for a namespace's epoch anchor. */
 function epochKey(namespace: string): string {
-	return `${holder.config.keyPrefix}:epoch:${namespace}`;
+	return `${keyPrefix()}:epoch:${namespace}`;
 }
 
 /** Backend key for the shared "last content write" stamp (no short TTL). */
 function lastContentWriteKey(): string {
-	return `${holder.config.keyPrefix}:last-content-write-at`;
+	return `${keyPrefix()}:last-content-write-at`;
 }
 
 /** Backend key for the site-wide change marker (no TTL). */
 function changeMarkerKey(): string {
-	return `${holder.config.keyPrefix}:epochs-changed`;
+	return `${keyPrefix()}:epochs-changed`;
 }
 
 function parseChangeMarker(raw: string | null): ChangeMarker | null {
@@ -507,7 +512,7 @@ function isContentNamespace(namespace: string): boolean {
  * is overwritten in place rather than orphaned under a dead epoch-keyed name.
  */
 function valueKey(namespaces: readonly string[], key: string): string {
-	return `${holder.config.keyPrefix}:${namespaces.join(",")}:${key}`;
+	return `${keyPrefix()}:${namespaces.join(",")}:${key}`;
 }
 
 /**
@@ -533,7 +538,8 @@ function epochsMatch(stored: readonly number[], current: readonly number[]): boo
 /**
  * Requests that must always read live data and never populate the cache:
  * visual edit mode, preview tokens, isolated databases (playground / DO
- * preview, whose schema and content diverge from the configured site), and
+ * preview, whose schema and content diverge from the configured site),
+ * and
  * Astro route-cache fills that must not rebuild a purged page from a stale
  * object-cache snapshot.
  */
@@ -558,6 +564,8 @@ function shouldBypass(): boolean {
  * hanging.
  */
 async function getEpoch(namespace: string, backend: ObjectCacheBackend): Promise<number> {
+	const changeMarker = getChangeMarkerState();
+	const epochCache = getEpochCache();
 	const now = Date.now();
 	const cached = epochCache.get(namespace);
 	if (cached && now - cached.at < holder.config.revalidate) {
@@ -672,6 +680,7 @@ async function getEpoch(namespace: string, backend: ObjectCacheBackend): Promise
  * epoch read.
  */
 function canVouch(namespace: string, entry: EpochEntry, now: number): boolean {
+	const changeMarker = getChangeMarkerState();
 	const seen = changeMarker.marker;
 	return (
 		holder.config.revalidate > 0 &&
@@ -693,6 +702,7 @@ function canVouch(namespace: string, entry: EpochEntry, now: number): boolean {
  * callers share one in-flight read, with the same reclaim rules as epochs.
  */
 async function getChangeMarker(backend: ObjectCacheBackend): Promise<ChangeMarker | null> {
+	const changeMarker = getChangeMarkerState();
 	const now = Date.now();
 	if (changeMarker.at > 0 && now - changeMarker.at < holder.config.revalidate) {
 		return changeMarker.marker;
@@ -862,6 +872,7 @@ export async function isObjectCacheActive(): Promise<boolean> {
  * reseeded from a stale query-cache hit.
  */
 function stampLastContentWrite(): void {
+	const lastContentWrite = getLastContentWrite();
 	const stamp = Math.max(lastContentWrite.value + 1, Date.now());
 	lastContentWrite.value = stamp;
 	lastContentWrite.at = stamp;
@@ -873,6 +884,8 @@ function stampLastContentWrite(): void {
 }
 
 function persistLastContentWrite(): void {
+	const contentWritePersist = getContentWritePersist();
+	const lastContentWrite = getLastContentWrite();
 	if (contentWritePersist.pending) return;
 	contentWritePersist.pending = true;
 	after(async () => {
@@ -896,6 +909,7 @@ function persistLastContentWrite(): void {
  * `revalidate` window after another isolate stamped the backend.
  */
 export async function getLastContentWriteAt(): Promise<number> {
+	const lastContentWrite = getLastContentWrite();
 	const local = lastContentWrite.value;
 	const now = Date.now();
 	// Cache a confirmed miss (`0`) the same way as a positive stamp — otherwise
@@ -988,6 +1002,7 @@ export function invalidateObjectCache(
 	// Monotonic so two writes in the same millisecond still produce distinct
 	// epochs — otherwise the second write reuses the first's stamp and its
 	// stale entries survive.
+	const epochCache = getEpochCache();
 	const prev = epochCache.get(namespace)?.value ?? 0;
 	const stamp = Math.max(prev + 1, Date.now());
 	// Optimistic local bump: keep this isolate consistent without a round-trip.
@@ -1007,6 +1022,9 @@ export function invalidateObjectCache(
 }
 
 function persistEpoch(namespace: string, stamp: number): Promise<void> {
+	const markerWrite = getMarkerWrite();
+	const pendingBumps = getPendingBumps();
+	const epochCache = getEpochCache();
 	// Coalesce repeated bumps of the same namespace within a tick into a single
 	// backend write that persists the latest epoch.
 	const pending = pendingBumps.get(namespace);
@@ -1064,6 +1082,7 @@ function persistEpoch(namespace: string, stamp: number): Promise<void> {
  * vouched for, so isolates keep re-reading until they see the new epoch.
  */
 async function writeChangeMarker(backend: ObjectCacheBackend): Promise<void> {
+	const markerWrite = getMarkerWrite();
 	markerWrite.lastWriteAt = Date.now();
 	markerWrite.writtenSinceMarker = false;
 	const write = () => backend.set(changeMarkerKey(), `${Date.now()}.${crypto.randomUUID()}`);
@@ -1239,3 +1258,4 @@ export type {
 	ObjectCacheDescriptor,
 	ObjectCacheRuntimeConfig,
 } from "./types.js";
+import { currentSiteId, siteScopedGlobal } from "../site-scope.js";

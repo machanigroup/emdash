@@ -3,6 +3,7 @@ import { createInitLock, type InitLock } from "../utils/init-lock.js";
 
 // SSR chunks and the dev-server plugin must share the same runtime and init lock.
 const RUNTIME_HOLDER_KEY = Symbol.for("emdash:runtime-holder");
+const SITE_RUNTIME_HOLDERS_KEY = Symbol.for("emdash:runtime-holder@sites");
 const store = globalThis as Record<symbol, unknown>;
 
 interface RuntimeHolder {
@@ -11,31 +12,92 @@ interface RuntimeHolder {
 	closed: boolean;
 }
 
-export function getRuntimeHolder(): RuntimeHolder {
+function createHolder(): RuntimeHolder {
+	return { instance: null, lock: createInitLock(), closed: false };
+}
+
+function siteHolders(): Map<string, RuntimeHolder> {
+	// eslint-disable-next-line typescript/no-unsafe-type-assertion -- private globalThis symbol slot
+	let holders = store[SITE_RUNTIME_HOLDERS_KEY] as Map<string, RuntimeHolder> | undefined;
+	if (!holders) {
+		holders = new Map();
+		store[SITE_RUNTIME_HOLDERS_KEY] = holders;
+	}
+	return holders;
+}
+
+/** The runtime holder for a site, or for the default site when `siteId` is undefined. */
+export function getRuntimeHolder(siteId?: string): RuntimeHolder {
+	if (siteId !== undefined) {
+		const holders = siteHolders();
+		let holder = holders.get(siteId);
+		if (!holder) {
+			holder = createHolder();
+			holders.set(siteId, holder);
+		}
+		return holder;
+	}
 	// eslint-disable-next-line typescript/no-unsafe-type-assertion -- private globalThis symbol slot
 	let holder = store[RUNTIME_HOLDER_KEY] as RuntimeHolder | undefined;
 	if (!holder) {
-		holder = { instance: null, lock: createInitLock(), closed: false };
+		holder = createHolder();
 		store[RUNTIME_HOLDER_KEY] = holder;
 	}
 	return holder;
 }
 
-export async function shutdownRuntime(): Promise<void> {
-	delete store[Symbol.for("emdash:plugins")];
-	// eslint-disable-next-line typescript/no-unsafe-type-assertion -- private globalThis symbol slot
-	const holder = store[RUNTIME_HOLDER_KEY] as RuntimeHolder | undefined;
+/** Shuts down a site's runtime and forgets its holder, so the next request starts it again. */
+export async function releaseSiteRuntime(siteId: string): Promise<void> {
+	const holders = siteHolders();
+	const holder = holders.get(siteId);
 	if (!holder) return;
+	holders.delete(siteId);
+	await shutdownHolder(holder);
+}
 
+/** Ids of the sites whose runtimes this worker holds. */
+export function heldSiteRuntimes(): string[] {
+	return [...siteHolders().keys()];
+}
+
+async function shutdownHolder(holder: RuntimeHolder): Promise<void> {
 	// Detach before awaiting so the next server cannot reuse a closing runtime.
 	holder.closed = true;
-	delete store[RUNTIME_HOLDER_KEY];
 	const runtime = holder.instance;
 	holder.instance = null;
-	try {
-		await runtime?.shutdown();
-	} catch (error) {
-		console.error("[emdash] runtime shutdown failed:", error);
-		throw error;
+	await runtime?.shutdown();
+}
+
+const SITE_SWEEP_KEY = Symbol.for("emdash:multi-site-sweep");
+
+/** Remembers the timer that runs every site's scheduled work, so shutdown can stop it. */
+export function setSiteSweepTimer(timer: ReturnType<typeof setInterval>): void {
+	store[SITE_SWEEP_KEY] = timer;
+}
+
+export function hasSiteSweepTimer(): boolean {
+	return store[SITE_SWEEP_KEY] !== undefined;
+}
+
+export async function shutdownRuntime(): Promise<void> {
+	delete store[Symbol.for("emdash:plugins")];
+	const sweep = store[SITE_SWEEP_KEY];
+	if (sweep !== undefined) {
+		// eslint-disable-next-line typescript/no-unsafe-type-assertion -- written only by setSiteSweepTimer
+		clearInterval(sweep as ReturnType<typeof setInterval>);
+		delete store[SITE_SWEEP_KEY];
+	}
+	// eslint-disable-next-line typescript/no-unsafe-type-assertion -- private globalThis symbol slot
+	const holder = store[RUNTIME_HOLDER_KEY] as RuntimeHolder | undefined;
+	// eslint-disable-next-line typescript/no-unsafe-type-assertion -- private globalThis symbol slot
+	const sites = store[SITE_RUNTIME_HOLDERS_KEY] as Map<string, RuntimeHolder> | undefined;
+	delete store[RUNTIME_HOLDER_KEY];
+	delete store[SITE_RUNTIME_HOLDERS_KEY];
+	const holders = [...(holder ? [holder] : []), ...(sites?.values() ?? [])];
+	const results = await Promise.allSettled(holders.map(shutdownHolder));
+	const failure = results.find((result) => result.status === "rejected");
+	if (failure) {
+		console.error("[emdash] runtime shutdown failed:", failure.reason);
+		throw failure.reason;
 	}
 }

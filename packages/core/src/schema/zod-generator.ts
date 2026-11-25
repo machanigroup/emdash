@@ -1,5 +1,6 @@
 import { z, type ZodType } from "zod";
 
+import { siteScopedGlobal } from "../site-scope.js";
 import { hashString } from "../utils/hash.js";
 import { isSafeUrlFieldValue } from "../utils/url.js";
 import type { BlockFieldDefinition } from "./block-types.js";
@@ -289,7 +290,11 @@ function applyValidation(
 /**
  * Schema cache to avoid regenerating schemas on every request
  */
-const schemaCache = new Map<string, { schema: z.ZodObject<any>; version: string }>();
+const SCHEMA_CACHE_KEY = Symbol.for("emdash:zod-schema-cache");
+
+function getSchemaCache(): Map<string, { schema: z.ZodObject<any>; version: string }> {
+	return siteScopedGlobal(SCHEMA_CACHE_KEY, () => new Map());
+}
 
 /**
  * Get or generate a cached schema for a collection
@@ -298,6 +303,7 @@ export function getCachedSchema(
 	collection: CollectionWithFields,
 	version?: string,
 ): z.ZodObject<any> {
+	const schemaCache = getSchemaCache();
 	const cacheKey = collection.slug;
 	const cached = schemaCache.get(cacheKey);
 
@@ -322,14 +328,14 @@ export function getCachedSchema(
  * Invalidate cached schema for a collection
  */
 export function invalidateSchemaCache(slug: string): void {
-	schemaCache.delete(slug);
+	getSchemaCache().delete(slug);
 }
 
 /**
  * Clear all cached schemas
  */
 export function clearSchemaCache(): void {
-	schemaCache.clear();
+	getSchemaCache().clear();
 }
 
 /**

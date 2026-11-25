@@ -4,7 +4,7 @@ import type { I18n, MessageDescriptor } from "@lingui/core";
 import { msg } from "@lingui/core/macro";
 import { useLingui as useLinguiContext } from "@lingui/react";
 import { useLingui } from "@lingui/react/macro";
-import { Gear, PencilSimple, Storefront, Users } from "@phosphor-icons/react";
+import { Buildings, Gear, PencilSimple, Storefront, Users } from "@phosphor-icons/react";
 import { useQuery } from "@tanstack/react-query";
 import { Link, useLocation } from "@tanstack/react-router";
 import * as React from "react";
@@ -144,6 +144,7 @@ export interface SidebarNavProps {
 			favicon?: string;
 			hiddenNavItems?: string[];
 		};
+		multiSite?: { siteId: string | null; orgId: string | null };
 	};
 }
 
@@ -583,6 +584,9 @@ export function buildNavGroups(input: NavBuildInput): NavGroup[] {
 		},
 		{ ...BYLINE_SCHEMA_NAV_ITEM, label: translate(msg`Byline Schema`) },
 		{ to: "/users", label: translate(msg`Users`), icon: Users, minRole: ROLE_ADMIN },
+		...(manifest.multiSite
+			? [{ to: "/organizations", label: translate(msg`Organizations`), icon: Buildings }]
+			: []),
 		{
 			to: "/plugins-manager",
 			label: translate(msg`Plugins`),

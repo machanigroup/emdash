@@ -1,0 +1,119 @@
+---
+title: Multiple sites
+description: Serve several sites from one EmDash deployment, grouped into organizations, with one sign-in and shared roles.
+---
+
+import { Aside, Steps } from "@astrojs/starlight/components";
+
+One EmDash deployment can serve several sites. Each site is chosen by the request's hostname and keeps its own content, schema, settings, plugins, and media. Sites belong to organizations, and people sign in once on a shared admin host to manage every site they can reach.
+
+A member's role in an organization applies to all of its sites. An organization Admin can give a member a different role on one site.
+
+## Configure the deployment
+
+Multi-site needs a control-plane database, which holds organizations, sites, hostnames, accounts, and passkeys, plus one database for each site. Use the same database adapter for all of them. Each entry in `multiSite` lists the options that differ from the top-level `database` and `storage` options.
+
+```ts title="astro.config.mjs"
+import { d1, r2 } from "@emdash-cms/cloudflare";
+import emdash from "emdash/astro";
+
+export default defineConfig({
+	integrations: [
+		emdash({
+			database: d1({ binding: "DB" }),
+			storage: r2({ binding: "MEDIA" }),
+			multiSite: {
+				controlPlane: { binding: "CONTROL_DB" },
+				databases: {
+					"brand-a": { binding: "DB_BRAND_A" },
+					"brand-b": { binding: "DB_BRAND_B" },
+				},
+				storages: {
+					"brand-a": { binding: "MEDIA_BRAND_A" },
+				},
+				adminUrl: "https://admin.example.com",
+			},
+		}),
+	],
+});
+```
+
+| Option | Description |
+| --- | --- |
+| `controlPlane` | Options merged over `database`'s options to open the control-plane database. |
+| `databases` | Site databases by name. A site can only use a name listed here, or `default` for the top-level `database`. |
+| `storages` | Site media storage by name. A site can use a name listed here, or `default` to share the top-level `storage`. |
+| `adminUrl` | Origin of the shared admin host. People sign in there, and passkeys belong to it. |
+| `idleSiteTtlMs` | Release a site's runtime after this many milliseconds without requests. Defaults to 10 minutes on Cloudflare Workers and `0` (keep every site loaded) on Node.js. |
+| `hostRefreshMs` | How long a worker uses its cached hostname table before refreshing it in the background. Defaults to 30 seconds. |
+
+Point the admin hostname and every site hostname at the deployment.
+
+<Aside type="caution">
+	A site's database and storage names come only from this config, so an organization Admin can't attach a site to a database or bucket you didn't list. Add the binding or connection, add its name here, and redeploy before you add the site.
+</Aside>
+
+## Set up the admin host
+
+<Steps>
+
+1. Open `/_emdash/admin` on the admin host. The setup wizard creates the first account, which is a **deployment Admin**: Admin on every site, and the only kind of account that can create organizations and sites.
+
+2. Open **Organizations** and create an organization. You become its Admin.
+
+3. On the organization's page, select **Add site**. Enter its name, hostnames (the first is its main address), and the database and media storage it uses. The site's admin opens without a setup wizard, titled with the site's name.
+
+4. Select **Add member** and enter an email and role. Someone with an account joins right away. Anyone else receives an invitation to create an account on the admin host, and joins once they do. Without an email provider, the dialog shows the invitation link to send yourself.
+
+</Steps>
+
+## Work across sites
+
+The site switcher in the admin header lists every site you can reach. Switching reloads the admin on that site, with the role you hold there.
+
+**View Site** opens the site's own hostname in a new tab, signed in, so visual editing and previews work there. The site shows a confirmation page before it signs you in.
+
+On a site's own hostname, `/_emdash/admin` redirects to the admin host with that site selected, and its sign-in and setup APIs return 404. Accounts are only created and signed in on the admin host.
+
+A site's **Users** page lists the accounts that have worked on it, read-only. People and roles are changed on the organization's page; the site's user API refuses changes with `409 USERS_MANAGED_BY_ORGANIZATION`.
+
+## API tokens and the CLI
+
+Send API requests to the site's own hostname. To call the API through the admin host instead, name the site in the `X-EmDash-Site` header:
+
+```sh
+curl https://admin.example.com/_emdash/api/content/posts \
+	-H "Authorization: Bearer $EMDASH_TOKEN" \
+	-H "X-EmDash-Site: <site id>"
+```
+
+Sign the CLI in against a site's hostname. Its approval page opens on the admin host with that site selected.
+
+## Remove access
+
+Removing a member, changing their role, or disabling a site applies to every site on the member's next request, including requests made with API tokens they created. A site that is disabled answers every request with 404.
+
+An organization always keeps at least one Admin.
+
+## Scheduled work
+
+Each site publishes scheduled content and runs plugin cron tasks on its own schedule.
+
+- On Cloudflare Workers, the `scheduled()` handler's call to `runScheduledTasks()` runs every active site.
+- On Node.js, a timer runs every active site's scheduled work once a minute.
+
+## Bring in an existing site
+
+Deployments without `multiSite` work as they did before. To serve an existing site from a multi-site deployment, keep its database and give the control plane a new one:
+
+<Steps>
+
+1. List the site's database in `multiSite.databases`, or use `default` if it is the top-level `database`. Point `multiSite.controlPlane` at a different database: a site can't use the control-plane database, because the admin keeps a copy of each person's account, with their role on that site, in the site's database.
+
+2. Add the site to an organization from the admin host.
+
+3. Edit the site and select **Import accounts**. Its accounts are copied to the admin host under the same ids, so their content and bylines stay linked, and each person joins the organization with the role they had on the site. An email that already belongs to a different account on the admin host is skipped and listed.
+
+4. Ask the imported people to sign in on the admin host. Passkeys created on the site's old hostname don't work on the admin host, so they sign in another way, such as a magic link, and add a new passkey.
+
+</Steps>

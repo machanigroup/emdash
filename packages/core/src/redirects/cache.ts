@@ -17,6 +17,7 @@
  */
 
 import { after } from "../after.js";
+import { siteScopedGlobal } from "../site-scope.js";
 import {
 	createSingleFlightCache,
 	type SingleFlightCache,
@@ -78,11 +79,8 @@ interface RedirectCacheState {
 const REDIRECT_CACHE_TTL_MS = 30_000;
 const REDIRECT_CACHE_MAX_REFRESH_ATTEMPTS = 3;
 const REDIRECT_CACHE_KEY = Symbol.for("emdash:redirect-cache");
-const g = globalThis as Record<symbol, unknown>;
-const cacheState: RedirectCacheState =
-	// eslint-disable-next-line typescript/no-unsafe-type-assertion -- globalThis singleton pattern (see request-context.ts)
-	(g[REDIRECT_CACHE_KEY] as RedirectCacheState | undefined) ??
-	(() => {
+function getCacheState(): RedirectCacheState {
+	return siteScopedGlobal(REDIRECT_CACHE_KEY, () => {
 		const state: RedirectCacheState = {
 			redirects: null,
 			expiresAt: 0,
@@ -90,20 +88,21 @@ const cacheState: RedirectCacheState =
 			refresh: createSingleFlightCache<CachedRedirects>(),
 			revalidatingUntil: 0,
 		};
-		g[REDIRECT_CACHE_KEY] = state;
 		return state;
-	})();
+	});
+}
 
 /**
  * Invalidate the cached redirects (both exact and pattern).
  * Call when redirects are created, updated, or deleted.
  */
 export function invalidateRedirectCache(): void {
-	cacheState.generation++;
-	cacheState.redirects = null;
-	cacheState.expiresAt = 0;
-	cacheState.revalidatingUntil = 0;
-	invalidateSingleFlightCache(cacheState.refresh);
+	const state = getCacheState();
+	state.generation++;
+	state.redirects = null;
+	state.expiresAt = 0;
+	state.revalidatingUntil = 0;
+	invalidateSingleFlightCache(state.refresh);
 }
 
 /** Compile a rule set into the in-memory lookup structures. */
@@ -123,26 +122,28 @@ function compileRedirects(rules: RedirectRuleSet): CachedRedirects {
 }
 
 function installCachedRedirects(redirects: CachedRedirects): CachedRedirects {
-	cacheState.redirects = redirects;
-	cacheState.expiresAt = Date.now() + REDIRECT_CACHE_TTL_MS;
-	return cacheState.redirects;
+	const state = getCacheState();
+	state.redirects = redirects;
+	state.expiresAt = Date.now() + REDIRECT_CACHE_TTL_MS;
+	return state.redirects;
 }
 
 function revalidateInBackground(source: RedirectSource, cached: CachedRedirects): void {
+	const state = getCacheState();
 	const now = Date.now();
-	if (cacheState.revalidatingUntil > now) return;
-	cacheState.revalidatingUntil = now + REDIRECT_CACHE_TTL_MS;
-	const generation = cacheState.generation;
+	if (state.revalidatingUntil > now) return;
+	state.revalidatingUntil = now + REDIRECT_CACHE_TTL_MS;
+	const generation = state.generation;
 	after(async () => {
 		try {
 			if (cached.version !== null && (await source.isCurrent(cached.version))) {
-				if (generation === cacheState.generation) {
-					cacheState.expiresAt = Date.now() + REDIRECT_CACHE_TTL_MS;
+				if (generation === state.generation) {
+					state.expiresAt = Date.now() + REDIRECT_CACHE_TTL_MS;
 				}
 				return;
 			}
 			const loaded = compileRedirects(await source.load());
-			if (generation === cacheState.generation) installCachedRedirects(loaded);
+			if (generation === state.generation) installCachedRedirects(loaded);
 		} catch (error) {
 			console.error("[emdash:redirects] revalidating redirects failed:", error);
 		}
@@ -162,9 +163,10 @@ export async function loadCachedRedirects(
 	source: RedirectSource,
 	options: LoadCachedRedirectsOptions = {},
 ): Promise<CachedRedirects> {
+	const state = getCacheState();
 	let verify = options.verify === true;
 	for (let attempt = 0; attempt < REDIRECT_CACHE_MAX_REFRESH_ATTEMPTS; attempt++) {
-		const cached = cacheState.redirects;
+		const cached = state.redirects;
 		if (cached && verify) {
 			verify = false;
 			let current: boolean;
@@ -175,27 +177,27 @@ export async function loadCachedRedirects(
 				return cached;
 			}
 			if (current) {
-				if (cacheState.redirects === cached) {
-					cacheState.expiresAt = Date.now() + REDIRECT_CACHE_TTL_MS;
+				if (state.redirects === cached) {
+					state.expiresAt = Date.now() + REDIRECT_CACHE_TTL_MS;
 				}
 				return cached;
 			}
-			if (cacheState.redirects === cached) invalidateRedirectCache();
+			if (state.redirects === cached) invalidateRedirectCache();
 			continue;
 		}
 		if (cached) {
-			if (Date.now() >= cacheState.expiresAt) revalidateInBackground(source, cached);
+			if (Date.now() >= state.expiresAt) revalidateInBackground(source, cached);
 			return cached;
 		}
 
-		const generation = cacheState.generation;
+		const generation = state.generation;
 		const loaded = await singleFlightCached(
-			cacheState.refresh,
+			state.refresh,
 			async () => compileRedirects(await source.load()),
 			{ anchor: (promise) => after(() => promise), ownerTimeoutMs: 30_000 },
 		);
 
-		if (generation === cacheState.generation) {
+		if (generation === state.generation) {
 			return installCachedRedirects(loaded);
 		}
 

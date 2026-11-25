@@ -1,12 +1,15 @@
 import { Badge, Button, LinkButton, Popover } from "@cloudflare/kumo";
 import { useLingui } from "@lingui/react/macro";
 import { SignOut, Shield, Gear, ArrowSquareOut, EyeSlash } from "@phosphor-icons/react";
+import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import * as React from "react";
 
-import { apiFetch } from "../lib/api/client";
+import { apiFetch, fetchManifest } from "../lib/api/client";
 import { useCurrentUser } from "../lib/api/current-user";
+import { createSiteSignInLink } from "../lib/api/multisite";
 import { AdminBreadcrumbs } from "./AdminBreadcrumbs.js";
+import { SiteSwitcher } from "./multisite/SiteSwitcher.js";
 import { Sidebar } from "./Sidebar";
 import { ThemeToggle } from "./ThemeToggle";
 import { UserAvatar } from "./UserAvatar.js";
@@ -35,6 +38,44 @@ async function handleLogout() {
 }
 
 /**
+ * Opens the managed site's own pages in a new tab, signed in, so visual
+ * editing and previews work on the site's hostname.
+ */
+function ViewSiteButton({ siteId }: { siteId: string }) {
+	const { t } = useLingui();
+	const [opening, setOpening] = React.useState(false);
+	const open = async () => {
+		const tab = window.open("about:blank", "_blank");
+		setOpening(true);
+		try {
+			const url = await createSiteSignInLink(siteId);
+			if (tab) {
+				tab.opener = null;
+				tab.location.href = url;
+			} else {
+				window.location.assign(url);
+			}
+		} catch {
+			tab?.close();
+		} finally {
+			setOpening(false);
+		}
+	};
+	return (
+		<Button
+			variant="ghost"
+			size="sm"
+			disabled={opening}
+			aria-label={t`View Site`}
+			onClick={() => void open()}
+		>
+			<ArrowSquareOut className="h-4 w-4 sm:me-1 rtl:-scale-x-100" aria-hidden="true" />
+			<span className="hidden sm:inline">{t`View Site`}</span>
+		</Button>
+	);
+}
+
+/**
  * Admin header with mobile menu toggle and user actions.
  * Uses useSidebar() hook from kumo Sidebar.Provider context.
  */
@@ -43,6 +84,7 @@ export function Header({ staging = false }: { staging?: boolean }) {
 	const [userMenuOpen, setUserMenuOpen] = React.useState(false);
 
 	const { data: user } = useCurrentUser();
+	const { data: manifest } = useQuery({ queryKey: ["manifest"], queryFn: fetchManifest });
 
 	const displayName = user?.name || user?.email || t`User`;
 
@@ -60,7 +102,8 @@ export function Header({ staging = false }: { staging?: boolean }) {
 			{/* The desktop trigger lives in the sidebar footer; mobile keeps it here so the closed sheet can reopen. */}
 			<Sidebar.Trigger className="shrink-0 cursor-pointer md:hidden rtl:rotate-180" />
 
-			<div className="flex min-w-0 flex-1 items-center">
+			<div className="flex min-w-0 flex-1 items-center gap-2">
+				{manifest?.multiSite && <SiteSwitcher currentSiteId={manifest.multiSite.siteId} />}
 				<AdminBreadcrumbs />
 			</div>
 
@@ -75,10 +118,14 @@ export function Header({ staging = false }: { staging?: boolean }) {
 					))}
 
 				{/* View site link */}
-				<LinkButton variant="ghost" size="sm" href="/" external aria-label={t`View Site`}>
-					<ArrowSquareOut className="h-4 w-4 sm:me-1" aria-hidden="true" />
-					<span className="hidden sm:inline">{t`View Site`}</span>
-				</LinkButton>
+				{manifest?.multiSite ? (
+					manifest.multiSite.siteId && <ViewSiteButton siteId={manifest.multiSite.siteId} />
+				) : (
+					<LinkButton variant="ghost" size="sm" href="/" external aria-label={t`View Site`}>
+						<ArrowSquareOut className="h-4 w-4 sm:me-1" aria-hidden="true" />
+						<span className="hidden sm:inline">{t`View Site`}</span>
+					</LinkButton>
+				)}
 
 				{/* Theme toggle */}
 				<ThemeToggle />

@@ -88,6 +88,7 @@ export default defineConfig({
 						{ label: "Built-in SEO Features", slug: "guides/seo" },
 						{ label: "Google AdSense", slug: "guides/google-adsense" },
 						{ label: "Authentication", slug: "guides/authentication" },
+						{ label: "Multiple sites", slug: "guides/multi-site" },
 						{ label: "Email Setup", slug: "guides/email" },
 						{ label: "Atmosphere Login", slug: "guides/atmosphere-auth" },
 						{ label: "AI Tools", slug: "guides/ai-tools" },

@@ -747,6 +747,70 @@ export interface EmDashConfig {
 	 * `astro:config:setup` hook (not authored by the user).
 	 */
 	robotsTxtOverridden?: boolean;
+
+	/**
+	 * Serve several sites from this deployment, chosen by request hostname.
+	 *
+	 * Organizations, sites, and their hostnames live in a control-plane
+	 * database. Each site has its own database and media storage, opened with
+	 * the configured `database` and `storage` adapters and the overrides
+	 * named here. A site row refers to these entries by name, so only the
+	 * databases and storage listed in this config can be attached to a site.
+	 * The name `default` refers to the `database` and `storage` options
+	 * unchanged.
+	 *
+	 * Requests to a hostname that no active site lists get a 404.
+	 *
+	 * @example
+	 * ```ts
+	 * emdash({
+	 *   database: d1({ binding: "DB" }),
+	 *   storage: r2({ binding: "MEDIA" }),
+	 *   multiSite: {
+	 *     controlPlane: { binding: "CONTROL_DB" },
+	 *     databases: { "brand-a": { binding: "DB_BRAND_A" } },
+	 *     storages: { "brand-a": { binding: "MEDIA_BRAND_A" } },
+	 *   },
+	 * })
+	 * ```
+	 */
+	multiSite?: MultiSiteConfig;
+}
+
+export interface MultiSiteConfig {
+	/** Options merged over `database`'s adapter options to open the control-plane database. */
+	controlPlane: Record<string, unknown>;
+	/** Site databases by name: options merged over `database`'s adapter options. */
+	databases: Record<string, Record<string, unknown>>;
+	/** Site media storage by name: options merged over `storage`'s adapter options. */
+	storages?: Record<string, Record<string, unknown>>;
+	/**
+	 * The origin of the shared admin, such as `https://admin.example.com`.
+	 *
+	 * When set, people sign in once on this host, and its admin manages every
+	 * site they can reach, with the role their organization gives them on each
+	 * one. Accounts, passkeys, and sessions live in the control-plane database.
+	 * Opening `/_emdash/admin` on a site's own hostname redirects here.
+	 *
+	 * When unset, each site's admin signs people in against that site's own
+	 * accounts.
+	 */
+	adminUrl?: string;
+	/**
+	 * Release a site's runtime, database connection, and caches after it has
+	 * served no request for this many milliseconds; the next request opens
+	 * them again. `0` keeps every site loaded.
+	 *
+	 * Defaults to 10 minutes on serverless hosts such as Cloudflare Workers,
+	 * and to `0` on long-running servers such as Node.js, where a timer runs
+	 * every site's scheduled work each minute.
+	 */
+	idleSiteTtlMs?: number;
+	/**
+	 * How long a worker serves its cached hostname table before refreshing it in
+	 * the background, in milliseconds. Defaults to 30 seconds.
+	 */
+	hostRefreshMs?: number;
 }
 
 const STORED_CONFIG_KEY = Symbol.for("emdash:stored-config");

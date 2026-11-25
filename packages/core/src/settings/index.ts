@@ -31,6 +31,7 @@ import { isMissingTableError } from "../utils/db-errors.js";
 
 /** Object-cache namespace for site settings. */
 const SETTINGS_CACHE_NAMESPACE = "settings";
+import { siteScopedGlobal } from "../site-scope.js";
 import type { Storage } from "../storage/types.js";
 import {
 	createSingleFlightCache,
@@ -110,11 +111,8 @@ interface SiteSettingsCache {
 
 const SITE_SETTINGS_CACHE_TTL_MS = 30_000;
 const SITE_SETTINGS_CACHE_KEY = Symbol.for("emdash:site-settings:swr");
-const g = globalThis as Record<symbol, unknown>;
-const settingsCache: SiteSettingsCache =
-	// eslint-disable-next-line typescript/no-unsafe-type-assertion -- globalThis singleton pattern (see request-context.ts)
-	(g[SITE_SETTINGS_CACHE_KEY] as SiteSettingsCache | undefined) ??
-	(() => {
+function getSettingsCache(): SiteSettingsCache {
+	return siteScopedGlobal(SITE_SETTINGS_CACHE_KEY, () => {
 		const c: SiteSettingsCache = {
 			snapshot: null,
 			expiresAt: 0,
@@ -122,22 +120,23 @@ const settingsCache: SiteSettingsCache =
 			revalidatingUntil: 0,
 			refresh: createSingleFlightCache<CachedSiteSettings>(),
 		};
-		g[SITE_SETTINGS_CACHE_KEY] = c;
 		return c;
-	})();
+	});
+}
 
 /** Capture the resolved snapshot before route-cache headers are finalized. @internal */
 export function peekSiteSettingsSnapshot(): CachedSiteSettings | null {
-	return settingsCache.snapshot;
+	return getSettingsCache().snapshot;
 }
 
 /** Discard a snapshot found stale by the route-cache freshness check. @internal */
 export function invalidateSiteSettingsSnapshot(): void {
-	settingsCache.generation++;
-	settingsCache.snapshot = null;
-	settingsCache.expiresAt = 0;
-	settingsCache.revalidatingUntil = 0;
-	invalidateSingleFlightCache(settingsCache.refresh);
+	const cache = getSettingsCache();
+	cache.generation++;
+	cache.snapshot = null;
+	cache.expiresAt = 0;
+	cache.revalidatingUntil = 0;
+	invalidateSingleFlightCache(cache.refresh);
 }
 
 /**
@@ -316,7 +315,7 @@ export async function getSiteSettingWithDb<K extends SiteSettingKey>(
 
 function refreshSiteSettings(): Promise<CachedSiteSettings> {
 	return singleFlightCached(
-		settingsCache.refresh,
+		getSettingsCache().refresh,
 		() =>
 			cachedQuery({
 				namespace: SETTINGS_CACHE_NAMESPACE,
@@ -328,20 +327,22 @@ function refreshSiteSettings(): Promise<CachedSiteSettings> {
 }
 
 function installSiteSettings(snapshot: CachedSiteSettings): void {
-	settingsCache.snapshot = snapshot;
-	settingsCache.expiresAt = Date.now() + SITE_SETTINGS_CACHE_TTL_MS;
+	const cache = getSettingsCache();
+	cache.snapshot = snapshot;
+	cache.expiresAt = Date.now() + SITE_SETTINGS_CACHE_TTL_MS;
 }
 
 function revalidateSiteSettings(): void {
+	const cache = getSettingsCache();
 	const now = Date.now();
-	if (settingsCache.revalidatingUntil > now) return;
-	settingsCache.revalidatingUntil = now + SITE_SETTINGS_CACHE_TTL_MS;
-	const generation = ++settingsCache.generation;
-	invalidateSingleFlightCache(settingsCache.refresh);
+	if (cache.revalidatingUntil > now) return;
+	cache.revalidatingUntil = now + SITE_SETTINGS_CACHE_TTL_MS;
+	const generation = ++cache.generation;
+	invalidateSingleFlightCache(cache.refresh);
 	after(async () => {
 		try {
 			const snapshot = await refreshSiteSettings();
-			if (generation === settingsCache.generation) installSiteSettings(snapshot);
+			if (generation === cache.generation) installSiteSettings(snapshot);
 		} catch (error) {
 			console.error("[emdash:settings] revalidating site settings failed:", error);
 		}
@@ -349,15 +350,16 @@ function revalidateSiteSettings(): void {
 }
 
 async function loadCachedSiteSettings(): Promise<CachedSiteSettings> {
+	const cache = getSettingsCache();
 	for (let attempt = 0; attempt < 3; attempt++) {
-		const snapshot = settingsCache.snapshot;
+		const snapshot = cache.snapshot;
 		if (snapshot) {
-			if (Date.now() >= settingsCache.expiresAt) revalidateSiteSettings();
+			if (Date.now() >= cache.expiresAt) revalidateSiteSettings();
 			return snapshot;
 		}
-		const generation = settingsCache.generation;
+		const generation = cache.generation;
 		const loaded = await refreshSiteSettings();
-		if (generation === settingsCache.generation) {
+		if (generation === cache.generation) {
 			installSiteSettings(loaded);
 			return loaded;
 		}
@@ -382,6 +384,7 @@ async function loadCachedSiteSettings(): Promise<CachedSiteSettings> {
  * ```
  */
 export function getSiteSettings(): Promise<Partial<SiteSettings>> {
+	const cache = getSettingsCache();
 	return requestCached("siteSettings", async () => {
 		const snapshot = await requestCached("siteSettingsSnapshot", async () => {
 			const ctx = getRequestContext();
@@ -392,9 +395,9 @@ export function getSiteSettings(): Promise<Partial<SiteSettings>> {
 			// Reload an older result instead of streaming that snapshot into a fill.
 			if (requestSettings?.version !== undefined && loaded.version !== requestSettings.version) {
 				invalidateSiteSettingsSnapshot();
-				const generation = settingsCache.generation;
+				const generation = cache.generation;
 				loaded = await loadSiteSettingsSnapshot(await getDb());
-				if (generation === settingsCache.generation) installSiteSettings(loaded);
+				if (generation === cache.generation) installSiteSettings(loaded);
 			}
 			return loaded;
 		});

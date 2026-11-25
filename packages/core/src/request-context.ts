@@ -108,6 +108,21 @@ export interface EmDashRequestContext {
 	 */
 	dbIsIsolated?: boolean;
 	/**
+	 * The site this request belongs to in a multi-site deployment. Unset for
+	 * the default site, which keeps the isolate-wide caches of a single-site
+	 * deployment; set, it gives the request that site's cache slots.
+	 */
+	siteId?: string;
+	/** The organization of `siteId`, when the request runs as a multi-site site. */
+	siteOrgId?: string;
+	/**
+	 * Rechecks a signed-in user's role on this site against the multi-site
+	 * control plane, updating the site's copy of the account. Resolves the role
+	 * to use, or null when the user has no access. Set only for site hostnames
+	 * of a deployment that signs people in on a shared admin host.
+	 */
+	refreshSiteAccount?: (userId: string) => Promise<number | null>;
+	/**
 	 * Query recorder attached by middleware when EMDASH_QUERY_LOG=1 is set.
 	 * The Kysely `log` hook appends an event per query; middleware flushes
 	 * to NDJSON after the response.
@@ -170,6 +185,14 @@ export function runInFreshRequestContext<T>(fn: () => Promise<T>): Promise<T> {
 			deferredTasks.settle();
 		}
 	});
+}
+
+/**
+ * Runs `fn` with no request context, so timers and callbacks it starts don't
+ * inherit the request that happened to start them.
+ */
+export function runOutsideRequestContext<T>(fn: () => T): T {
+	return storage.exit(fn);
 }
 
 /**

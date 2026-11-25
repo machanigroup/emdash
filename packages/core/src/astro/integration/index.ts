@@ -55,6 +55,7 @@ import {
 	injectBuiltinAuthRoutes,
 	injectAuthProviderRoutes,
 	injectMcpRoute,
+	injectMultiSiteRoutes,
 } from "./routes.js";
 import type { EmDashConfig } from "./runtime.js";
 import { createViteConfig, resolveAdminDist } from "./vite-config.js";
@@ -245,6 +246,7 @@ export function buildSerializableConfig(resolvedConfig: EmDashConfig): Record<st
 		toolbar: resolvedConfig.toolbar,
 		updateCheck: resolvedConfig.updateCheck,
 		objectCacheEnabled: resolvedConfig.objectCache !== undefined,
+		multiSite: resolvedConfig.multiSite,
 	};
 }
 
@@ -815,6 +817,10 @@ export function emdash(config: EmDashConfig = {}): AstroIntegration {
 				// Inject passkey/oauth/magic-link routes unless transparent external auth is active
 				if (!useExternalAuth) {
 					injectBuiltinAuthRoutes(injectRoute);
+				}
+
+				if (resolvedConfig.multiSite) {
+					injectMultiSiteRoutes(injectRoute);
 				}
 
 				// Inject MCP endpoint (always on — bearer-token-only, no cost if unused)

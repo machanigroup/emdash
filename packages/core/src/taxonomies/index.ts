@@ -38,6 +38,7 @@ import {
 import type { CacheHint } from "../query.js";
 import { peekRequestCache, requestCached, setRequestCacheEntry } from "../request-cache.js";
 import { getRequestContext } from "../request-context.js";
+import { siteScopedGlobal } from "../site-scope.js";
 import { chunks, SQL_BATCH_SIZE } from "../utils/chunks.js";
 import { isMissingTableError } from "../utils/db-errors.js";
 import {
@@ -147,15 +148,12 @@ export function invalidateTermCache(): void {
  * databases bypass the isolate snapshot.
  */
 const TAXONOMY_DEFS_CACHE_KEY = Symbol.for("emdash:taxonomy-defs:swr");
-const taxonomyDefsStore = globalThis as Record<symbol, unknown>;
-const defsCache =
-	// eslint-disable-next-line typescript/no-unsafe-type-assertion -- globalThis singleton pattern
-	(taxonomyDefsStore[TAXONOMY_DEFS_CACHE_KEY] as RevalidatingCache<TaxonomyDef[]> | undefined) ??
-	(() => {
+function getDefsCache(): RevalidatingCache<TaxonomyDef[]> {
+	return siteScopedGlobal(TAXONOMY_DEFS_CACHE_KEY, () => {
 		const c = createRevalidatingCache<TaxonomyDef[]>();
-		taxonomyDefsStore[TAXONOMY_DEFS_CACHE_KEY] = c;
 		return c;
-	})();
+	});
+}
 
 /**
  * Invalidate the isolate-wide taxonomy-definitions cache (and the related
@@ -164,14 +162,14 @@ const defsCache =
  * pick up remote changes through background revalidation.
  */
 export function invalidateTaxonomyDefsCache(): void {
-	invalidateRevalidatingCache(defsCache);
+	invalidateRevalidatingCache(getDefsCache());
 	resetTaxonomyNamesCache();
 	invalidateTaxonomyObjectCache();
 }
 
 /** @internal Clear the isolate snapshot between test databases. */
 export function resetTaxonomyDefsCacheForTests(): void {
-	invalidateRevalidatingCache(defsCache);
+	invalidateRevalidatingCache(getDefsCache());
 }
 
 /** Every locale's definition rows, straight from the database (no caching). */
@@ -191,7 +189,7 @@ async function fetchTaxonomyDefRows(): Promise<TaxonomyDef[]> {
 function loadTaxonomyDefRows(): Promise<TaxonomyDef[]> {
 	const context = getRequestContext();
 	if (context?.dbIsIsolated) return fetchTaxonomyDefRows();
-	return revalidatingCached(defsCache, fetchTaxonomyDefRows, (error) =>
+	return revalidatingCached(getDefsCache(), fetchTaxonomyDefRows, (error) =>
 		console.error("[emdash:taxonomies] revalidating taxonomy definitions failed:", error),
 	);
 }

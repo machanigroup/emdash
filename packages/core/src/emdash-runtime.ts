@@ -518,6 +518,12 @@ export type CreateRoomHostFn = (runtime: EmDashRuntime) => RuntimeRoomHost | nul
  */
 export interface RuntimeDependencies {
 	config: EmDashConfig;
+	/**
+	 * The site this runtime serves in a multi-site deployment, or undefined for
+	 * the default site. Keys the runtime's database, storage, seed, and plugin
+	 * caches so sites sharing an isolate never share them.
+	 */
+	siteId?: string;
 	/** Effective migration mode, resolved once by the runtime entrypoint. */
 	migrationMode?: RuntimeMigrationMode;
 	plugins: ResolvedPlugin[];
@@ -835,23 +841,9 @@ function getSeedHolder(): SeedHolder {
 	return holder;
 }
 const storageCache = new Map<string, Storage>();
-const sandboxedPluginCache = new Map<string, SandboxedPluginInstance>();
-const sandboxedManifestCache = new Map<string, PluginManifest>();
-/**
- * Per-tier sets of `${pluginId}:${version}` keys present in
- * `sandboxedPluginCache`. Used during sync to know which entries belong
- * to which install source so we can invalidate only what belongs to the
- * tier currently being synced.
- */
-const marketplacePluginKeys = new Set<string>();
-const registryPluginKeys = new Set<string>();
 const INSTALLED_PLUGIN_REFRESH_RETRY_MS = 5_000;
-/**
- * Manifest metadata for runtime-installed sandboxed plugins (marketplace
- * and registry both). Keyed by `pluginId`; readers don't care which
- * source the plugin came from. Named `marketplace*` for legacy reasons.
- */
-const marketplaceManifestCache = new Map<
+
+type MarketplaceManifestEntry = Map<
 	string,
 	{
 		id: string;
@@ -868,10 +860,64 @@ const marketplaceManifestCache = new Map<
 		allowedHosts?: string[];
 		capabilities?: PluginCapability[];
 	}
->();
-/** Route metadata for sandboxed plugins: pluginId -> routeName -> RouteMeta */
-const sandboxedRouteMetaCache = new Map<string, Map<string, RouteMeta>>();
-let sandboxRunner: SandboxRunner | null = null;
+>;
+
+/**
+ * Sandboxed and runtime-installed plugin state for one site. Each site's
+ * runtime loads its own plugin set from its own database and storage, so the
+ * caches are kept per site; the default site uses a single module-wide set.
+ */
+interface PluginCaches {
+	sandboxedPluginCache: Map<string, SandboxedPluginInstance>;
+	sandboxedManifestCache: Map<string, PluginManifest>;
+	/**
+	 * Per-tier sets of `${pluginId}:${version}` keys present in
+	 * `sandboxedPluginCache`. Used during sync to know which entries belong
+	 * to which install source so we can invalidate only what belongs to the
+	 * tier currently being synced.
+	 */
+	marketplacePluginKeys: Set<string>;
+	registryPluginKeys: Set<string>;
+	/**
+	 * Manifest metadata for runtime-installed sandboxed plugins (marketplace
+	 * and registry both). Keyed by `pluginId`; readers don't care which
+	 * source the plugin came from. Named `marketplace*` for legacy reasons.
+	 */
+	marketplaceManifestCache: MarketplaceManifestEntry;
+	/** Route metadata for sandboxed plugins: pluginId -> routeName -> RouteMeta */
+	sandboxedRouteMetaCache: Map<string, Map<string, RouteMeta>>;
+	sandboxRunner: SandboxRunner | null;
+}
+
+function createPluginCaches(): PluginCaches {
+	return {
+		sandboxedPluginCache: new Map(),
+		sandboxedManifestCache: new Map(),
+		marketplacePluginKeys: new Set(),
+		registryPluginKeys: new Set(),
+		marketplaceManifestCache: new Map(),
+		sandboxedRouteMetaCache: new Map(),
+		sandboxRunner: null,
+	};
+}
+
+const defaultPluginCaches = createPluginCaches();
+const sitePluginCaches = new Map<string, PluginCaches>();
+
+function pluginCachesFor(siteId: string | undefined): PluginCaches {
+	if (siteId === undefined) return defaultPluginCaches;
+	let caches = sitePluginCaches.get(siteId);
+	if (!caches) {
+		caches = createPluginCaches();
+		sitePluginCaches.set(siteId, caches);
+	}
+	return caches;
+}
+
+/** The db and storage holder key for a deployment's database or storage entrypoint. */
+function siteCacheKey(entrypoint: string, siteId: string | undefined): string {
+	return siteId === undefined ? entrypoint : `${entrypoint}@site:${siteId}`;
+}
 
 function allowedBrowserImageHosts(
 	capabilities: readonly PluginCapability[],
@@ -1000,6 +1046,7 @@ export class EmDashRuntime {
 	};
 	/** Dependencies needed for exclusive hook resolution */
 	private runtimeDeps: RuntimeDependencies;
+	private readonly pluginCaches: PluginCaches;
 	/** Mutable ref for the cron invokeCronHook closure to read the current pipeline */
 	private pipelineRef!: { current: HookPipeline };
 	private readonly commentModerationInProgress = new Set<string>();
@@ -1053,6 +1100,7 @@ export class EmDashRuntime {
 		this.allPipelinePlugins = parts.allPipelinePlugins;
 		this.pipelineFactoryOptions = parts.pipelineFactoryOptions;
 		this.runtimeDeps = parts.runtimeDeps;
+		this.pluginCaches = pluginCachesFor(parts.runtimeDeps.siteId);
 		this.pipelineRef = parts.pipelineRef;
 	}
 
@@ -1060,7 +1108,7 @@ export class EmDashRuntime {
 	 * Get the sandbox runner instance (for marketplace install/update)
 	 */
 	getSandboxRunner(): SandboxRunner | null {
-		return sandboxRunner;
+		return this.pluginCaches.sandboxRunner;
 	}
 
 	/**
@@ -1328,7 +1376,7 @@ export class EmDashRuntime {
 		for (const plugin of this.allPipelinePlugins) {
 			map.set(plugin.id, plugin);
 		}
-		for (const manifest of marketplaceManifestCache.values()) {
+		for (const manifest of this.pluginCaches.marketplaceManifestCache.values()) {
 			if (!map.has(manifest.id)) {
 				map.set(manifest.id, manifest);
 			}
@@ -1451,15 +1499,15 @@ export class EmDashRuntime {
 	async shutdown(): Promise<void> {
 		await this._rooms?.shutdown();
 		await this.stopCron();
-		sandboxRunner?.setCommentModerate?.(null);
-		await sandboxRunner?.terminateAll();
-		sandboxRunner = null;
-		sandboxedPluginCache.clear();
-		sandboxedManifestCache.clear();
-		sandboxedRouteMetaCache.clear();
-		marketplaceManifestCache.clear();
-		marketplacePluginKeys.clear();
-		registryPluginKeys.clear();
+		this.pluginCaches.sandboxRunner?.setCommentModerate?.(null);
+		await this.pluginCaches.sandboxRunner?.terminateAll();
+		this.pluginCaches.sandboxRunner = null;
+		this.pluginCaches.sandboxedPluginCache.clear();
+		this.pluginCaches.sandboxedManifestCache.clear();
+		this.pluginCaches.sandboxedRouteMetaCache.clear();
+		this.pluginCaches.marketplaceManifestCache.clear();
+		this.pluginCaches.marketplacePluginKeys.clear();
+		this.pluginCaches.registryPluginKeys.clear();
 	}
 
 	/**
@@ -1561,7 +1609,10 @@ export class EmDashRuntime {
 				if (isCurrentClaim()) {
 					this.setSandboxedPluginActive(pluginId, false);
 					this.enabledPlugins.delete(pluginId);
-					for (const key of [...registryPluginKeys, ...marketplacePluginKeys]) {
+					for (const key of [
+						...this.pluginCaches.registryPluginKeys,
+						...this.pluginCaches.marketplacePluginKeys,
+					]) {
 						if (key.slice(0, key.lastIndexOf(":")) === pluginId) {
 							await this.discardRuntimePlugin(key, isCurrentClaim);
 						}
@@ -1605,7 +1656,12 @@ export class EmDashRuntime {
 				}
 				return;
 			}
-			if (!this.installedPluginSandboxAvailable || !this.storage || !sandboxRunner) return;
+			if (
+				!this.installedPluginSandboxAvailable ||
+				!this.storage ||
+				!this.pluginCaches.sandboxRunner
+			)
+				return;
 			await this.retryRuntimePlugins(snapshot, isCurrentClaim, pluginId, true);
 			if (!isCurrentClaim()) return;
 			plugin = this.allPipelinePlugins.find(matches);
@@ -1695,7 +1751,10 @@ export class EmDashRuntime {
 					if (current()) {
 						this.setSandboxedPluginActive(pluginId, active);
 						if (!active) {
-							for (const key of [...registryPluginKeys, ...marketplacePluginKeys]) {
+							for (const key of [
+								...this.pluginCaches.registryPluginKeys,
+								...this.pluginCaches.marketplacePluginKeys,
+							]) {
 								if (key.slice(0, key.lastIndexOf(":")) === pluginId)
 									await this.discardRuntimePlugin(key, current);
 							}
@@ -1743,7 +1802,9 @@ export class EmDashRuntime {
 			if (
 				this.sandboxedPlugins.has(`${plugin.id}:${plugin.version}`) &&
 				(error?.name === "SandboxUnavailableError" ||
-					(error instanceof HookTimeoutError && sandboxRunner && !sandboxRunner.isHealthy()))
+					(error instanceof HookTimeoutError &&
+						this.pluginCaches.sandboxRunner &&
+						!this.pluginCaches.sandboxRunner.isHealthy()))
 			) {
 				sandboxReadiness = undefined;
 				await stateRepo.delete(plugin.id, {
@@ -1777,11 +1838,12 @@ export class EmDashRuntime {
 					try {
 						// Readiness has its own deadline, not the hook's execution budget.
 						await (sandboxReadiness ??=
-							sandboxRunner?.ensureRunning?.({ waitForPendingRestart: true }) ?? Promise.resolve());
-						if (sandboxRunner && !sandboxRunner.isHealthy()) {
+							this.pluginCaches.sandboxRunner?.ensureRunning?.({ waitForPendingRestart: true }) ??
+							Promise.resolve());
+						if (this.pluginCaches.sandboxRunner && !this.pluginCaches.sandboxRunner.isHealthy()) {
 							throw new SandboxUnavailableError(
 								plugin.id,
-								sandboxRunner.unavailableReason?.() ?? "not ready",
+								this.pluginCaches.sandboxRunner.unavailableReason?.() ?? "not ready",
 							);
 						}
 					} catch (error) {
@@ -1806,15 +1868,15 @@ export class EmDashRuntime {
 				if (
 					this.sandboxedPlugins.has(`${plugin.id}:${plugin.version}`) &&
 					plugin.hooks["plugin:activate"] &&
-					sandboxRunner &&
-					!sandboxRunner.isHealthy()
+					this.pluginCaches.sandboxRunner &&
+					!this.pluginCaches.sandboxRunner.isHealthy()
 				) {
 					await recordFailure(
 						plugin,
 						"plugin:activate",
 						new SandboxUnavailableError(
 							plugin.id,
-							sandboxRunner.unavailableReason?.() ?? "not ready",
+							this.pluginCaches.sandboxRunner.unavailableReason?.() ?? "not ready",
 						),
 					);
 					continue;
@@ -1908,8 +1970,8 @@ export class EmDashRuntime {
 	private async syncPluginState(): Promise<void> {
 		const repo = new PluginStateRepository(this.db);
 		const writtenGeneration = repo.getLastWrittenGeneration();
-		if (!this.runtimeDeps.sandboxBypassed && sandboxRunner) {
-			this.installedPluginSandboxAvailable = sandboxRunner.isAvailable();
+		if (!this.runtimeDeps.sandboxBypassed && this.pluginCaches.sandboxRunner) {
+			this.installedPluginSandboxAvailable = this.pluginCaches.sandboxRunner.isAvailable();
 		}
 		try {
 			await this.withPluginStateLock(async (isCurrentClaim) => {
@@ -1938,7 +2000,7 @@ export class EmDashRuntime {
 		return !(
 			this.sandboxedPluginEntries.some((entry) => entry.id === pluginId) ||
 			(this.configuredPlugins.some((plugin) => plugin.id === pluginId) &&
-				!marketplaceManifestCache.has(pluginId))
+				!this.pluginCaches.marketplaceManifestCache.has(pluginId))
 		);
 	}
 
@@ -2024,7 +2086,9 @@ export class EmDashRuntime {
 		const failure = this.pluginRefreshFailures.get(pluginId);
 		if (failure?.stateKey === this.pluginStateFingerprint(state) && Date.now() < failure.retryAt)
 			return false;
-		return !sandboxedPluginCache.has(`${pluginId}:${this.runtimePluginVersion(state)}`);
+		return !this.pluginCaches.sandboxedPluginCache.has(
+			`${pluginId}:${this.runtimePluginVersion(state)}`,
+		);
 	}
 
 	private async finishPluginPipeline(isCurrentClaim: () => boolean): Promise<void> {
@@ -2093,10 +2157,13 @@ export class EmDashRuntime {
 		states: ReadonlyMap<string, PluginState>,
 		isCurrentClaim: () => boolean,
 	): Promise<void> {
-		for (const key of [...registryPluginKeys, ...marketplacePluginKeys]) {
+		for (const key of [
+			...this.pluginCaches.registryPluginKeys,
+			...this.pluginCaches.marketplacePluginKeys,
+		]) {
 			const pluginId = key.slice(0, key.lastIndexOf(":"));
 			const desired = states.get(pluginId);
-			const source = registryPluginKeys.has(key) ? "registry" : "marketplace";
+			const source = this.pluginCaches.registryPluginKeys.has(key) ? "registry" : "marketplace";
 			if (
 				desired?.status === "active" &&
 				this.isRuntimePluginState(desired) &&
@@ -2110,20 +2177,20 @@ export class EmDashRuntime {
 	private async discardRuntimePlugin(key: string, isCurrentClaim: () => boolean): Promise<void> {
 		const pluginId = key.slice(0, key.lastIndexOf(":"));
 		try {
-			const instance = sandboxedPluginCache.get(key);
+			const instance = this.pluginCaches.sandboxedPluginCache.get(key);
 			instance?.setActive?.(false);
 			await instance?.terminate();
 		} catch (error) {
 			console.warn(`EmDash: Failed to terminate sandboxed plugin ${key}:`, error);
 		}
 		if (!isCurrentClaim()) throw new Error("Plugin synchronization was superseded");
-		sandboxedPluginCache.delete(key);
-		sandboxedManifestCache.delete(key);
+		this.pluginCaches.sandboxedPluginCache.delete(key);
+		this.pluginCaches.sandboxedManifestCache.delete(key);
 		this.sandboxedPlugins.delete(key);
-		registryPluginKeys.delete(key);
-		marketplacePluginKeys.delete(key);
-		sandboxedRouteMetaCache.delete(pluginId);
-		marketplaceManifestCache.delete(pluginId);
+		this.pluginCaches.registryPluginKeys.delete(key);
+		this.pluginCaches.marketplacePluginKeys.delete(key);
+		this.pluginCaches.sandboxedRouteMetaCache.delete(pluginId);
+		this.pluginCaches.marketplaceManifestCache.delete(pluginId);
 		this.removePluginFromLists(pluginId);
 		this.pluginPipelineDirty = true;
 	}
@@ -2137,7 +2204,7 @@ export class EmDashRuntime {
 		if (
 			this.runtimeDeps.sandboxBypassed ||
 			!this.storage ||
-			!sandboxRunner ||
+			!this.pluginCaches.sandboxRunner ||
 			!this.installedPluginSandboxAvailable
 		)
 			return;
@@ -2148,7 +2215,7 @@ export class EmDashRuntime {
 			const pluginId = state.pluginId;
 			const version = this.runtimePluginVersion(state);
 			const key = `${pluginId}:${version}`;
-			if (sandboxedPluginCache.has(key)) continue;
+			if (this.pluginCaches.sandboxedPluginCache.has(key)) continue;
 			const stateKey = this.pluginStateFingerprint(state);
 			const failed = this.pluginRefreshFailures.get(pluginId);
 			if (failed?.stateKey === stateKey && Date.now() < failed.retryAt) continue;
@@ -2161,25 +2228,34 @@ export class EmDashRuntime {
 				);
 				if (!isCurrentClaim()) throw new Error("Plugin synchronization was superseded");
 				if (!bundle) throw new Error(`Plugin bundle unavailable: ${pluginId}@${version}`);
-				const loaded = await sandboxRunner.load(bundle.manifest, bundle.backendCode);
+				const loaded = await this.pluginCaches.sandboxRunner.load(
+					bundle.manifest,
+					bundle.backendCode,
+				);
 				if (!isCurrentClaim()) {
-					if (sandboxedPluginCache.get(key) !== loaded) await loaded.terminate();
+					if (this.pluginCaches.sandboxedPluginCache.get(key) !== loaded) await loaded.terminate();
 					throw new Error("Plugin synchronization was superseded");
 				}
-				for (const previous of [...registryPluginKeys, ...marketplacePluginKeys]) {
+				for (const previous of [
+					...this.pluginCaches.registryPluginKeys,
+					...this.pluginCaches.marketplacePluginKeys,
+				]) {
 					if (previous !== key && previous.slice(0, previous.lastIndexOf(":")) === pluginId) {
 						await this.discardRuntimePlugin(previous, isCurrentClaim);
 					}
 				}
 				this.invalidateStorageIndexReadiness(pluginId);
-				sandboxedPluginCache.set(key, loaded);
-				sandboxedManifestCache.set(key, bundle.manifest);
+				this.pluginCaches.sandboxedPluginCache.set(key, loaded);
+				this.pluginCaches.sandboxedManifestCache.set(key, bundle.manifest);
 				this.sandboxedPlugins.set(key, loaded);
 				this.allPipelinePlugins.push(createSandboxedPluginProxy(bundle.manifest, loaded));
-				(state.source === "registry" ? registryPluginKeys : marketplacePluginKeys).add(key);
+				(state.source === "registry"
+					? this.pluginCaches.registryPluginKeys
+					: this.pluginCaches.marketplacePluginKeys
+				).add(key);
 				this.pluginRefreshFailures.delete(pluginId);
 				this.pluginPipelineDirty = true;
-				marketplaceManifestCache.set(pluginId, {
+				this.pluginCaches.marketplaceManifestCache.set(pluginId, {
 					id: bundle.manifest.id,
 					version: bundle.manifest.version,
 					admin: bundle.manifest.admin,
@@ -2193,8 +2269,8 @@ export class EmDashRuntime {
 					const normalized = normalizeManifestRoute(entry);
 					routeMeta.set(normalized.name, buildRouteMeta(normalized));
 				}
-				if (routeMeta.size > 0) sandboxedRouteMetaCache.set(pluginId, routeMeta);
-				else sandboxedRouteMetaCache.delete(pluginId);
+				if (routeMeta.size > 0) this.pluginCaches.sandboxedRouteMetaCache.set(pluginId, routeMeta);
+				else this.pluginCaches.sandboxedRouteMetaCache.delete(pluginId);
 			} catch (error) {
 				if (!isCurrentClaim()) throw error;
 				this.pluginRefreshFailures.set(pluginId, {
@@ -2261,13 +2337,13 @@ export class EmDashRuntime {
 
 			// Drop metadata for plugins no longer active.
 			const toRemove: string[] = [];
-			for (const pluginId of marketplaceManifestCache.keys()) {
+			for (const pluginId of this.pluginCaches.marketplaceManifestCache.keys()) {
 				if (!desired.has(pluginId)) toRemove.push(pluginId);
 			}
 			for (const pluginId of toRemove) {
 				if (!isCurrentClaim()) throw new Error("Plugin synchronization was superseded");
-				marketplaceManifestCache.delete(pluginId);
-				sandboxedRouteMetaCache.delete(pluginId);
+				this.pluginCaches.marketplaceManifestCache.delete(pluginId);
+				this.pluginCaches.sandboxedRouteMetaCache.delete(pluginId);
 				// Remove from pipeline lists too (mutate in place since the
 				// arrays are readonly references but mutable contents)
 				this.removePluginFromLists(pluginId);
@@ -2277,7 +2353,7 @@ export class EmDashRuntime {
 			// Load plugin code, adapt as trusted plugins, and add to pipeline lists
 			for (const [pluginId, version] of desired) {
 				if (
-					marketplaceManifestCache.get(pluginId)?.version === version &&
+					this.pluginCaches.marketplaceManifestCache.get(pluginId)?.version === version &&
 					this.configuredPlugins.some(
 						(plugin) => plugin.id === pluginId && plugin.version === version,
 					)
@@ -2289,7 +2365,7 @@ export class EmDashRuntime {
 					console.warn(`EmDash: Marketplace plugin ${pluginId}@${version} not found in R2`);
 					continue;
 				}
-				marketplaceManifestCache.set(pluginId, {
+				this.pluginCaches.marketplaceManifestCache.set(pluginId, {
 					id: bundle.manifest.id,
 					version: bundle.manifest.version,
 					admin: bundle.manifest.admin,
@@ -2304,9 +2380,9 @@ export class EmDashRuntime {
 						const normalized = normalizeManifestRoute(entry);
 						routeMetaMap.set(normalized.name, buildRouteMeta(normalized));
 					}
-					sandboxedRouteMetaCache.set(pluginId, routeMetaMap);
+					this.pluginCaches.sandboxedRouteMetaCache.set(pluginId, routeMetaMap);
 				} else {
-					sandboxedRouteMetaCache.delete(pluginId);
+					this.pluginCaches.sandboxedRouteMetaCache.delete(pluginId);
 				}
 
 				// Skip if already in the pipeline at this version
@@ -2380,6 +2456,7 @@ export class EmDashRuntime {
 		deps: RuntimeDependencies,
 		timings?: Array<{ name: string; dur: number; desc?: string }>,
 	): Promise<EmDashRuntime> {
+		const pluginCaches = pluginCachesFor(deps.siteId);
 		// Helper: time a phase and push into the shared timings array when
 		// provided. Uses performance.now() — monotonic across async boundaries.
 		// No-op when `timings` wasn't passed (preserves backwards compatibility
@@ -2689,7 +2766,7 @@ export class EmDashRuntime {
 				await disposeReadDb();
 				throw error;
 			}
-			const seedKey = deps.config.database?.entrypoint ?? "default";
+			const seedKey = siteCacheKey(deps.config.database?.entrypoint ?? "default", deps.siteId);
 			const seedHolder = getSeedHolder();
 			try {
 				await initWithLock(
@@ -2866,6 +2943,7 @@ export class EmDashRuntime {
 			const marketplaceBypassed = await EmDashRuntime.loadMarketplacePluginsBypassed(
 				storage,
 				installedPluginStates,
+				pluginCaches,
 			);
 			for (const plugin of marketplaceBypassed) {
 				allPipelinePlugins.push(plugin);
@@ -2939,7 +3017,7 @@ export class EmDashRuntime {
 		// plugins. The proxy carries only manifest metadata and RPC handlers;
 		// plugin code remains inside the configured runner.
 		for (const [pluginKey, instance] of sandboxedPlugins) {
-			const manifest = sandboxedManifestCache.get(pluginKey);
+			const manifest = pluginCaches.sandboxedManifestCache.get(pluginKey);
 			if (!manifest) continue;
 			allPipelinePlugins.push(createSandboxedPluginProxy(manifest, instance));
 			const status = pluginStates.get(manifest.id);
@@ -3069,8 +3147,10 @@ export class EmDashRuntime {
 
 		// Wire email send into sandbox runner (created earlier but without
 		// email pipeline since it didn't exist yet)
-		if (sandboxRunner) {
-			sandboxRunner.setEmailSend((message, pluginId) => emailPipeline.send(message, pluginId));
+		if (pluginCaches.sandboxRunner) {
+			pluginCaches.sandboxRunner.setEmailSend((message, pluginId) =>
+				emailPipeline.send(message, pluginId),
+			);
 		}
 
 		// ── Cron system ──────────────────────────────────────────────────
@@ -3140,7 +3220,7 @@ export class EmDashRuntime {
 				// Non-fatal — CMS works without cron
 			}
 		});
-		sandboxRunner?.setCronReschedule?.(() => cronScheduler?.reschedule());
+		pluginCaches.sandboxRunner?.setCronReschedule?.(() => cronScheduler?.reschedule());
 
 		const runtime = new EmDashRuntime({
 			installedPluginSandboxAvailable,
@@ -3199,14 +3279,14 @@ export class EmDashRuntime {
 		};
 		runtime.pipelineFactoryOptions.contentCreate = contentCreate;
 		pipeline.setContextFactory({ contentCreate });
-		sandboxRunner?.setContentCreate?.(contentCreate);
+		pluginCaches.sandboxRunner?.setContentCreate?.(contentCreate);
 		// Hand the constructed instance to the scheduler-cleanup closure so the
 		// timer-driven sweep can fire publish hooks (see runtimeRef above).
 		runtimeRef.current = runtime;
-		sandboxRunner?.setCommentModerate?.((pluginId, id, status, expectedStatus) =>
+		pluginCaches.sandboxRunner?.setCommentModerate?.((pluginId, id, status, expectedStatus) =>
 			runtime.handlePluginCommentModerate(pluginId, id, status, expectedStatus),
 		);
-		sandboxRunner?.setContentActions?.(contentActions);
+		pluginCaches.sandboxRunner?.setContentActions?.(contentActions);
 
 		if (ownsConfiguredDb && pluginStatesRead) {
 			// A sandbox that failed to load must not consume its first-install guard.
@@ -3255,9 +3335,8 @@ export class EmDashRuntime {
 		const dbConfig = deps.config.database;
 		if (!dbConfig) return false;
 		const holder = getDbHolder();
-		return (
-			!holder.cache.has(dbConfig.entrypoint) && !activeInitFailure(holder, dbConfig.entrypoint)
-		);
+		const cacheKey = siteCacheKey(dbConfig.entrypoint, deps.siteId);
+		return !holder.cache.has(cacheKey) && !activeInitFailure(holder, cacheKey);
 	}
 
 	/**
@@ -3295,7 +3374,7 @@ export class EmDashRuntime {
 			}
 		}
 
-		const cacheKey = dbConfig.entrypoint;
+		const cacheKey = siteCacheKey(dbConfig.entrypoint, deps.siteId);
 
 		// Waiters poll the cache rather than sharing the initializing request's
 		// promise: if the request that owns the init is cancelled mid-await
@@ -3389,6 +3468,34 @@ export class EmDashRuntime {
 	}
 
 	/**
+	 * Releases the database connection, storage adapter, seed state, and
+	 * plugin caches held for a site in this worker. Call after shutting down
+	 * the site's runtime; the next request for the site opens them again.
+	 */
+	static releaseSite(siteId: string): void {
+		const suffix = siteCacheKey("", siteId);
+		const dbHolder = getDbHolder();
+		for (const [key, db] of dbHolder.cache) {
+			if (!key.endsWith(suffix)) continue;
+			dbHolder.cache.delete(key);
+			db.destroy().catch((error: unknown) => {
+				console.error(`[emdash:multisite] closing site ${siteId}'s database failed:`, error);
+			});
+		}
+		for (const key of dbHolder.failures.keys()) {
+			if (key.endsWith(suffix)) dbHolder.failures.delete(key);
+		}
+		for (const key of storageCache.keys()) {
+			if (key.endsWith(suffix)) storageCache.delete(key);
+		}
+		const seedHolder = getSeedHolder();
+		for (const key of seedHolder.done) {
+			if (key.endsWith(suffix)) seedHolder.done.delete(key);
+		}
+		sitePluginCaches.delete(siteId);
+	}
+
+	/**
 	 * Get or create storage instance
 	 */
 	static getStorage(deps: RuntimeDependencies): Storage | null {
@@ -3397,7 +3504,7 @@ export class EmDashRuntime {
 			return null;
 		}
 
-		const cacheKey = storageConfig.entrypoint;
+		const cacheKey = siteCacheKey(storageConfig.entrypoint, deps.siteId);
 		const cached = storageCache.get(cacheKey);
 		if (cached) {
 			return cached;
@@ -3500,14 +3607,15 @@ export class EmDashRuntime {
 			trailingSlash?: "always" | "never" | "ignore";
 		},
 	): Promise<Map<string, SandboxedPluginInstance>> {
+		const pluginCaches = pluginCachesFor(deps.siteId);
 		// Check if sandboxing is enabled
 		if (!deps.sandboxEnabled) {
-			return sandboxedPluginCache;
+			return pluginCaches.sandboxedPluginCache;
 		}
 
 		// Create sandbox runner if not exists
-		if (!sandboxRunner && deps.createSandboxRunner) {
-			sandboxRunner = deps.createSandboxRunner(
+		if (!pluginCaches.sandboxRunner && deps.createSandboxRunner) {
+			pluginCaches.sandboxRunner = deps.createSandboxRunner(
 				createSandboxRunnerOptions(
 					{
 						db,
@@ -3532,15 +3640,15 @@ export class EmDashRuntime {
 			);
 		}
 
-		if (!sandboxRunner) {
-			return sandboxedPluginCache;
+		if (!pluginCaches.sandboxRunner) {
+			return pluginCaches.sandboxedPluginCache;
 		}
 
 		// Check if the runner is actually available (has required bindings).
 		// Warn regardless of whether there are plugins to load, so operators
 		// see the issue even if no marketplace plugins are installed yet.
-		if (!sandboxRunner.isAvailable()) {
-			const reason = sandboxRunner.unavailableReason?.();
+		if (!pluginCaches.sandboxRunner.isAvailable()) {
+			const reason = pluginCaches.sandboxRunner.unavailableReason?.();
 			console.warn(
 				reason
 					? `EmDash: Plugin sandbox is configured but not available on this platform: ${reason}. ` +
@@ -3549,24 +3657,24 @@ export class EmDashRuntime {
 							"Sandboxed plugins will not be loaded. " +
 							"If using @emdash-cms/sandbox-workerd/sandbox, ensure workerd is installed.",
 			);
-			return sandboxedPluginCache;
+			return pluginCaches.sandboxedPluginCache;
 		}
 
 		if (deps.sandboxedPluginEntries.length === 0) {
-			return sandboxedPluginCache;
+			return pluginCaches.sandboxedPluginCache;
 		}
 
 		// sandbox: false escape hatch is handled separately (before pipeline
 		// creation) via loadBypassedPlugins. If we somehow reach here with the
 		// flag set, just return — the plugins are already in the trusted pipeline.
 		if (deps.sandboxBypassed) {
-			return sandboxedPluginCache;
+			return pluginCaches.sandboxedPluginCache;
 		}
 
 		// Load each sandboxed plugin via sandbox runner
 		for (const entry of deps.sandboxedPluginEntries) {
 			const pluginKey = `${entry.id}:${entry.version}`;
-			if (sandboxedPluginCache.has(pluginKey)) {
+			if (pluginCaches.sandboxedPluginCache.has(pluginKey)) {
 				continue;
 			}
 
@@ -3613,9 +3721,9 @@ export class EmDashRuntime {
 					mcp: entry.mcp,
 				};
 
-				const plugin = await sandboxRunner.load(manifest, entry.code);
-				sandboxedPluginCache.set(pluginKey, plugin);
-				sandboxedManifestCache.set(pluginKey, manifest);
+				const plugin = await pluginCaches.sandboxRunner.load(manifest, entry.code);
+				pluginCaches.sandboxedPluginCache.set(pluginKey, plugin);
+				pluginCaches.sandboxedManifestCache.set(pluginKey, manifest);
 				console.log(
 					`EmDash: Loaded sandboxed plugin ${pluginKey} with capabilities: [${manifest.capabilities.join(", ")}]`,
 				);
@@ -3626,16 +3734,16 @@ export class EmDashRuntime {
 						const normalized = normalizeManifestRoute(routeEntry);
 						routeMetaMap.set(normalized.name, buildRouteMeta(normalized));
 					}
-					sandboxedRouteMetaCache.set(entry.id, routeMetaMap);
+					pluginCaches.sandboxedRouteMetaCache.set(entry.id, routeMetaMap);
 				} else {
-					sandboxedRouteMetaCache.delete(entry.id);
+					pluginCaches.sandboxedRouteMetaCache.delete(entry.id);
 				}
 			} catch (error) {
 				console.error(`EmDash: Failed to load sandboxed plugin ${entry.id}:`, error);
 			}
 		}
 
-		return sandboxedPluginCache;
+		return pluginCaches.sandboxedPluginCache;
 	}
 
 	/**
@@ -3661,10 +3769,11 @@ export class EmDashRuntime {
 			trailingSlash?: "always" | "never" | "ignore";
 		},
 	): Promise<boolean> {
+		const pluginCaches = pluginCachesFor(deps.siteId);
 		// Ensure sandbox runner exists with media storage wired up.
 		// (storage here is the media Storage adapter from the runtime.)
-		if (!sandboxRunner && deps.createSandboxRunner) {
-			sandboxRunner = deps.createSandboxRunner(
+		if (!pluginCaches.sandboxRunner && deps.createSandboxRunner) {
+			pluginCaches.sandboxRunner = deps.createSandboxRunner(
 				createSandboxRunnerOptions(
 					{
 						db,
@@ -3690,11 +3799,14 @@ export class EmDashRuntime {
 		// BEFORE pipeline creation by EmDashRuntime.create(). Skip here.
 		if (deps.sandboxBypassed) return false;
 
-		if (!sandboxRunner || !sandboxRunner.isAvailable()) {
+		if (!pluginCaches.sandboxRunner || !pluginCaches.sandboxRunner.isAvailable()) {
 			return false;
 		}
 
-		const keySet = source === "marketplace" ? marketplacePluginKeys : registryPluginKeys;
+		const keySet =
+			source === "marketplace"
+				? pluginCaches.marketplacePluginKeys
+				: pluginCaches.registryPluginKeys;
 
 		for (const plugin of states.filter((state) => state.source === source)) {
 			if (plugin.status !== "active") continue;
@@ -3715,13 +3827,13 @@ export class EmDashRuntime {
 					continue;
 				}
 
-				const loaded = await sandboxRunner.load(bundle.manifest, bundle.backendCode);
+				const loaded = await pluginCaches.sandboxRunner.load(bundle.manifest, bundle.backendCode);
 				cache.set(pluginKey, loaded);
-				sandboxedManifestCache.set(pluginKey, bundle.manifest);
+				pluginCaches.sandboxedManifestCache.set(pluginKey, bundle.manifest);
 				keySet.add(pluginKey);
 
 				// Cache manifest admin config for getManifest()
-				marketplaceManifestCache.set(plugin.pluginId, {
+				pluginCaches.marketplaceManifestCache.set(plugin.pluginId, {
 					id: bundle.manifest.id,
 					version: bundle.manifest.version,
 					admin: bundle.manifest.admin,
@@ -3738,7 +3850,7 @@ export class EmDashRuntime {
 						const normalized = normalizeManifestRoute(entry);
 						routeMeta.set(normalized.name, buildRouteMeta(normalized));
 					}
-					sandboxedRouteMetaCache.set(plugin.pluginId, routeMeta);
+					pluginCaches.sandboxedRouteMetaCache.set(plugin.pluginId, routeMeta);
 				}
 
 				console.log(
@@ -3767,6 +3879,7 @@ export class EmDashRuntime {
 	private static async loadMarketplacePluginsBypassed(
 		storage: Storage,
 		states: readonly PluginState[],
+		pluginCaches: PluginCaches,
 	): Promise<ResolvedPlugin[]> {
 		const resolved: ResolvedPlugin[] = [];
 		const marketplacePlugins = states.filter((state) => state.source === "marketplace");
@@ -3790,7 +3903,7 @@ export class EmDashRuntime {
 				}
 
 				// Cache manifest and route metadata for admin UI and route auth
-				marketplaceManifestCache.set(plugin.pluginId, {
+				pluginCaches.marketplaceManifestCache.set(plugin.pluginId, {
 					id: bundle.manifest.id,
 					version: bundle.manifest.version,
 					admin: bundle.manifest.admin,
@@ -3805,7 +3918,7 @@ export class EmDashRuntime {
 						const normalized = normalizeManifestRoute(entry);
 						routeMeta.set(normalized.name, buildRouteMeta(normalized));
 					}
-					sandboxedRouteMetaCache.set(plugin.pluginId, routeMeta);
+					pluginCaches.sandboxedRouteMetaCache.set(plugin.pluginId, routeMeta);
 				}
 
 				// Evaluate the bundled ESM and adapt it as a trusted plugin
@@ -4047,7 +4160,7 @@ export class EmDashRuntime {
 		}
 
 		// Add marketplace-installed plugins (dynamically loaded from R2)
-		for (const [pluginId, meta] of marketplaceManifestCache) {
+		for (const [pluginId, meta] of this.pluginCaches.marketplaceManifestCache) {
 			// Skip if already included from build-time config
 			if (manifestPlugins[pluginId]) continue;
 
@@ -6528,7 +6641,7 @@ export class EmDashRuntime {
 			};
 		}
 
-		const manifest = marketplaceManifestCache.get(pluginId);
+		const manifest = this.pluginCaches.marketplaceManifestCache.get(pluginId);
 		if (!manifest) return null;
 		const pages = (manifest.admin?.pages ?? []).map((page) => normalizePluginPagePath(page.path));
 		const imageHosts = allowedBrowserImageHosts(
@@ -6661,7 +6774,7 @@ export class EmDashRuntime {
 				capabilities = entry.capabilities;
 				allowedHosts = entry.allowedHosts;
 			} else {
-				const manifest = marketplaceManifestCache.get(pluginId);
+				const manifest = this.pluginCaches.marketplaceManifestCache.get(pluginId);
 				if (!manifest) return null;
 				panels = manifest.admin?.editorPanels;
 				actions = manifest.admin?.editorActions;
@@ -6756,7 +6869,7 @@ export class EmDashRuntime {
 		}
 
 		// Check sandboxed plugin route metadata cache
-		const meta = sandboxedRouteMetaCache.get(pluginId);
+		const meta = this.pluginCaches.sandboxedRouteMetaCache.get(pluginId);
 		if (meta) {
 			const routeMeta = meta.get(routeKey);
 			if (routeMeta) return routeMeta;
@@ -6766,7 +6879,7 @@ export class EmDashRuntime {
 		// that declares admin pages or widgets. This handles plugins installed
 		// from bundles that predate the explicit admin route requirement.
 		if (routeKey === "admin") {
-			const manifestMeta = marketplaceManifestCache.get(pluginId);
+			const manifestMeta = this.pluginCaches.marketplaceManifestCache.get(pluginId);
 			if (manifestMeta?.admin?.pages?.length || manifestMeta?.admin?.widgets?.length) {
 				return { public: false };
 			}
@@ -6793,7 +6906,7 @@ export class EmDashRuntime {
 	 * contract of `getPluginSettingsSchema` for build-time plugins.
 	 */
 	getRuntimePluginSettingsSchema(pluginId: string): Record<string, SettingField> | null {
-		const meta = marketplaceManifestCache.get(pluginId);
+		const meta = this.pluginCaches.marketplaceManifestCache.get(pluginId);
 		if (!meta) return null;
 		return meta.admin?.settingsSchema ?? {};
 	}
@@ -7026,7 +7139,8 @@ export class EmDashRuntime {
 		};
 
 		for (const entry of this.sandboxedPluginEntries) addManifestTools(entry.id, entry.mcp);
-		for (const [id, manifest] of marketplaceManifestCache) addManifestTools(id, manifest.mcp);
+		for (const [id, manifest] of this.pluginCaches.marketplaceManifestCache)
+			addManifestTools(id, manifest.mcp);
 
 		return tools;
 	}

@@ -187,6 +187,12 @@ export interface EmDashManifest {
 	 * Used by the login page to conditionally show the "Sign up" link.
 	 */
 	signupEnabled?: boolean;
+	/**
+	 * Present on the shared admin of a multi-site deployment. `siteId` is the
+	 * site the admin is managing and `orgId` its organization, both null when
+	 * it shows the control plane.
+	 */
+	multiSite?: { siteId: string | null; orgId: string | null };
 	/** Whether the site is in staging (hidden from search engines). */
 	staging?: boolean;
 	/** Whether this host runs co-editing rooms. When false, the editor doesn't ask to join one. */

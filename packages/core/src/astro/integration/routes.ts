@@ -1148,6 +1148,41 @@ export function injectMcpRoute(injectRoute: InjectRoute): void {
 }
 
 /**
+ * Injects the organization and site management routes of a multi-site
+ * deployment. They answer on the shared admin host only.
+ */
+export function injectMultiSiteRoutes(injectRoute: InjectRoute): void {
+	const routes: Array<[pattern: string, entrypoint: string]> = [
+		["/_emdash/api/multisite/sites", "api/multisite/sites/index.ts"],
+		["/_emdash/api/multisite/sites/[siteId]", "api/multisite/sites/[siteId]/index.ts"],
+		[
+			"/_emdash/api/multisite/sites/[siteId]/roles/[userId]",
+			"api/multisite/sites/[siteId]/roles/[userId].ts",
+		],
+		[
+			"/_emdash/api/multisite/sites/[siteId]/import-accounts",
+			"api/multisite/sites/[siteId]/import-accounts.ts",
+		],
+		["/_emdash/api/multisite/refs", "api/multisite/refs.ts"],
+		["/_emdash/api/multisite/orgs", "api/multisite/orgs/index.ts"],
+		["/_emdash/api/multisite/orgs/[orgId]", "api/multisite/orgs/[orgId]/index.ts"],
+		["/_emdash/api/multisite/orgs/[orgId]/sites", "api/multisite/orgs/[orgId]/sites.ts"],
+		["/_emdash/api/multisite/orgs/[orgId]/members", "api/multisite/orgs/[orgId]/members/index.ts"],
+		[
+			"/_emdash/api/multisite/orgs/[orgId]/members/[userId]",
+			"api/multisite/orgs/[orgId]/members/[userId].ts",
+		],
+		[
+			"/_emdash/api/multisite/orgs/[orgId]/invites/[email]",
+			"api/multisite/orgs/[orgId]/invites/[email].ts",
+		],
+	];
+	for (const [pattern, entrypoint] of routes) {
+		injectRoute({ pattern, entrypoint: resolveRoute(entrypoint) });
+	}
+}
+
+/**
  * Injects routes from pluggable auth providers.
  *
  * Each provider declares the routes it needs in its `AuthProviderDescriptor.routes` array.

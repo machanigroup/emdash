@@ -36,6 +36,7 @@ import { after } from "../after.js";
 import { OptionsRepository } from "../database/repositories/options.js";
 import { isRequestScopedDb } from "../database/request-scoped.js";
 import type { Database } from "../database/types.js";
+import { currentSiteId, siteScopedGlobal } from "../site-scope.js";
 import { decodeBase64url, encodeBase64url } from "../utils/base64.js";
 import {
 	createSingleFlightCache,
@@ -414,6 +415,10 @@ interface SecretsCacheHolder {
 	requestScoped?: SingleFlightCache<ResolvedSecrets>;
 }
 
+const SITE_REQUEST_SCOPED_SECRETS_KEY = Symbol.for(
+	"@emdash-cms/core/secrets-cache@2:request-scoped",
+);
+
 function getSecretsCache(db: Kysely<Database>): SingleFlightCache<ResolvedSecrets> {
 	// eslint-disable-next-line typescript/no-unsafe-type-assertion -- globalThis singleton pattern
 	const holder = globalThis as Record<symbol, SecretsCacheHolder | undefined>;
@@ -423,6 +428,11 @@ function getSecretsCache(db: Kysely<Database>): SingleFlightCache<ResolvedSecret
 		holder[SECRETS_CACHE_KEY] = entry;
 	}
 	if (isRequestScopedDb(db)) {
+		if (currentSiteId() !== undefined) {
+			return siteScopedGlobal(SITE_REQUEST_SCOPED_SECRETS_KEY, () =>
+				createSingleFlightCache<ResolvedSecrets>(),
+			);
+		}
 		entry.requestScoped ??= createSingleFlightCache<ResolvedSecrets>();
 		return entry.requestScoped;
 	}

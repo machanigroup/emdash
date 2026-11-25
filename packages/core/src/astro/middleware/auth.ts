@@ -38,9 +38,12 @@ import { getAuthMode, type ExternalAuthMode } from "../../auth/mode.js";
 import { startUserSession } from "../../auth/start-user-session.js";
 import type { AuthResult, ExternalAuthConfig } from "../../auth/types.js";
 import { getRegistryConfigInput } from "../../registry/config.js";
+import { getRequestContext } from "../../request-context.js";
+import type { EmDashConfig } from "../integration/runtime.js";
 import { resolveSessionUser } from "../session-user.js";
 import type { EmDashHandlers } from "../types.js";
 import { buildEmDashCsp, getConfiguredStorageEndpoint } from "./csp.js";
+import type { SiteRouter } from "./site.js";
 
 declare global {
 	namespace App {
@@ -53,6 +56,8 @@ declare global {
 			emdash?: EmDashHandlers;
 			/** Per-session playground database, set by the `@emdash-cms/cloudflare` playground middleware. */
 			__playgroundDb?: unknown;
+			/** The multi-site control plane, set on the shared admin host's control-plane routes. */
+			emdashMultiSite?: { router: SiteRouter; config: EmDashConfig };
 		}
 		interface SessionData {
 			user: { id: string };
@@ -470,8 +475,7 @@ async function handlePluginRouteAuth(
 		const { session } = context;
 		const sessionUser = await resolveSessionUser(session);
 		if (sessionUser?.id && emdash?.db) {
-			const adapter = createKyselyAdapter(emdash.db);
-			const user = await adapter.getUserById(sessionUser.id);
+			const user = await loadRequestUser(emdash.db, sessionUser.id);
 			if (user && !user.disabled) {
 				locals.user = user;
 			}
@@ -496,6 +500,19 @@ function isPublicPluginApiRoute(pathname: string, emdash: EmDashHandlers | undef
 }
 
 /**
+ * Loads the request's user from the site database. On a multi-site hostname
+ * whose accounts come from a shared admin host, the role is rechecked against
+ * the control plane first, and a user who lost access is treated as disabled.
+ */
+async function loadRequestUser(db: EmDashHandlers["db"], userId: string): Promise<User | null> {
+	const user = await createKyselyAdapter(db).getUserById(userId);
+	const refresh = getRequestContext()?.refreshSiteAccount;
+	if (!user || !refresh) return user;
+	const role = await refresh(user.id);
+	return role === null ? { ...user, disabled: true } : { ...user, role: toRoleLevel(role) };
+}
+
+/**
  * Soft auth check for public routes with edit mode cookie.
  * Checks the session and sets locals.user if valid, but never blocks the request.
  */
@@ -515,8 +532,7 @@ async function handlePublicRouteAuth(
 	try {
 		const sessionUser = await resolveSessionUser(session);
 		if (sessionUser?.id && emdash?.db) {
-			const adapter = createKyselyAdapter(emdash.db);
-			const user = await adapter.getUserById(sessionUser.id);
+			const user = await loadRequestUser(emdash.db, sessionUser.id);
 			if (user && !user.disabled) {
 				locals.user = user;
 			}
@@ -718,9 +734,7 @@ async function handleBearerAuth(
 
 	if (!resolved) return "invalid";
 
-	// Look up the user
-	const adapter = createKyselyAdapter(emdash.db);
-	const user = await adapter.getUserById(resolved.userId);
+	const user = await loadRequestUser(emdash.db, resolved.userId);
 
 	if (!user || user.disabled) return "invalid";
 
@@ -758,9 +772,7 @@ async function handlePasskeyAuth(
 			return context.redirect(loginUrl.toString());
 		}
 
-		// Get full user from database
-		const adapter = createKyselyAdapter(emdash.db);
-		const user = await adapter.getUserById(sessionUser.id);
+		const user = await loadRequestUser(emdash.db, sessionUser.id);
 
 		if (!user) {
 			// User no longer exists - clear session

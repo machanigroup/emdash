@@ -103,6 +103,14 @@ export const Permissions = {
 	"search:read": Role.SUBSCRIBER,
 	"search:manage": Role.ADMIN,
 
+	// Multi-site organizations. Checked against a member's organization role,
+	// except orgs:create and sites:manage, which need a deployment Admin
+	// because sites are attached to databases the operator configured.
+	"orgs:read": Role.SUBSCRIBER,
+	"orgs:members": Role.ADMIN,
+	"orgs:create": Role.ADMIN,
+	"sites:manage": Role.ADMIN,
+
 	// Auth
 	"auth:manage_own_credentials": Role.SUBSCRIBER,
 	"auth:manage_connections": Role.ADMIN,
