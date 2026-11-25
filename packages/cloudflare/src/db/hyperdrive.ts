@@ -64,7 +64,7 @@ import { env, waitUntil } from "cloudflare:workers";
 import { EmDashConfigurationError } from "emdash";
 import { kyselyLogOption } from "emdash/database/instrumentation";
 import { FailFastPostgresDialect } from "emdash/internal/database/pg-migration-lock";
-import { type Dialect, Kysely, PostgresDialect } from "kysely";
+import { type Dialect, Kysely } from "kysely";
 // `pg` is provided by the consuming site (an optional peer of `emdash`); it is
 // kept external from this package's bundle.
 import { Pool } from "pg";
@@ -215,7 +215,7 @@ export function createRequestScopedDb(opts: RequestScopedDbOpts): RequestScopedD
 
 	const pool = createPool(binding.connectionString, opts.config.max ?? DEFAULT_MAX);
 	const db = new Kysely<any>({
-		dialect: new PostgresDialect({ pool }),
+		dialect: new FailFastPostgresDialect({ pool }),
 		// Mirror the D1 adapter and the runtime singleton: route per-request
 		// queries through the instrumentation logger so db.* Server-Timing
 		// counters and EMDASH_QUERY_LOG capture Hyperdrive queries too. The
