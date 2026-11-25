@@ -208,7 +208,7 @@ msgid "{0, plural, one {# byline} other {# bylines}}"
 msgstr ""
 
 #. placeholder {0}: seedInfo.collections
-#: packages/admin/src/components/SetupWizard.tsx:220
+#: packages/admin/src/components/SetupWizard.tsx:226
 msgid "{0, plural, one {# collection} other {# collections}}"
 msgstr ""
 
@@ -218,7 +218,7 @@ msgid "{0, plural, one {# comment imported} other {# comments imported}}"
 msgstr ""
 
 #. placeholder {0}: result.affected
-#: packages/admin/src/router.tsx:3148
+#: packages/admin/src/router.tsx:3157
 msgid "{0, plural, one {# comment updated} other {# comments updated}}"
 msgstr ""
 
@@ -308,6 +308,11 @@ msgstr ""
 msgid "{0, plural, one {# media file imported} other {# media files imported}}"
 msgstr ""
 
+#. placeholder {0}: org.memberCount
+#: packages/admin/src/components/multisite/OrganizationsPage.tsx:123
+msgid "{0, plural, one {# member} other {# members}}"
+msgstr ""
+
 #. placeholder {0}: result.menus.created
 #: packages/admin/src/components/WordPressImport.tsx:2306
 msgid "{0, plural, one {# menu imported} other {# menus imported}}"
@@ -374,6 +379,11 @@ msgstr ""
 msgid "{0, plural, one {# row} other {# rows}} × {1, plural, one {# column} other {# columns}} selected"
 msgstr ""
 
+#. placeholder {0}: org.siteCount
+#: packages/admin/src/components/multisite/OrganizationsPage.tsx:122
+msgid "{0, plural, one {# site} other {# sites}}"
+msgstr ""
+
 #. placeholder {0}: result.skipped
 #: packages/admin/src/components/WordPressImport.tsx:2273
 msgid "{0, plural, one {# skipped (already exists)} other {# skipped (already exist)}}"
@@ -427,6 +437,11 @@ msgstr ""
 #. placeholder {0}: state.columns
 #: packages/admin/src/components/editor/TableControls.tsx:230
 msgid "{0, plural, one {Column deleted} other {# columns deleted}}"
+msgstr ""
+
+#. placeholder {0}: member.siteRoles.length
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:648
+msgid "{0, plural, one {Different role on # site} other {Different role on # sites}}"
 msgstr ""
 
 #. placeholder {0}: fields.length
@@ -537,6 +552,12 @@ msgstr ""
 msgid "{0} items will be imported"
 msgstr ""
 
+#. placeholder {0}: removing?.name || removing?.email || ""
+#. placeholder {1}: org.name
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:704
+msgid "{0} loses access to every site in {1}, including any API tokens they created there."
+msgstr ""
+
 #. placeholder {0}: i18n.number(progress.filesDone)
 #. placeholder {1}: i18n.number(progress.filesTotal)
 #. placeholder {2}: formatFileSize(progress.bytesDone)
@@ -548,7 +569,7 @@ msgstr ""
 
 #. placeholder {0}: i18n.number(seedProgress.done)
 #. placeholder {1}: i18n.number(seedProgress.total)
-#: packages/admin/src/components/SetupWizard.tsx:211
+#: packages/admin/src/components/SetupWizard.tsx:217
 msgid "{0} of {1} items"
 msgstr ""
 
@@ -574,17 +595,17 @@ msgid "{0} of {1} steps · {2} of {3}"
 msgstr ""
 
 #. placeholder {0}: failedIds.length
-#: packages/admin/src/router.tsx:845
+#: packages/admin/src/router.tsx:854
 msgid "{0} of {total} could not be deleted"
 msgstr ""
 
 #. placeholder {0}: failedIds.length
-#: packages/admin/src/router.tsx:801
+#: packages/admin/src/router.tsx:810
 msgid "{0} of {total} could not be published"
 msgstr ""
 
 #. placeholder {0}: failedIds.length
-#: packages/admin/src/router.tsx:824
+#: packages/admin/src/router.tsx:833
 msgid "{0} of {total} could not be updated"
 msgstr ""
 
@@ -876,7 +897,7 @@ msgstr ""
 msgid "{name} · Viewing"
 msgstr ""
 
-#: packages/admin/src/router.tsx:1279
+#: packages/admin/src/router.tsx:1288
 msgid "{name} changed this entry"
 msgstr ""
 
@@ -1165,8 +1186,8 @@ msgstr ""
 msgid "• URLs in your content are updated automatically"
 msgstr ""
 
-#: packages/admin/src/components/SetupWizard.tsx:290
-#: packages/admin/src/components/SetupWizard.tsx:341
+#: packages/admin/src/components/SetupWizard.tsx:296
+#: packages/admin/src/components/SetupWizard.tsx:347
 #: packages/admin/src/components/WordPressImport.tsx:1658
 msgid "← Back"
 msgstr ""
@@ -1343,6 +1364,10 @@ msgstr ""
 msgid "A media file is missing from the package"
 msgstr ""
 
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:125
+msgid "A member's role here applies to every site in the organization, unless a site gives them a different role."
+msgstr ""
+
 #: packages/admin/src/components/TaxonomyManager.tsx:126
 #: packages/admin/src/components/TaxonomyManager.tsx:918
 msgid "A name cannot be generated from this label. Type one manually using lowercase letters, numbers, and underscores."
@@ -1384,6 +1409,10 @@ msgstr ""
 
 #: packages/admin/src/components/settings/GeneralSettings.tsx:367
 msgid "A short description of your site"
+msgstr ""
+
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:525
+msgid "A site that isn't online answers every request with \"Site not found\", and nobody can manage it until it is back online."
 msgstr ""
 
 #: packages/admin/src/components/RelationForm.tsx:81
@@ -1449,7 +1478,7 @@ msgstr ""
 msgid "Accept & Update"
 msgstr ""
 
-#: packages/admin/src/router.tsx:527
+#: packages/admin/src/router.tsx:530
 msgid "Accept invitation"
 msgstr ""
 
@@ -1465,7 +1494,7 @@ msgstr ""
 msgid "Access denied"
 msgstr ""
 
-#: packages/admin/src/router.tsx:3170
+#: packages/admin/src/router.tsx:3179
 msgid "Access Denied"
 msgstr ""
 
@@ -1474,7 +1503,7 @@ msgstr ""
 msgid "Access your media library"
 msgstr ""
 
-#: packages/admin/src/components/SetupWizard.tsx:410
+#: packages/admin/src/components/SetupWizard.tsx:416
 msgid "Account"
 msgstr ""
 
@@ -1538,7 +1567,7 @@ msgid "Activation cannot be confirmed. Keep editing paused and refresh the statu
 msgstr ""
 
 #: packages/admin/src/components/users/UserDetail.tsx:210
-#: packages/admin/src/components/users/UserList.tsx:211
+#: packages/admin/src/components/users/UserList.tsx:235
 msgid "Active"
 msgstr ""
 
@@ -1739,6 +1768,12 @@ msgstr ""
 msgid "Add links to build your navigation menu"
 msgstr ""
 
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:629
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:769
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:830
+msgid "Add member"
+msgstr ""
+
 #: packages/admin/src/components/AllowedTypesEditor.tsx:196
 msgid "Add MIME type or extension"
 msgstr ""
@@ -1794,6 +1829,12 @@ msgstr ""
 
 #: packages/admin/src/components/ContentTypeEditor.tsx:691
 msgid "Add SEO metadata fields (title, description, image) and include in sitemap"
+msgstr ""
+
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:224
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:356
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:427
+msgid "Add site"
 msgstr ""
 
 #: packages/admin/src/components/FieldEditor.tsx:1610
@@ -1892,6 +1933,8 @@ msgid "Added:"
 msgstr ""
 
 #: packages/admin/src/components/MenuEditor.tsx:670
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:427
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:830
 #: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:384
 msgid "Adding..."
 msgstr ""
@@ -1921,12 +1964,12 @@ msgstr ""
 msgid "Admin"
 msgstr "Admin"
 
-#: packages/admin/src/components/Sidebar.tsx:461
+#: packages/admin/src/components/Sidebar.tsx:462
 msgctxt "navigation group"
 msgid "Admin"
 msgstr ""
 
-#: packages/admin/src/components/Sidebar.tsx:742
+#: packages/admin/src/components/Sidebar.tsx:746
 msgid "Admin navigation"
 msgstr ""
 
@@ -2034,8 +2077,8 @@ msgstr ""
 msgid "All locales"
 msgstr "Hizkuntza guztiak"
 
-#: packages/admin/src/components/users/UserList.tsx:52
-#: packages/admin/src/components/users/UserList.tsx:56
+#: packages/admin/src/components/users/UserList.tsx:57
+#: packages/admin/src/components/users/UserList.tsx:61
 msgid "All roles"
 msgstr "Rol guztiak"
 
@@ -2081,7 +2124,7 @@ msgid "Allowed block types"
 msgstr ""
 
 #: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:265
-#: packages/admin/src/router.tsx:3258
+#: packages/admin/src/router.tsx:3267
 msgid "Allowed Domains"
 msgstr ""
 
@@ -2195,21 +2238,21 @@ msgstr ""
 #: packages/admin/src/components/TaxonomySidebar.tsx:712
 #: packages/admin/src/components/TaxonomySidebar.tsx:875
 #: packages/admin/src/components/ThemeMarketplaceBrowse.tsx:114
-#: packages/admin/src/router.tsx:755
-#: packages/admin/src/router.tsx:776
-#: packages/admin/src/router.tsx:1001
-#: packages/admin/src/router.tsx:1224
-#: packages/admin/src/router.tsx:1390
-#: packages/admin/src/router.tsx:1458
-#: packages/admin/src/router.tsx:1817
-#: packages/admin/src/router.tsx:1995
-#: packages/admin/src/router.tsx:2020
-#: packages/admin/src/router.tsx:2107
-#: packages/admin/src/router.tsx:2139
-#: packages/admin/src/router.tsx:3120
-#: packages/admin/src/router.tsx:3156
-#: packages/admin/src/router.tsx:3691
-#: packages/admin/src/router.tsx:3885
+#: packages/admin/src/router.tsx:764
+#: packages/admin/src/router.tsx:785
+#: packages/admin/src/router.tsx:1010
+#: packages/admin/src/router.tsx:1233
+#: packages/admin/src/router.tsx:1399
+#: packages/admin/src/router.tsx:1467
+#: packages/admin/src/router.tsx:1826
+#: packages/admin/src/router.tsx:2004
+#: packages/admin/src/router.tsx:2029
+#: packages/admin/src/router.tsx:2116
+#: packages/admin/src/router.tsx:2148
+#: packages/admin/src/router.tsx:3129
+#: packages/admin/src/router.tsx:3165
+#: packages/admin/src/router.tsx:3720
+#: packages/admin/src/router.tsx:3914
 #: packages/admin/src/routes/byline-schema.tsx:143
 msgid "An error occurred"
 msgstr ""
@@ -2312,7 +2355,7 @@ msgstr ""
 #: packages/admin/src/components/Settings.tsx:109
 #: packages/admin/src/components/settings/ApiTokenSettings.tsx:210
 #: packages/admin/src/components/settings/ApiTokenSettings.tsx:351
-#: packages/admin/src/router.tsx:3272
+#: packages/admin/src/router.tsx:3281
 msgid "API Tokens"
 msgstr "API Tokenak"
 
@@ -2476,7 +2519,7 @@ msgstr ""
 msgid "Authentication error: {0}"
 msgstr ""
 
-#: packages/admin/src/components/LoginPage.tsx:200
+#: packages/admin/src/components/LoginPage.tsx:201
 msgid "Authentication error: {error}"
 msgstr "Autentifikazio errorea: {error}"
 
@@ -2517,7 +2560,7 @@ msgstr ""
 msgid "Authorize"
 msgstr ""
 
-#: packages/admin/src/router.tsx:538
+#: packages/admin/src/router.tsx:541
 msgid "Authorize device"
 msgstr ""
 
@@ -2581,7 +2624,7 @@ msgstr ""
 msgid "Automatic backups need a storage backend (R2, S3, or local storage). Configure storage in your EmDash config to enable them."
 msgstr ""
 
-#: packages/admin/src/router.tsx:1962
+#: packages/admin/src/router.tsx:1971
 msgid "Autosave failed"
 msgstr ""
 
@@ -2645,9 +2688,9 @@ msgid "Back to editing."
 msgstr ""
 
 #: packages/admin/src/components/InviteAcceptPage.tsx:177
-#: packages/admin/src/components/LoginPage.tsx:120
-#: packages/admin/src/components/LoginPage.tsx:157
-#: packages/admin/src/components/LoginPage.tsx:332
+#: packages/admin/src/components/LoginPage.tsx:121
+#: packages/admin/src/components/LoginPage.tsx:158
+#: packages/admin/src/components/LoginPage.tsx:343
 #: packages/admin/src/components/MagicLinkConfirmPage.tsx:92
 #: packages/admin/src/components/SignupPage.tsx:307
 msgid "Back to login"
@@ -2686,7 +2729,7 @@ msgstr ""
 
 #: packages/admin/src/components/Settings.tsx:126
 #: packages/admin/src/components/settings/BackupSettings.tsx:144
-#: packages/admin/src/router.tsx:3299
+#: packages/admin/src/router.tsx:3308
 msgid "Backups"
 msgstr ""
 
@@ -2887,8 +2930,8 @@ msgstr ""
 msgid "Byline schema"
 msgstr ""
 
-#: packages/admin/src/components/Sidebar.tsx:584
-#: packages/admin/src/router.tsx:3628
+#: packages/admin/src/components/Sidebar.tsx:585
+#: packages/admin/src/router.tsx:3657
 msgid "Byline Schema"
 msgstr ""
 
@@ -2901,9 +2944,9 @@ msgstr ""
 #: packages/admin/src/components/ContentSettingsPanel.tsx:1219
 #: packages/admin/src/components/settings/transfer/labels.ts:19
 #: packages/admin/src/components/settings/transfer/labels.ts:79
-#: packages/admin/src/components/Sidebar.tsx:550
+#: packages/admin/src/components/Sidebar.tsx:551
 #: packages/admin/src/lib/editor-sections.ts:34
-#: packages/admin/src/router.tsx:3617
+#: packages/admin/src/router.tsx:3646
 #: packages/admin/src/routes/bylines.tsx:302
 msgid "Bylines"
 msgstr ""
@@ -2922,8 +2965,8 @@ msgstr ""
 
 #: packages/admin/src/components/AdminCommandPalette.tsx:142
 #: packages/admin/src/components/ContentTypeEditor.tsx:586
-#: packages/admin/src/components/Sidebar.tsx:479
-#: packages/admin/src/router.tsx:610
+#: packages/admin/src/components/Sidebar.tsx:480
+#: packages/admin/src/router.tsx:619
 #: packages/admin/src/routes/calendar.tsx:286
 msgid "Calendar"
 msgstr ""
@@ -2967,6 +3010,11 @@ msgstr ""
 #: packages/admin/src/components/MenuEditor.tsx:664
 #: packages/admin/src/components/MenuEditor.tsx:894
 #: packages/admin/src/components/MenuList.tsx:238
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:198
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:425
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:546
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:824
+#: packages/admin/src/components/multisite/OrganizationsPage.tsx:173
 #: packages/admin/src/components/PortableTextEditor.tsx:1431
 #: packages/admin/src/components/PortableTextEditor.tsx:4636
 #: packages/admin/src/components/PortableTextEditor.tsx:4662
@@ -3003,6 +3051,10 @@ msgstr ""
 #: packages/admin/src/components/settings/transfer/ImportSection.tsx:215
 #: packages/admin/src/components/settings/transfer/ImportSection.tsx:355
 msgid "Cancel import"
+msgstr ""
+
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:931
+msgid "Cancel invitation"
 msgstr ""
 
 #: packages/admin/src/components/MediaUploadDialog.tsx:334
@@ -3095,7 +3147,7 @@ msgstr ""
 #. placeholder {0}: selectedUser?.name || selectedUser?.email
 #. placeholder {1}: getRoleLabel(selectedUser?.role ?? 0)
 #. placeholder {2}: getRoleLabel(pendingSaveData?.role ?? 0)
-#: packages/admin/src/routes/users.tsx:307
+#: packages/admin/src/routes/users.tsx:351
 msgid "Change <0>{0}</0> from <1>{1}</1> to <2>{2}</2>? They will lose access to higher-level features."
 msgstr ""
 
@@ -3216,7 +3268,7 @@ msgstr ""
 msgid "Changes apply everywhere this byline appears."
 msgstr ""
 
-#: packages/admin/src/router.tsx:2038
+#: packages/admin/src/router.tsx:2047
 msgid "Changes discarded"
 msgstr ""
 
@@ -3272,7 +3324,7 @@ msgstr ""
 msgid "Check your connection and try again."
 msgstr ""
 
-#: packages/admin/src/components/LoginPage.tsx:102
+#: packages/admin/src/components/LoginPage.tsx:103
 #: packages/admin/src/components/SignupPage.tsx:151
 #: packages/admin/src/components/SignupPage.tsx:427
 msgid "Check your email"
@@ -3370,6 +3422,10 @@ msgstr ""
 
 #: packages/admin/src/components/FieldEditor.tsx:426
 msgid "Choose a relationship."
+msgstr ""
+
+#: packages/admin/src/components/multisite/SiteSwitcher.tsx:23
+msgid "Choose a site"
 msgstr ""
 
 #: packages/admin/src/components/BulkTagDialog.tsx:184
@@ -3493,7 +3549,7 @@ msgstr ""
 #: packages/admin/src/components/ContentList.tsx:1177
 #: packages/admin/src/components/MediaLibrary.tsx:1021
 #: packages/admin/src/components/Sections.tsx:369
-#: packages/admin/src/components/users/UserList.tsx:126
+#: packages/admin/src/components/users/UserList.tsx:134
 #: packages/admin/src/routes/bylines.tsx:472
 msgid "Clear filters"
 msgstr ""
@@ -3532,7 +3588,7 @@ msgstr ""
 msgid "Click the link in the email to continue setting up your account."
 msgstr ""
 
-#: packages/admin/src/components/LoginPage.tsx:115
+#: packages/admin/src/components/LoginPage.tsx:116
 msgid "Click the link in the email to sign in."
 msgstr "Egin klik emailean webgunean sartzeko."
 
@@ -3643,9 +3699,9 @@ msgstr ""
 msgid "Collection “{0}” was created on this site"
 msgstr ""
 
-#: packages/admin/src/router.tsx:865
-#: packages/admin/src/router.tsx:1068
-#: packages/admin/src/router.tsx:2560
+#: packages/admin/src/router.tsx:874
+#: packages/admin/src/router.tsx:1077
+#: packages/admin/src/router.tsx:2569
 msgid "Collection \"{collection}\" not found"
 msgstr ""
 
@@ -3727,8 +3783,8 @@ msgstr ""
 #: packages/admin/src/components/ContentTypeEditor.tsx:702
 #: packages/admin/src/components/settings/transfer/labels.ts:34
 #: packages/admin/src/components/settings/transfer/labels.ts:88
-#: packages/admin/src/components/Sidebar.tsx:514
-#: packages/admin/src/router.tsx:3045
+#: packages/admin/src/components/Sidebar.tsx:515
+#: packages/admin/src/router.tsx:3054
 msgid "Comments"
 msgstr ""
 
@@ -3764,7 +3820,7 @@ msgstr ""
 msgid "Confirm"
 msgstr "Baieztatu"
 
-#: packages/admin/src/router.tsx:501
+#: packages/admin/src/router.tsx:504
 msgid "Confirm magic link"
 msgstr ""
 
@@ -3835,9 +3891,9 @@ msgstr ""
 #: packages/admin/src/components/comments/CommentInbox.tsx:359
 #: packages/admin/src/components/Dashboard.tsx:499
 #: packages/admin/src/components/SectionEditor.tsx:197
-#: packages/admin/src/components/Sidebar.tsx:459
+#: packages/admin/src/components/Sidebar.tsx:460
 #: packages/admin/src/components/Widgets.tsx:986
-#: packages/admin/src/router.tsx:622
+#: packages/admin/src/router.tsx:631
 msgid "Content"
 msgstr "Edukia"
 
@@ -3858,7 +3914,7 @@ msgstr ""
 msgid "Content found:"
 msgstr ""
 
-#: packages/admin/src/router.tsx:2088
+#: packages/admin/src/router.tsx:2097
 msgid "Content has been scheduled for publishing"
 msgstr ""
 
@@ -3866,7 +3922,7 @@ msgstr ""
 msgid "Content ID:"
 msgstr ""
 
-#: packages/admin/src/router.tsx:1989
+#: packages/admin/src/router.tsx:1998
 msgid "Content is now live"
 msgstr ""
 
@@ -3891,11 +3947,11 @@ msgstr ""
 msgid "Content refers to media that is not in the package"
 msgstr ""
 
-#: packages/admin/src/router.tsx:2014
+#: packages/admin/src/router.tsx:2023
 msgid "Content removed from public view"
 msgstr ""
 
-#: packages/admin/src/router.tsx:2100
+#: packages/admin/src/router.tsx:2109
 msgid "Content reverted to draft"
 msgstr ""
 
@@ -3921,8 +3977,8 @@ msgstr ""
 
 #: packages/admin/src/components/AdminCommandPalette.tsx:197
 #: packages/admin/src/components/ContentTypeList.tsx:148
-#: packages/admin/src/components/Sidebar.tsx:580
-#: packages/admin/src/router.tsx:3636
+#: packages/admin/src/components/Sidebar.tsx:581
+#: packages/admin/src/router.tsx:3665
 msgid "Content Types"
 msgstr "Eduki motak"
 
@@ -3948,8 +4004,8 @@ msgstr "Edukia idatzi"
 msgid "Continue"
 msgstr ""
 
-#: packages/admin/src/components/SetupWizard.tsx:202
-#: packages/admin/src/components/SetupWizard.tsx:298
+#: packages/admin/src/components/SetupWizard.tsx:208
+#: packages/admin/src/components/SetupWizard.tsx:304
 msgid "Continue →"
 msgstr ""
 
@@ -3970,12 +4026,12 @@ msgstr ""
 msgid "Continue to finish signing in. The link works only once."
 msgstr ""
 
-#: packages/admin/src/components/SetupWizard.tsx:357
+#: packages/admin/src/components/SetupWizard.tsx:363
 msgid "Continue to import"
 msgstr ""
 
 #. placeholder {0}: activeProviderEntry.label
-#: packages/admin/src/components/LoginPage.tsx:225
+#: packages/admin/src/components/LoginPage.tsx:226
 msgid "Continue with {0}."
 msgstr ""
 
@@ -3995,6 +4051,7 @@ msgstr "Laguntzailea"
 #: packages/admin/src/components/co-editing/SyncStatus.tsx:240
 #: packages/admin/src/components/editor/CodeBlockNode.tsx:254
 #: packages/admin/src/components/editor/CodeBlockNode.tsx:278
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:820
 #: packages/admin/src/components/settings/transfer/CopyableDigest.tsx:43
 #: packages/admin/src/components/settings/transfer/ImportSection.tsx:576
 msgid "Copied"
@@ -4022,6 +4079,7 @@ msgstr ""
 msgid "Copy failed"
 msgstr ""
 
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:820
 #: packages/admin/src/components/users/InviteUserModal.tsx:228
 msgid "Copy invite link"
 msgstr ""
@@ -4353,6 +4411,10 @@ msgstr ""
 msgid "Create one to let entries here link to entries in another content type."
 msgstr ""
 
+#: packages/admin/src/components/multisite/OrganizationsPage.tsx:179
+msgid "Create organization"
+msgstr ""
+
 #: packages/admin/src/components/auth/PasskeyRegistration.tsx:741
 msgid "Create passkey"
 msgstr ""
@@ -4417,7 +4479,7 @@ msgstr "Sortu tokena"
 msgid "Create Widget Area"
 msgstr ""
 
-#: packages/admin/src/components/SetupWizard.tsx:620
+#: packages/admin/src/components/SetupWizard.tsx:637
 msgid "Create your account"
 msgstr ""
 
@@ -4473,7 +4535,7 @@ msgid "Created {0}"
 msgstr "Sorrera {0}"
 
 #. placeholder {0}: result.locale?.toUpperCase() ?? t`new`
-#: packages/admin/src/router.tsx:2131
+#: packages/admin/src/router.tsx:2140
 msgid "Created {0} translation"
 msgstr ""
 
@@ -4498,6 +4560,7 @@ msgid "Creating cropped copy..."
 msgstr ""
 
 #: packages/admin/src/components/MenuList.tsx:244
+#: packages/admin/src/components/multisite/OrganizationsPage.tsx:179
 #: packages/admin/src/components/Redirects.tsx:311
 #: packages/admin/src/components/RelationFormPanel.tsx:148
 #: packages/admin/src/components/Sections.tsx:306
@@ -4588,7 +4651,7 @@ msgid "Custom Taxonomies"
 msgstr ""
 
 #: packages/admin/src/components/ContentEditor.tsx:3235
-#: packages/admin/src/components/Sidebar.tsx:797
+#: packages/admin/src/components/Sidebar.tsx:801
 msgid "Customize sidebar"
 msgstr ""
 
@@ -4606,10 +4669,14 @@ msgstr ""
 #: packages/admin/src/components/ContentTypeList.tsx:408
 #: packages/admin/src/components/Dashboard.tsx:75
 #: packages/admin/src/components/Shell.tsx:90
-#: packages/admin/src/components/Sidebar.tsx:476
-#: packages/admin/src/router.tsx:592
+#: packages/admin/src/components/Sidebar.tsx:477
+#: packages/admin/src/router.tsx:595
 msgid "Dashboard"
 msgstr "Lan-lekua"
+
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:399
+msgid "Database"
+msgstr ""
 
 #: packages/admin/src/components/BlockTypeList.tsx:31
 msgid "Database-owned definitions available to blocks fields."
@@ -4988,15 +5055,15 @@ msgstr ""
 msgid "Demo"
 msgstr ""
 
-#: packages/admin/src/routes/users.tsx:314
+#: packages/admin/src/routes/users.tsx:358
 msgid "Demote User"
 msgstr ""
 
-#: packages/admin/src/routes/users.tsx:305
+#: packages/admin/src/routes/users.tsx:349
 msgid "Demote User?"
 msgstr ""
 
-#: packages/admin/src/routes/users.tsx:315
+#: packages/admin/src/routes/users.tsx:359
 msgid "Demoting..."
 msgstr ""
 
@@ -5082,6 +5149,10 @@ msgstr ""
 msgid "Device-bound passkey"
 msgstr ""
 
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:531
+msgid "Did this site have its own accounts before it joined? Import them so those people can sign in here, with the roles they had on the site."
+msgstr ""
+
 #: packages/admin/src/components/SignupPage.tsx:163
 msgid "Didn't receive the email?"
 msgstr ""
@@ -5115,18 +5186,19 @@ msgstr ""
 msgid "Disable redirect {0}"
 msgstr ""
 
-#: packages/admin/src/routes/users.tsx:289
+#: packages/admin/src/routes/users.tsx:333
 msgid "Disable User"
 msgstr ""
 
-#: packages/admin/src/routes/users.tsx:282
+#: packages/admin/src/routes/users.tsx:326
 msgid "Disable User?"
 msgstr ""
 
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:236
 #: packages/admin/src/components/PluginManager.tsx:461
 #: packages/admin/src/components/Redirects.tsx:706
 #: packages/admin/src/components/users/UserDetail.tsx:205
-#: packages/admin/src/components/users/UserList.tsx:179
+#: packages/admin/src/components/users/UserList.tsx:197
 msgid "Disabled"
 msgstr ""
 
@@ -5135,11 +5207,11 @@ msgid "Disabled:"
 msgstr ""
 
 #. placeholder {0}: selectedUser?.name || selectedUser?.email
-#: packages/admin/src/routes/users.tsx:284
+#: packages/admin/src/routes/users.tsx:328
 msgid "Disabling <0>{0}</0> will prevent them from logging in until re-enabled. Their content will be preserved."
 msgstr ""
 
-#: packages/admin/src/routes/users.tsx:290
+#: packages/admin/src/routes/users.tsx:334
 msgid "Disabling..."
 msgstr ""
 
@@ -5274,7 +5346,7 @@ msgstr ""
 msgid "Domain updated"
 msgstr ""
 
-#: packages/admin/src/components/LoginPage.tsx:347
+#: packages/admin/src/components/LoginPage.tsx:358
 msgid "Don't have an account? <0>Sign up</0>"
 msgstr "Ez duzu konturik? <0>Eman izena</0>"
 
@@ -5286,6 +5358,8 @@ msgstr ""
 #: packages/admin/src/components/BylineCreditsEditor.tsx:777
 #: packages/admin/src/components/ContentList.tsx:1280
 #: packages/admin/src/components/MediaUploadDialog.tsx:338
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:812
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:896
 #: packages/admin/src/components/users/InviteUserModal.tsx:225
 #: packages/admin/src/components/WordPressImport.tsx:2178
 msgid "Done"
@@ -5529,6 +5603,8 @@ msgstr ""
 #. placeholder {0}: collection.label
 #. placeholder {0}: domain.domain
 #: packages/admin/src/components/ContentTypeList.tsx:379
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:268
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:496
 #: packages/admin/src/components/PortableTextEditor.tsx:1372
 #: packages/admin/src/components/RelationFormPanel.tsx:128
 #: packages/admin/src/components/RelationList.tsx:183
@@ -5587,12 +5663,12 @@ msgstr ""
 msgid "Edit caption"
 msgstr ""
 
-#: packages/admin/src/router.tsx:1112
+#: packages/admin/src/router.tsx:1121
 msgid "Edit content"
 msgstr ""
 
-#: packages/admin/src/router.tsx:3831
-#: packages/admin/src/router.tsx:3850
+#: packages/admin/src/router.tsx:3860
+#: packages/admin/src/router.tsx:3879
 msgid "Edit content type"
 msgstr ""
 
@@ -5644,7 +5720,7 @@ msgid "Edit media alt text, captions, and focal points"
 msgstr ""
 
 #: packages/admin/src/components/MenuEditor.tsx:186
-#: packages/admin/src/router.tsx:3531
+#: packages/admin/src/router.tsx:3540
 msgid "Edit menu"
 msgstr ""
 
@@ -5675,7 +5751,7 @@ msgid "Edit role"
 msgstr ""
 
 #: packages/admin/src/components/SectionEditor.tsx:50
-#: packages/admin/src/router.tsx:3581
+#: packages/admin/src/router.tsx:3610
 msgid "Edit section"
 msgstr ""
 
@@ -5786,14 +5862,15 @@ msgid "em1.…"
 msgstr ""
 
 #: packages/admin/src/components/InviteAcceptPage.tsx:65
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:798
 #: packages/admin/src/components/Settings.tsx:120
 #: packages/admin/src/components/SignupPage.tsx:220
 #: packages/admin/src/components/users/UserDetail.tsx:158
-#: packages/admin/src/router.tsx:3286
+#: packages/admin/src/router.tsx:3295
 msgid "Email"
 msgstr "Emaila"
 
-#: packages/admin/src/components/LoginPage.tsx:130
+#: packages/admin/src/components/LoginPage.tsx:131
 #: packages/admin/src/components/SignupPage.tsx:87
 #: packages/admin/src/components/users/InviteUserModal.tsx:183
 msgid "Email address"
@@ -5807,7 +5884,7 @@ msgstr ""
 msgid "Email every other user a link to the sign-in page at {siteHost}."
 msgstr ""
 
-#: packages/admin/src/components/SetupWizard.tsx:243
+#: packages/admin/src/components/SetupWizard.tsx:249
 #: packages/admin/src/components/SignupPage.tsx:69
 msgid "Email is required"
 msgstr ""
@@ -5830,7 +5907,7 @@ msgstr ""
 
 #: packages/admin/src/components/Settings.tsx:116
 #: packages/admin/src/components/settings/EmailSettings.tsx:181
-#: packages/admin/src/router.tsx:3285
+#: packages/admin/src/router.tsx:3294
 msgid "Email Settings"
 msgstr ""
 
@@ -5918,7 +5995,7 @@ msgstr ""
 msgid "EmDash never receives your PIN, password, or biometric information."
 msgstr ""
 
-#: packages/admin/src/router.tsx:2602
+#: packages/admin/src/router.tsx:2611
 msgid "EmDash or this entry’s fields changed since you opened it."
 msgstr ""
 
@@ -5944,7 +6021,7 @@ msgstr ""
 msgid "Empty gallery — open settings to add images"
 msgstr ""
 
-#: packages/admin/src/components/SetupWizard.tsx:174
+#: packages/admin/src/components/SetupWizard.tsx:180
 msgid "Empty site"
 msgstr ""
 
@@ -6224,9 +6301,9 @@ msgstr ""
 
 #: packages/admin/src/components/MenuEditor.tsx:223
 #: packages/admin/src/components/MenuEditor.tsx:358
-#: packages/admin/src/components/SetupWizard.tsx:603
+#: packages/admin/src/components/SetupWizard.tsx:609
 #: packages/admin/src/components/TaxonomyManager.tsx:1127
-#: packages/admin/src/router.tsx:4171
+#: packages/admin/src/router.tsx:4202
 msgid "Error"
 msgstr ""
 
@@ -6276,6 +6353,10 @@ msgstr ""
 
 #: packages/admin/src/components/ContentTypeList.tsx:281
 msgid "Every relationship this content type takes part in goes too:"
+msgstr ""
+
+#: packages/admin/src/routes/users.tsx:56
+msgid "Everyone in this site's organization can work on it with their organization role. Add or remove people, and change roles, on the organization's page."
 msgstr ""
 
 #: packages/admin/src/components/settings/SidebarsSettings.tsx:65
@@ -6404,8 +6485,16 @@ msgstr ""
 msgid "Failed to add domain"
 msgstr ""
 
+#: packages/admin/src/lib/api/multisite.ts:158
+msgid "Failed to add member"
+msgstr ""
+
 #: packages/admin/src/components/settings/SecuritySettings.tsx:186
 msgid "Failed to add passkey"
+msgstr ""
+
+#: packages/admin/src/lib/api/multisite.ts:139
+msgid "Failed to add site"
 msgstr ""
 
 #: packages/admin/src/lib/api/taxonomies.ts:120
@@ -6431,6 +6520,19 @@ msgstr ""
 
 #: packages/admin/src/lib/api/transfer.ts:489
 msgid "Failed to cancel import"
+msgstr ""
+
+#: packages/admin/src/lib/api/multisite.ts:182
+msgid "Failed to cancel invitation"
+msgstr ""
+
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:609
+#: packages/admin/src/lib/api/multisite.ts:166
+msgid "Failed to change role"
+msgstr ""
+
+#: packages/admin/src/lib/api/multisite.ts:193
+msgid "Failed to change site role"
 msgstr ""
 
 #: packages/admin/src/lib/api/settings.ts:127
@@ -6471,7 +6573,7 @@ msgstr ""
 msgid "Failed to create a sign-in link"
 msgstr ""
 
-#: packages/admin/src/components/SetupWizard.tsx:557
+#: packages/admin/src/components/SetupWizard.tsx:563
 msgid "Failed to create admin"
 msgstr ""
 
@@ -6532,6 +6634,10 @@ msgstr ""
 msgid "Failed to create menu translation"
 msgstr ""
 
+#: packages/admin/src/lib/api/multisite.ts:113
+msgid "Failed to create organization"
+msgstr ""
+
 #: packages/admin/src/lib/api/redirects.ts:89
 msgid "Failed to create redirect"
 msgstr ""
@@ -6562,7 +6668,7 @@ msgid "Failed to create term translation"
 msgstr ""
 
 #: packages/admin/src/components/TaxonomySidebar.tsx:874
-#: packages/admin/src/router.tsx:2136
+#: packages/admin/src/router.tsx:2145
 msgid "Failed to create translation"
 msgstr ""
 
@@ -6574,7 +6680,7 @@ msgstr ""
 msgid "Failed to create widget area"
 msgstr ""
 
-#: packages/admin/src/router.tsx:844
+#: packages/admin/src/router.tsx:853
 msgid "Failed to delete"
 msgstr ""
 
@@ -6696,7 +6802,7 @@ msgstr ""
 msgid "Failed to download a package file"
 msgstr ""
 
-#: packages/admin/src/router.tsx:775
+#: packages/admin/src/router.tsx:784
 msgid "Failed to duplicate"
 msgstr ""
 
@@ -6737,7 +6843,7 @@ msgstr ""
 msgid "Failed to fetch API tokens"
 msgstr ""
 
-#: packages/admin/src/lib/api/client.ts:408
+#: packages/admin/src/lib/api/client.ts:413
 msgid "Failed to fetch auth mode"
 msgstr ""
 
@@ -6811,7 +6917,7 @@ msgstr ""
 msgid "Failed to fetch fields"
 msgstr ""
 
-#: packages/admin/src/lib/api/client.ts:391
+#: packages/admin/src/lib/api/client.ts:396
 msgid "Failed to fetch manifest"
 msgstr ""
 
@@ -6922,7 +7028,7 @@ msgstr ""
 msgid "Failed to fetch settings"
 msgstr ""
 
-#: packages/admin/src/components/SetupWizard.tsx:504
+#: packages/admin/src/components/SetupWizard.tsx:510
 msgid "Failed to fetch setup status"
 msgstr ""
 
@@ -6962,7 +7068,7 @@ msgstr ""
 #: packages/admin/src/lib/api/current-user.ts:30
 #: packages/admin/src/lib/api/users.ts:91
 #: packages/admin/src/lib/api/users.ts:96
-#: packages/admin/src/router.tsx:3066
+#: packages/admin/src/router.tsx:3075
 msgid "Failed to fetch user"
 msgstr ""
 
@@ -7007,6 +7113,10 @@ msgstr ""
 msgid "Failed to import"
 msgstr ""
 
+#: packages/admin/src/lib/api/multisite.ts:208
+msgid "Failed to import accounts"
+msgstr ""
+
 #: packages/admin/src/components/WordPressImport.tsx:464
 #: packages/admin/src/lib/api/import.ts:262
 msgid "Failed to import from WordPress"
@@ -7035,7 +7145,7 @@ msgstr ""
 msgid "Failed to list files to upload"
 msgstr ""
 
-#: packages/admin/src/router.tsx:576
+#: packages/admin/src/router.tsx:579
 msgid "Failed to load admin"
 msgstr ""
 
@@ -7096,6 +7206,16 @@ msgstr ""
 msgid "visualEditing.mediaLoadFailed"
 msgstr ""
 
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:115
+#: packages/admin/src/lib/api/multisite.ts:118
+msgid "Failed to load organization"
+msgstr ""
+
+#: packages/admin/src/components/multisite/OrganizationsPage.tsx:74
+#: packages/admin/src/lib/api/multisite.ts:105
+msgid "Failed to load organizations"
+msgstr ""
+
 #: packages/admin/src/components/settings/SecuritySettings.tsx:128
 msgid "Failed to load passkeys"
 msgstr ""
@@ -7117,8 +7237,16 @@ msgstr ""
 msgid "Failed to load plugins. The registry aggregator may be unreachable."
 msgstr ""
 
-#: packages/admin/src/components/SetupWizard.tsx:605
+#: packages/admin/src/components/SetupWizard.tsx:611
 msgid "Failed to load setup"
+msgstr ""
+
+#: packages/admin/src/lib/api/multisite.ts:131
+msgid "Failed to load site storage options"
+msgstr ""
+
+#: packages/admin/src/lib/api/multisite.ts:95
+msgid "Failed to load sites"
 msgstr ""
 
 #: packages/admin/src/lib/api/calendar.ts:49
@@ -7138,7 +7266,7 @@ msgid "Failed to load transfer settings"
 msgstr ""
 
 #. placeholder {0}: usersQuery.error.message
-#: packages/admin/src/routes/users.tsx:210
+#: packages/admin/src/routes/users.tsx:235
 msgid "Failed to load users: {0}"
 msgstr ""
 
@@ -7150,8 +7278,13 @@ msgstr ""
 msgid "Failed to lock the entry"
 msgstr ""
 
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:80
+#: packages/admin/src/lib/api/multisite.ts:217
+msgid "Failed to open the site"
+msgstr ""
+
 #: packages/admin/src/lib/api/comments.ts:131
-#: packages/admin/src/router.tsx:3155
+#: packages/admin/src/router.tsx:3164
 msgid "Failed to perform bulk action"
 msgstr ""
 
@@ -7168,9 +7301,9 @@ msgstr ""
 msgid "Failed to probe URL"
 msgstr ""
 
-#: packages/admin/src/router.tsx:800
-#: packages/admin/src/router.tsx:1994
-#: packages/admin/src/router.tsx:2346
+#: packages/admin/src/router.tsx:809
+#: packages/admin/src/router.tsx:2003
+#: packages/admin/src/router.tsx:2355
 msgid "Failed to publish"
 msgstr ""
 
@@ -7182,7 +7315,7 @@ msgstr ""
 msgid "Failed to read byline field usage"
 msgstr ""
 
-#: packages/admin/src/router.tsx:3690
+#: packages/admin/src/router.tsx:3719
 msgid "Failed to register {slug}"
 msgstr ""
 
@@ -7194,6 +7327,10 @@ msgstr ""
 msgid "Failed to release the entry lock"
 msgstr ""
 
+#: packages/admin/src/lib/api/multisite.ts:174
+msgid "Failed to remove member"
+msgstr ""
+
 #: packages/admin/src/components/settings/PasskeyItem.tsx:73
 #: packages/admin/src/components/settings/SecuritySettings.tsx:71
 msgid "Failed to remove passkey"
@@ -7201,6 +7338,10 @@ msgstr ""
 
 #: packages/admin/src/lib/api/media.ts:271
 msgid "Failed to rename media folder"
+msgstr ""
+
+#: packages/admin/src/lib/api/multisite.ts:126
+msgid "Failed to rename organization"
 msgstr ""
 
 #: packages/admin/src/components/settings/SecuritySettings.tsx:55
@@ -7237,7 +7378,7 @@ msgstr ""
 msgid "Failed to replace media image"
 msgstr ""
 
-#: packages/admin/src/router.tsx:754
+#: packages/admin/src/router.tsx:763
 msgid "Failed to restore"
 msgstr ""
 
@@ -7261,9 +7402,9 @@ msgstr ""
 
 #: packages/admin/src/components/ContentEditor.tsx:3275
 #: packages/admin/src/components/ContentEditor.tsx:3527
-#: packages/admin/src/router.tsx:996
-#: packages/admin/src/router.tsx:1812
-#: packages/admin/src/router.tsx:3884
+#: packages/admin/src/router.tsx:1005
+#: packages/admin/src/router.tsx:1821
+#: packages/admin/src/router.tsx:3913
 msgid "Failed to save"
 msgstr ""
 
@@ -7296,8 +7437,8 @@ msgstr ""
 msgid "Failed to schedule content"
 msgstr ""
 
-#: packages/admin/src/components/LoginPage.tsx:71
-#: packages/admin/src/components/LoginPage.tsx:76
+#: packages/admin/src/components/LoginPage.tsx:72
+#: packages/admin/src/components/LoginPage.tsx:77
 msgid "Failed to send magic link"
 msgstr "Huts egin du esteka magikoa bidaltzeak"
 
@@ -7339,8 +7480,8 @@ msgstr ""
 msgid "Failed to uninstall plugin"
 msgstr ""
 
-#: packages/admin/src/router.tsx:2019
-#: packages/admin/src/router.tsx:2393
+#: packages/admin/src/router.tsx:2028
+#: packages/admin/src/router.tsx:2402
 msgid "Failed to unpublish"
 msgstr ""
 
@@ -7348,8 +7489,8 @@ msgstr ""
 msgid "Failed to unpublish content"
 msgstr ""
 
-#: packages/admin/src/router.tsx:2106
-#: packages/admin/src/router.tsx:2487
+#: packages/admin/src/router.tsx:2115
+#: packages/admin/src/router.tsx:2496
 msgid "Failed to unschedule"
 msgstr ""
 
@@ -7357,7 +7498,7 @@ msgstr ""
 msgid "Failed to unschedule content"
 msgstr ""
 
-#: packages/admin/src/router.tsx:823
+#: packages/admin/src/router.tsx:832
 msgid "Failed to update"
 msgstr ""
 
@@ -7448,7 +7589,11 @@ msgstr ""
 msgid "Failed to update settings"
 msgstr ""
 
-#: packages/admin/src/router.tsx:3119
+#: packages/admin/src/lib/api/multisite.ts:147
+msgid "Failed to update site"
+msgstr ""
+
+#: packages/admin/src/router.tsx:3128
 msgid "Failed to update status"
 msgstr ""
 
@@ -7633,7 +7778,7 @@ msgstr ""
 msgid "Filter by group"
 msgstr ""
 
-#: packages/admin/src/components/users/UserList.tsx:84
+#: packages/admin/src/components/users/UserList.tsx:92
 msgid "Filter by role"
 msgstr ""
 
@@ -7660,7 +7805,7 @@ msgstr ""
 msgid "Filter: {activeCount} selected"
 msgstr ""
 
-#: packages/admin/src/router.tsx:1235
+#: packages/admin/src/router.tsx:1244
 msgid "Find it in this entry’s revisions."
 msgstr ""
 
@@ -7715,7 +7860,7 @@ msgid "Focal point. Use arrow keys to move it."
 msgstr ""
 
 #: packages/admin/src/components/MediaPickerModal.tsx:1247
-#: packages/admin/src/router.tsx:2976
+#: packages/admin/src/router.tsx:2985
 msgid "Folder"
 msgstr ""
 
@@ -7723,7 +7868,7 @@ msgstr ""
 msgid "Folder deleted"
 msgstr ""
 
-#: packages/admin/src/router.tsx:2769
+#: packages/admin/src/router.tsx:2778
 msgid "Folder no longer exists"
 msgstr ""
 
@@ -7826,12 +7971,12 @@ msgid "Gallery settings"
 msgstr ""
 
 #: packages/admin/src/components/Settings.tsx:56
-#: packages/admin/src/router.tsx:3341
+#: packages/admin/src/router.tsx:3350
 msgid "General"
 msgstr "Orokorra"
 
 #: packages/admin/src/components/settings/GeneralSettings.tsx:307
-#: packages/admin/src/router.tsx:3340
+#: packages/admin/src/router.tsx:3349
 msgid "General Settings"
 msgstr ""
 
@@ -7845,6 +7990,10 @@ msgstr "Hasi"
 
 #: packages/admin/src/components/settings/SocialSettings.tsx:149
 msgid "GitHub"
+msgstr ""
+
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:868
+msgid "Give {label} a different role on a site, or keep their organization role."
 msgstr ""
 
 #: packages/admin/src/components/MenuEditor.tsx:537
@@ -7876,7 +8025,7 @@ msgid "Go live {countdown}"
 msgstr ""
 
 #: packages/admin/src/components/WordPressImport.tsx:2510
-#: packages/admin/src/router.tsx:4191
+#: packages/admin/src/router.tsx:4222
 msgid "Go to Dashboard"
 msgstr ""
 
@@ -8029,8 +8178,8 @@ msgstr ""
 msgid "Hidden from search engines"
 msgstr ""
 
-#: packages/admin/src/components/Header.tsx:70
-#: packages/admin/src/components/Header.tsx:74
+#: packages/admin/src/components/Header.tsx:113
+#: packages/admin/src/components/Header.tsx:117
 msgid "Hidden from search engines until you go live"
 msgstr ""
 
@@ -8112,11 +8261,16 @@ msgstr ""
 msgid "Host and user are required."
 msgstr ""
 
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:391
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:516
+msgid "Hostnames"
+msgstr ""
+
 #: packages/admin/src/components/PublishingDateTimeEditor.tsx:226
 msgid "Hour"
 msgstr ""
 
-#: packages/admin/src/components/SetupWizard.tsx:159
+#: packages/admin/src/components/SetupWizard.tsx:165
 msgid "How do you want to start?"
 msgstr ""
 
@@ -8202,9 +8356,14 @@ msgstr ""
 msgid "ID"
 msgstr "ID"
 
-#: packages/admin/src/components/LoginPage.tsx:104
+#: packages/admin/src/components/LoginPage.tsx:105
 msgid "If an account exists for <0>{email}</0>, we've sent a sign-in link."
 msgstr "<0>{email}</0> kontua existitzen bada, sartzeko esteka magikoa bidali dugu."
+
+#. placeholder {0}: org.name
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:773
+msgid "If nobody has an account with this email yet, they're invited to create one and join {0}."
+msgstr ""
 
 #: packages/admin/src/components/settings/ChangeDomainDialog.tsx:188
 msgid "If the site can't be reached from the internet yet, for example on localhost or behind a login, you can use the address without the check."
@@ -8322,7 +8481,7 @@ msgstr ""
 
 #: packages/admin/src/components/AdminCommandPalette.tsx:239
 #: packages/admin/src/components/settings/transfer/ImportSection.tsx:210
-#: packages/admin/src/components/Sidebar.tsx:606
+#: packages/admin/src/components/Sidebar.tsx:610
 #: packages/admin/src/components/WordPressImport.tsx:785
 msgid "Import"
 msgstr "Inportatu"
@@ -8340,11 +8499,15 @@ msgstr ""
 msgid "Import a site package into this site while it is empty, overwriting its initial setup. Admin includes this; choose it instead of Admin to give an agent narrower access."
 msgstr ""
 
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:539
+msgid "Import accounts"
+msgstr ""
+
 #: packages/admin/src/components/WordPressImport.tsx:1422
 msgid "Import all content directly including drafts, custom post types, ACF fields, and SEO data. No file download needed."
 msgstr ""
 
-#: packages/admin/src/components/SetupWizard.tsx:179
+#: packages/admin/src/components/SetupWizard.tsx:185
 msgid "Import an existing EmDash site"
 msgstr ""
 
@@ -8374,7 +8537,7 @@ msgid "Import failed"
 msgstr ""
 
 #: packages/admin/src/components/WordPressImport.tsx:738
-#: packages/admin/src/router.tsx:3516
+#: packages/admin/src/router.tsx:3525
 msgid "Import from WordPress"
 msgstr ""
 
@@ -8408,6 +8571,10 @@ msgstr ""
 
 #: packages/admin/src/components/Sections.tsx:68
 msgid "Imported"
+msgstr ""
+
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:456
+msgid "Imported {imported} accounts, {linked} already here"
 msgstr ""
 
 #: packages/admin/src/components/WordPressImport.tsx:2404
@@ -8459,6 +8626,10 @@ msgstr ""
 
 #: packages/admin/src/components/settings/transfer/labels.ts:60
 msgid "Importing terms and bylines"
+msgstr ""
+
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:539
+msgid "Importing..."
 msgstr ""
 
 #: packages/admin/src/components/MediaUsedIn.tsx:355
@@ -8679,7 +8850,15 @@ msgstr ""
 msgid "Invalid port"
 msgstr ""
 
-#: packages/admin/src/routes/users.tsx:132
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:769
+msgid "Invitation created"
+msgstr ""
+
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:746
+msgid "Invitation saved. They join when they sign in with this email."
+msgstr ""
+
+#: packages/admin/src/routes/users.tsx:157
 msgid "Invitation sent to {email}"
 msgstr ""
 
@@ -8696,7 +8875,7 @@ msgid "Invite Link Created"
 msgstr ""
 
 #: packages/admin/src/components/users/InviteUserModal.tsx:144
-#: packages/admin/src/components/users/UserList.tsx:66
+#: packages/admin/src/components/users/UserList.tsx:72
 msgid "Invite User"
 msgstr ""
 
@@ -8704,7 +8883,7 @@ msgstr ""
 msgid "Invite validation failed"
 msgstr ""
 
-#: packages/admin/src/components/users/UserList.tsx:133
+#: packages/admin/src/components/users/UserList.tsx:146
 msgid "Invite your first team member"
 msgstr ""
 
@@ -8736,7 +8915,7 @@ msgstr ""
 msgid "It was started somewhere else, so its plan can no longer be changed. Its progress will appear here."
 msgstr ""
 
-#: packages/admin/src/router.tsx:2623
+#: packages/admin/src/router.tsx:2632
 msgid "It’s shown read-only. An entry in Trash can be restored from there."
 msgstr ""
 
@@ -8770,7 +8949,7 @@ msgid "Its listing has not been approved for display. Check back later."
 msgstr ""
 
 #: packages/admin/src/components/InviteAcceptPage.tsx:76
-#: packages/admin/src/components/SetupWizard.tsx:278
+#: packages/admin/src/components/SetupWizard.tsx:284
 #: packages/admin/src/components/SignupPage.tsx:231
 msgid "Jane Doe"
 msgstr ""
@@ -8920,7 +9099,7 @@ msgid "Landscape"
 msgstr ""
 
 #: packages/admin/src/components/editor/CodeBlockNode.tsx:286
-#: packages/admin/src/components/LoginPage.tsx:360
+#: packages/admin/src/components/LoginPage.tsx:371
 #: packages/admin/src/components/Settings.tsx:155
 #: packages/admin/src/components/Settings.tsx:169
 msgid "Language"
@@ -8942,7 +9121,7 @@ msgstr ""
 msgid "Last login"
 msgstr ""
 
-#: packages/admin/src/components/users/UserList.tsx:105
+#: packages/admin/src/components/users/UserList.tsx:113
 msgid "Last Login"
 msgstr ""
 
@@ -9170,7 +9349,7 @@ msgstr ""
 #: packages/admin/src/components/ContentList.tsx:950
 #: packages/admin/src/components/ContentList.tsx:1013
 #: packages/admin/src/components/MediaLibrary.tsx:1254
-#: packages/admin/src/components/users/UserList.tsx:158
+#: packages/admin/src/components/users/UserList.tsx:176
 msgid "Load More"
 msgstr ""
 
@@ -9187,7 +9366,7 @@ msgstr ""
 
 #: packages/admin/src/components/calendar/CalendarToolbar.tsx:113
 #: packages/admin/src/components/ContentEditor.tsx:3011
-#: packages/admin/src/router.tsx:4146
+#: packages/admin/src/router.tsx:4177
 msgid "Loading"
 msgstr ""
 
@@ -9216,8 +9395,8 @@ msgstr ""
 msgid "Loading comments..."
 msgstr ""
 
-#: packages/admin/src/router.tsx:4148
-#: packages/admin/src/router.tsx:4160
+#: packages/admin/src/router.tsx:4179
+#: packages/admin/src/router.tsx:4191
 msgid "Loading configuration..."
 msgstr ""
 
@@ -9296,7 +9475,7 @@ msgstr ""
 msgid "Loading settings..."
 msgstr ""
 
-#: packages/admin/src/components/SetupWizard.tsx:592
+#: packages/admin/src/components/SetupWizard.tsx:598
 msgid "Loading setup..."
 msgstr ""
 
@@ -9328,6 +9507,8 @@ msgstr ""
 #: packages/admin/src/components/MediaDetailPanel.tsx:1731
 #: packages/admin/src/components/MediaLibrary.tsx:1254
 #: packages/admin/src/components/MediaUsedIn.tsx:245
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:107
+#: packages/admin/src/components/multisite/OrganizationsPage.tsx:63
 #: packages/admin/src/components/PortableTextEditor.tsx:1925
 #: packages/admin/src/components/Redirects.tsx:851
 #: packages/admin/src/components/RegistryBrowse.tsx:179
@@ -9342,7 +9523,7 @@ msgstr ""
 #: packages/admin/src/components/ThemeMarketplaceBrowse.tsx:170
 #: packages/admin/src/components/ThemeMarketplaceBrowse.tsx:244
 #: packages/admin/src/components/ThemeMarketplaceDetail.tsx:143
-#: packages/admin/src/components/users/UserList.tsx:147
+#: packages/admin/src/components/users/UserList.tsx:165
 #: packages/admin/src/routes/bylines.tsx:491
 msgid "Loading..."
 msgstr "Kargatzen..."
@@ -9396,11 +9577,11 @@ msgstr ""
 msgid "Locked because this field has stored values. Delete the values (or the field) to change this."
 msgstr ""
 
-#: packages/admin/src/router.tsx:487
+#: packages/admin/src/router.tsx:490
 msgid "Log in"
 msgstr ""
 
-#: packages/admin/src/components/Header.tsx:130
+#: packages/admin/src/components/Header.tsx:177
 msgid "Log out"
 msgstr ""
 
@@ -9427,6 +9608,10 @@ msgstr ""
 msgid "Lowercase letters, numbers and underscores. Reference fields store this."
 msgstr ""
 
+#: packages/admin/src/components/multisite/OrganizationsPage.tsx:162
+msgid "Lowercase letters, numbers, and hyphens."
+msgstr ""
+
 #: packages/admin/src/components/editor/codeBlockLanguages.ts:44
 msgid "Lua"
 msgstr ""
@@ -9440,7 +9625,8 @@ msgstr ""
 msgid "Main Sidebar"
 msgstr ""
 
-#: packages/admin/src/components/Sidebar.tsx:460
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:250
+#: packages/admin/src/components/Sidebar.tsx:461
 msgid "Manage"
 msgstr ""
 
@@ -9460,6 +9646,10 @@ msgstr ""
 
 #: packages/admin/src/components/PluginManager.tsx:202
 msgid "Manage installed plugins. Enable or disable plugins to control their functionality."
+msgstr ""
+
+#: packages/admin/src/routes/users.tsx:65
+msgid "Manage members"
 msgstr ""
 
 #: packages/admin/src/components/MenuList.tsx:161
@@ -9526,11 +9716,11 @@ msgstr ""
 msgid "Marketplace"
 msgstr ""
 
-#: packages/admin/src/router.tsx:3504
+#: packages/admin/src/router.tsx:3513
 msgid "Marketplace browsing is no longer available."
 msgstr ""
 
-#: packages/admin/src/router.tsx:3477
+#: packages/admin/src/router.tsx:3486
 msgid "Marketplace browsing is no longer available. Manage installed plugins from Plugins."
 msgstr ""
 
@@ -9578,11 +9768,11 @@ msgstr ""
 #: packages/admin/src/components/Settings.tsx:75
 #: packages/admin/src/components/settings/transfer/labels.ts:17
 #: packages/admin/src/components/settings/transfer/labels.ts:84
-#: packages/admin/src/components/Sidebar.tsx:501
+#: packages/admin/src/components/Sidebar.tsx:502
 #: packages/admin/src/components/WordPressImport.tsx:799
 #: packages/admin/src/components/WordPressImport.tsx:1197
 #: packages/admin/src/components/WordPressImport.tsx:1390
-#: packages/admin/src/router.tsx:2728
+#: packages/admin/src/router.tsx:2737
 msgid "Media"
 msgstr "Media"
 
@@ -9644,13 +9834,17 @@ msgstr "Media irakurri"
 msgid "Media results"
 msgstr ""
 
-#: packages/admin/src/router.tsx:3223
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:411
+msgid "Media storage"
+msgstr ""
+
+#: packages/admin/src/router.tsx:3232
 msgid "Media Usage"
 msgstr ""
 
 #: packages/admin/src/components/Settings.tsx:79
 #: packages/admin/src/components/settings/MediaUsageSettings.tsx:299
-#: packages/admin/src/router.tsx:3224
+#: packages/admin/src/router.tsx:3233
 msgid "Media usage tracking"
 msgstr ""
 
@@ -9681,6 +9875,14 @@ msgstr "Media idatzi"
 #: packages/admin/src/components/PortableTextEditor.tsx:538
 msgid "Medium section heading"
 msgstr "Atal-goiburu ertaina"
+
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:745
+msgid "Member added"
+msgstr ""
+
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:625
+msgid "Members"
+msgstr ""
 
 #: packages/admin/src/components/Widgets.tsx:119
 #: packages/admin/src/components/Widgets.tsx:1001
@@ -9739,9 +9941,9 @@ msgstr ""
 #: packages/admin/src/components/AdminCommandPalette.tsx:173
 #: packages/admin/src/components/MenuList.tsx:159
 #: packages/admin/src/components/settings/transfer/labels.ts:28
-#: packages/admin/src/components/Sidebar.tsx:522
+#: packages/admin/src/components/Sidebar.tsx:523
 #: packages/admin/src/components/WordPressImport.tsx:1201
-#: packages/admin/src/router.tsx:3524
+#: packages/admin/src/router.tsx:3533
 msgid "Menus"
 msgstr "Menuak"
 
@@ -9988,11 +10190,11 @@ msgstr ""
 msgid "Moved {name} to position {position} of {total}"
 msgstr ""
 
-#: packages/admin/src/router.tsx:820
+#: packages/admin/src/router.tsx:829
 msgid "Moved {total} items to draft"
 msgstr ""
 
-#: packages/admin/src/router.tsx:841
+#: packages/admin/src/router.tsx:850
 msgid "Moved {total} items to trash"
 msgstr ""
 
@@ -10089,7 +10291,7 @@ msgstr ""
 msgid "Multiple choices from options"
 msgstr ""
 
-#: packages/admin/src/components/SetupWizard.tsx:142
+#: packages/admin/src/components/SetupWizard.tsx:148
 msgid "My Awesome Blog"
 msgstr ""
 
@@ -10099,6 +10301,10 @@ msgstr ""
 #: packages/admin/src/components/MediaFolderDialog.tsx:169
 #: packages/admin/src/components/MenuList.tsx:220
 #: packages/admin/src/components/MenuList.tsx:223
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:190
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:371
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:509
+#: packages/admin/src/components/multisite/OrganizationsPage.tsx:151
 #: packages/admin/src/components/TaxonomyManager.tsx:726
 #: packages/admin/src/components/TaxonomyManager.tsx:977
 #: packages/admin/src/components/TaxonomyManager.tsx:980
@@ -10144,11 +10350,11 @@ msgid "Needs attention"
 msgstr ""
 
 #: packages/admin/src/components/users/UserDetail.tsx:240
-#: packages/admin/src/components/users/UserList.tsx:174
+#: packages/admin/src/components/users/UserList.tsx:192
 msgid "Never"
 msgstr ""
 
-#: packages/admin/src/router.tsx:2131
+#: packages/admin/src/router.tsx:2140
 msgid "new"
 msgstr ""
 
@@ -10179,11 +10385,11 @@ msgstr ""
 msgid "New collection"
 msgstr ""
 
-#: packages/admin/src/router.tsx:948
+#: packages/admin/src/router.tsx:957
 msgid "New content"
 msgstr ""
 
-#: packages/admin/src/router.tsx:3733
+#: packages/admin/src/router.tsx:3762
 msgid "New content type"
 msgstr ""
 
@@ -10202,6 +10408,11 @@ msgstr ""
 
 #: packages/admin/src/components/MediaLibrary.tsx:793
 msgid "New folder"
+msgstr ""
+
+#: packages/admin/src/components/multisite/OrganizationsPage.tsx:103
+#: packages/admin/src/components/multisite/OrganizationsPage.tsx:144
+msgid "New organization"
 msgstr ""
 
 #: packages/admin/src/components/MarketplaceMigrationBanner.tsx:15
@@ -10417,6 +10628,10 @@ msgstr ""
 msgid "No detailed description available."
 msgstr ""
 
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:242
+msgid "No domain yet"
+msgstr ""
+
 #: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:353
 msgid "No domains configured. Users must be invited individually."
 msgstr ""
@@ -10435,6 +10650,12 @@ msgstr ""
 
 #: packages/admin/src/components/users/InviteUserModal.tsx:147
 msgid "No email provider configured. Share this link manually."
+msgstr ""
+
+#. placeholder {0}: email.trim()
+#. placeholder {1}: org.name
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:772
+msgid "No email provider is configured. Send this link to {0} so they can create an account and join {1}."
 msgstr ""
 
 #: packages/admin/src/components/WordPressImport.tsx:2608
@@ -10597,6 +10818,10 @@ msgstr ""
 msgid "No moderation (auto-approve all)"
 msgstr ""
 
+#: packages/admin/src/components/multisite/OrganizationsPage.tsx:133
+msgid "No organizations yet. Create one to add sites and members."
+msgstr ""
+
 #: packages/admin/src/components/MenuEditor.tsx:482
 msgid "No parent (top level)"
 msgstr ""
@@ -10690,6 +10915,18 @@ msgstr ""
 msgid "No sections yet"
 msgstr ""
 
+#: packages/admin/src/components/multisite/ProviderSignIn.tsx:52
+msgid "No sign-in provider is configured. Add one to authProviders in the EmDash config."
+msgstr ""
+
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:282
+msgid "No sites yet. A deployment Admin can add them."
+msgstr ""
+
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:281
+msgid "No sites yet. Add one to start publishing."
+msgstr ""
+
 #: packages/admin/src/components/comments/CommentInbox.tsx:629
 msgid "No spam comments."
 msgstr ""
@@ -10706,11 +10943,11 @@ msgstr ""
 msgid "No usage to show yet"
 msgstr ""
 
-#: packages/admin/src/components/users/UserList.tsx:117
+#: packages/admin/src/components/users/UserList.tsx:125
 msgid "No users found matching your filters."
 msgstr ""
 
-#: packages/admin/src/components/users/UserList.tsx:131
+#: packages/admin/src/components/users/UserList.tsx:139
 msgid "No users yet."
 msgstr ""
 
@@ -10859,13 +11096,17 @@ msgstr ""
 msgid "On the site"
 msgstr ""
 
-#: packages/admin/src/components/SetupWizard.tsx:180
+#: packages/admin/src/components/SetupWizard.tsx:186
 msgid "Once setup is done, upload a .emdash package exported from another EmDash site."
 msgstr ""
 
 #: packages/admin/src/components/RelationForm.tsx:409
 #: packages/admin/src/components/RelationForm.tsx:419
 msgid "One"
+msgstr ""
+
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:517
+msgid "One per line. The first is the site's main address."
 msgstr ""
 
 #: packages/admin/src/components/DeviceAuthorizePage.tsx:310
@@ -10947,7 +11188,7 @@ msgid "Open setup"
 msgstr ""
 
 #: packages/admin/src/components/InviteAcceptPage.tsx:89
-#: packages/admin/src/components/SetupWizard.tsx:357
+#: packages/admin/src/components/SetupWizard.tsx:363
 #: packages/admin/src/components/SignupPage.tsx:246
 msgid "Open the dashboard"
 msgstr ""
@@ -10997,6 +11238,10 @@ msgstr ""
 msgid "Optional tooltip on hover"
 msgstr ""
 
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:392
+msgid "Optional. One per line; the first is the site's main address. Point each domain at this deployment."
+msgstr ""
+
 #: packages/admin/src/components/BylineFieldEditor.tsx:432
 #: packages/admin/src/components/FieldEditor.tsx:1292
 #: packages/admin/src/components/FieldEditor.tsx:1714
@@ -11016,8 +11261,8 @@ msgid "or connect by URL"
 msgstr ""
 
 #: packages/admin/src/components/InviteAcceptPage.tsx:102
-#: packages/admin/src/components/LoginPage.tsx:282
-#: packages/admin/src/components/SetupWizard.tsx:370
+#: packages/admin/src/components/LoginPage.tsx:293
+#: packages/admin/src/components/SetupWizard.tsx:376
 msgid "Or continue with"
 msgstr "Edo jarraitu honekin"
 
@@ -11039,6 +11284,31 @@ msgstr ""
 
 #: packages/admin/src/components/FieldEditor.tsx:754
 msgid "Ordered page-building blocks"
+msgstr ""
+
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:101
+#: packages/admin/src/router.tsx:3593
+msgid "Organization"
+msgstr ""
+
+#: packages/admin/src/components/multisite/OrganizationsPage.tsx:50
+msgid "Organization created"
+msgstr ""
+
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:572
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:584
+msgid "Organization role"
+msgstr ""
+
+#: packages/admin/src/components/multisite/OrganizationsPage.tsx:55
+#: packages/admin/src/components/multisite/SiteSwitcher.tsx:73
+#: packages/admin/src/components/Sidebar.tsx:588
+#: packages/admin/src/router.tsx:3582
+msgid "Organizations"
+msgstr ""
+
+#: packages/admin/src/components/multisite/OrganizationsPage.tsx:56
+msgid "Organizations group sites and the people who work on them. A member's role in an organization applies to all of its sites."
 msgstr ""
 
 #: packages/admin/src/components/MediaDetailPanel.tsx:539
@@ -11112,11 +11382,11 @@ msgstr ""
 msgid "Package downloaded"
 msgstr ""
 
-#: packages/admin/src/router.tsx:4058
+#: packages/admin/src/router.tsx:4087
 msgid "Page not found"
 msgstr ""
 
-#: packages/admin/src/router.tsx:4186
+#: packages/admin/src/router.tsx:4217
 msgid "Page Not Found"
 msgstr ""
 
@@ -11151,6 +11421,11 @@ msgstr ""
 #: packages/admin/src/components/MenuEditor.tsx:883
 #: packages/admin/src/components/TaxonomyManager.tsx:763
 msgid "Parent"
+msgstr ""
+
+#. placeholder {0}: org.name
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:497
+msgid "Part of {0}."
 msgstr ""
 
 #: packages/admin/src/components/Redirects.tsx:457
@@ -11196,7 +11471,7 @@ msgid "Passkey renamed"
 msgstr ""
 
 #: packages/admin/src/components/settings/SecuritySettings.tsx:140
-#: packages/admin/src/components/users/UserList.tsx:108
+#: packages/admin/src/components/users/UserList.tsx:116
 msgid "Passkeys"
 msgstr ""
 
@@ -11310,9 +11585,17 @@ msgstr ""
 msgid "Pending changes"
 msgstr ""
 
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:913
+msgid "Pending invitations"
+msgstr ""
+
 #: packages/admin/src/components/EntryLockNotice.tsx:162
 #: packages/admin/src/components/EntryLockNotice.tsx:189
 msgid "People are editing this entry together"
+msgstr ""
+
+#: packages/admin/src/routes/users.tsx:55
+msgid "People are managed by the organization"
 msgstr ""
 
 #: packages/admin/src/components/presence/PresenceAvatars.tsx:288
@@ -11391,7 +11674,7 @@ msgstr ""
 msgid "Please ask your administrator to send a new invite."
 msgstr ""
 
-#: packages/admin/src/components/SetupWizard.tsx:245
+#: packages/admin/src/components/SetupWizard.tsx:251
 msgid "Please enter a valid email"
 msgstr ""
 
@@ -11404,7 +11687,7 @@ msgid "Please enter a valid URL"
 msgstr ""
 
 #: packages/admin/src/components/WordPressImport.tsx:1234
-#: packages/admin/src/router.tsx:4034
+#: packages/admin/src/router.tsx:4063
 msgid "Plugin"
 msgstr ""
 
@@ -11442,8 +11725,8 @@ msgid "Plugin details"
 msgstr ""
 
 #: packages/admin/src/components/RegistryPluginDetail.tsx:461
-#: packages/admin/src/router.tsx:3446
-#: packages/admin/src/router.tsx:3454
+#: packages/admin/src/router.tsx:3455
+#: packages/admin/src/router.tsx:3463
 msgid "Plugin Details"
 msgstr ""
 
@@ -11468,7 +11751,7 @@ msgstr ""
 msgid "Plugin installation requires explicit consent"
 msgstr ""
 
-#: packages/admin/src/router.tsx:3438
+#: packages/admin/src/router.tsx:3447
 msgid "Plugin Marketplace"
 msgstr ""
 
@@ -11508,7 +11791,7 @@ msgid "Plugin Permissions"
 msgstr ""
 
 #: packages/admin/src/components/RegistryBrowse.tsx:104
-#: packages/admin/src/router.tsx:3395
+#: packages/admin/src/router.tsx:3404
 msgid "Plugin Registry"
 msgstr ""
 
@@ -11517,8 +11800,8 @@ msgstr ""
 msgid "Plugin registry configuration error"
 msgstr ""
 
-#: packages/admin/src/router.tsx:3431
-#: packages/admin/src/router.tsx:3468
+#: packages/admin/src/router.tsx:3440
+#: packages/admin/src/router.tsx:3477
 msgid "Plugin registry is not configured."
 msgstr ""
 
@@ -11528,7 +11811,7 @@ msgid "Plugin responded with {0}: {text}"
 msgstr ""
 
 #: packages/admin/src/components/PluginSettings.tsx:38
-#: packages/admin/src/router.tsx:4019
+#: packages/admin/src/router.tsx:4048
 msgid "Plugin Settings"
 msgstr ""
 
@@ -11559,9 +11842,9 @@ msgstr ""
 #: packages/admin/src/components/PluginManager.tsx:181
 #: packages/admin/src/components/PluginManager.tsx:190
 #: packages/admin/src/components/PluginManager.tsx:200
-#: packages/admin/src/components/Sidebar.tsx:462
-#: packages/admin/src/components/Sidebar.tsx:588
-#: packages/admin/src/router.tsx:3380
+#: packages/admin/src/components/Sidebar.tsx:463
+#: packages/admin/src/components/Sidebar.tsx:592
+#: packages/admin/src/router.tsx:3389
 msgid "Plugins"
 msgstr "Pluginak"
 
@@ -11638,7 +11921,7 @@ msgid "Preparing to download files from WordPress..."
 msgstr ""
 
 #: packages/admin/src/components/auth/PasskeyLogin.tsx:163
-#: packages/admin/src/components/SetupWizard.tsx:298
+#: packages/admin/src/components/SetupWizard.tsx:304
 msgid "Preparing..."
 msgstr ""
 
@@ -11677,7 +11960,7 @@ msgstr ""
 msgid "Preview of {0}"
 msgstr ""
 
-#: packages/admin/src/router.tsx:1467
+#: packages/admin/src/router.tsx:1476
 msgid "Preview opens once your edits are saved"
 msgstr ""
 
@@ -11800,11 +12083,6 @@ msgstr ""
 msgid "Publish, unpublish, schedule, and unschedule content"
 msgstr ""
 
-#. js-lingui-explicit-id
-#: packages/admin/src/locales/server.ts:54
-msgid "visualEditing.published"
-msgstr ""
-
 #: packages/admin/src/components/calendar/CalendarEntry.tsx:43
 #: packages/admin/src/components/calendar/CalendarEntryPanel.tsx:226
 #: packages/admin/src/components/ContentList.tsx:1072
@@ -11814,8 +12092,13 @@ msgstr ""
 #: packages/admin/src/components/Dashboard.tsx:527
 #: packages/admin/src/components/revisions/RevisionList.tsx:268
 #: packages/admin/src/components/revisions/RevisionViewBar.tsx:164
-#: packages/admin/src/router.tsx:1989
+#: packages/admin/src/router.tsx:1998
 msgid "Published"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: packages/admin/src/locales/server.ts:54
+msgid "visualEditing.published"
 msgstr ""
 
 #. placeholder {0}: isolate(formatDate(latest.publishedAt, i18n.locale))
@@ -11827,7 +12110,7 @@ msgstr ""
 msgid "Published {liveSince}"
 msgstr ""
 
-#: packages/admin/src/router.tsx:797
+#: packages/admin/src/router.tsx:806
 msgid "Published {total} items"
 msgstr ""
 
@@ -11967,7 +12250,7 @@ msgid "Read your taxonomies and terms"
 msgstr ""
 
 #: packages/admin/src/components/EntryLockNotice.tsx:96
-#: packages/admin/src/router.tsx:2585
+#: packages/admin/src/router.tsx:2594
 msgid "Read-only"
 msgstr ""
 
@@ -12057,8 +12340,8 @@ msgstr ""
 #: packages/admin/src/components/Redirects.tsx:731
 #: packages/admin/src/components/settings/transfer/labels.ts:33
 #: packages/admin/src/components/settings/transfer/labels.ts:90
-#: packages/admin/src/components/Sidebar.tsx:529
-#: packages/admin/src/router.tsx:3566
+#: packages/admin/src/components/Sidebar.tsx:530
+#: packages/admin/src/router.tsx:3575
 msgid "Redirects"
 msgstr ""
 
@@ -12128,8 +12411,8 @@ msgstr ""
 
 #: packages/admin/src/components/PluginManager.tsx:218
 #: packages/admin/src/components/PluginManager.tsx:463
-#: packages/admin/src/components/Sidebar.tsx:597
-#: packages/admin/src/router.tsx:3395
+#: packages/admin/src/components/Sidebar.tsx:601
+#: packages/admin/src/router.tsx:3404
 msgid "Registry"
 msgstr ""
 
@@ -12138,7 +12421,7 @@ msgstr ""
 #: packages/admin/src/components/RelationsPanel.tsx:65
 #: packages/admin/src/components/settings/transfer/labels.ts:14
 #: packages/admin/src/components/settings/transfer/labels.ts:77
-#: packages/admin/src/router.tsx:3769
+#: packages/admin/src/router.tsx:3798
 msgid "Relations"
 msgstr ""
 
@@ -12162,7 +12445,7 @@ msgid "Release notes"
 msgstr ""
 
 #: packages/admin/src/components/co-editing/SyncStatus.tsx:109
-#: packages/admin/src/router.tsx:2610
+#: packages/admin/src/router.tsx:2619
 msgid "Reload"
 msgstr ""
 
@@ -12174,7 +12457,7 @@ msgstr ""
 msgid "Reload page"
 msgstr ""
 
-#: packages/admin/src/router.tsx:2601
+#: packages/admin/src/router.tsx:2610
 msgid "Reloading the admin"
 msgstr ""
 
@@ -12198,6 +12481,7 @@ msgstr ""
 #: packages/admin/src/components/ImageFieldRenderer.tsx:605
 #: packages/admin/src/components/ImageFieldRenderer.tsx:846
 #: packages/admin/src/components/media/MediaBrowserItems.tsx:224
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:705
 #: packages/admin/src/components/PortableTextEditor.tsx:5422
 #: packages/admin/src/components/settings/GeneralSettings.tsx:478
 #: packages/admin/src/components/settings/GeneralSettings.tsx:538
@@ -12231,6 +12515,7 @@ msgstr ""
 #: packages/admin/src/components/ContentEditor.tsx:5189
 #: packages/admin/src/components/ContentEditor.tsx:5255
 #: packages/admin/src/components/ImageFieldRenderer.tsx:833
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:679
 #: packages/admin/src/components/SeoImageField.tsx:206
 #: packages/admin/src/components/SeoImageField.tsx:207
 msgid "Remove {label}"
@@ -12282,6 +12567,10 @@ msgstr ""
 #: packages/admin/src/components/PortableTextEditor.tsx:4015
 #: packages/admin/src/components/PortableTextEditor.tsx:4658
 msgid "Remove link"
+msgstr ""
+
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:703
+msgid "Remove member?"
 msgstr ""
 
 #: packages/admin/src/components/settings/PasskeyItem.tsx:161
@@ -12393,11 +12682,13 @@ msgid "Removing starter content"
 msgstr ""
 
 #: packages/admin/src/components/editor/ImageDetailPanel.tsx:360
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:706
 #: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:441
 #: packages/admin/src/components/settings/PasskeyItem.tsx:183
 msgid "Removing..."
 msgstr ""
 
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:129
 #: packages/admin/src/components/settings/PasskeyItem.tsx:149
 msgid "Rename"
 msgstr ""
@@ -12410,6 +12701,10 @@ msgstr ""
 #: packages/admin/src/components/MenuEditor.tsx:531
 #: packages/admin/src/components/MenuEditor.tsx:536
 msgid "Rename menu"
+msgstr ""
+
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:178
+msgid "Rename organization"
 msgstr ""
 
 #: packages/admin/src/components/settings/PasskeyItem.tsx:150
@@ -12567,7 +12862,7 @@ msgstr ""
 msgid "Request a new link"
 msgstr ""
 
-#: packages/admin/src/lib/api/client.ts:379
+#: packages/admin/src/lib/api/client.ts:384
 msgid "Request failed"
 msgstr ""
 
@@ -12747,7 +13042,7 @@ msgstr ""
 #: packages/admin/src/components/settings/SidebarsSettings.tsx:92
 #: packages/admin/src/components/ThemeMarketplaceBrowse.tsx:122
 #: packages/admin/src/lib/content-editor-panels.tsx:319
-#: packages/admin/src/router.tsx:4174
+#: packages/admin/src/router.tsx:4205
 #: packages/admin/src/routes/byline-schema.tsx:264
 #: packages/admin/src/routes/calendar.tsx:319
 msgid "Retry"
@@ -12798,7 +13093,7 @@ msgstr ""
 msgid "Reusable content blocks you can insert into any content"
 msgstr ""
 
-#: packages/admin/src/router.tsx:2039
+#: packages/admin/src/router.tsx:2048
 msgid "Reverted to published version"
 msgstr ""
 
@@ -12909,17 +13204,28 @@ msgstr ""
 msgid "robots.txt"
 msgstr ""
 
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:804
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:805
 #: packages/admin/src/components/users/InviteUserModal.tsx:200
 #: packages/admin/src/components/users/InviteUserModal.tsx:203
 #: packages/admin/src/components/users/UserDetail.tsx:173
 #: packages/admin/src/components/users/UserDetail.tsx:185
-#: packages/admin/src/components/users/UserList.tsx:99
+#: packages/admin/src/components/users/UserList.tsx:107
 msgid "Role"
 msgstr ""
 
 #: packages/admin/src/components/users/roleDefinitions.ts:61
 msgid "Role {role}"
 msgstr "Rola {role}"
+
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:659
+msgid "Role of {label}"
+msgstr ""
+
+#. placeholder {0}: site.name
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:878
+msgid "Role on {0}"
+msgstr ""
 
 #: packages/admin/src/components/BylineCreditsEditor.tsx:763
 msgid "Role on this post (optional)"
@@ -12986,8 +13292,8 @@ msgstr ""
 msgid "Same window"
 msgstr ""
 
-#: packages/admin/src/components/SetupWizard.tsx:168
-#: packages/admin/src/components/SetupWizard.tsx:208
+#: packages/admin/src/components/SetupWizard.tsx:174
+#: packages/admin/src/components/SetupWizard.tsx:214
 msgid "Sample content"
 msgstr ""
 
@@ -12998,6 +13304,8 @@ msgstr ""
 #: packages/admin/src/components/MediaFolderDialog.tsx:207
 #: packages/admin/src/components/MenuEditor.tsx:571
 #: packages/admin/src/components/MenuEditor.tsx:896
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:204
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:548
 #: packages/admin/src/components/PortableTextEditor.tsx:1433
 #: packages/admin/src/components/Redirects.tsx:313
 #: packages/admin/src/components/SaveButton.tsx:51
@@ -13111,6 +13419,8 @@ msgstr ""
 #: packages/admin/src/components/MediaFolderDialog.tsx:207
 #: packages/admin/src/components/MenuEditor.tsx:571
 #: packages/admin/src/components/MenuEditor.tsx:896
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:204
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:548
 #: packages/admin/src/components/PluginSettings.tsx:150
 #: packages/admin/src/components/PluginSettings.tsx:193
 #: packages/admin/src/components/Redirects.tsx:310
@@ -13172,7 +13482,7 @@ msgstr ""
 #: packages/admin/src/components/calendar/CalendarEntryPanel.tsx:420
 #: packages/admin/src/components/ContentList.tsx:1074
 #: packages/admin/src/components/ContentStatusBadge.tsx:63
-#: packages/admin/src/router.tsx:2087
+#: packages/admin/src/router.tsx:2096
 msgid "Scheduled"
 msgstr ""
 
@@ -13298,7 +13608,7 @@ msgstr ""
 msgid "Search by filename..."
 msgstr ""
 
-#: packages/admin/src/components/users/UserList.tsx:72
+#: packages/admin/src/components/users/UserList.tsx:80
 msgid "Search by name or email..."
 msgstr ""
 
@@ -13440,7 +13750,7 @@ msgstr ""
 msgid "Search to narrow the list"
 msgstr ""
 
-#: packages/admin/src/components/users/UserList.tsx:75
+#: packages/admin/src/components/users/UserList.tsx:83
 msgid "Search users"
 msgstr ""
 
@@ -13495,8 +13805,8 @@ msgstr ""
 #: packages/admin/src/components/Sections.tsx:218
 #: packages/admin/src/components/settings/transfer/labels.ts:32
 #: packages/admin/src/components/settings/transfer/labels.ts:93
-#: packages/admin/src/components/Sidebar.tsx:543
-#: packages/admin/src/router.tsx:3573
+#: packages/admin/src/components/Sidebar.tsx:544
+#: packages/admin/src/router.tsx:3602
 msgid "Sections"
 msgstr "Atalak"
 
@@ -13504,7 +13814,7 @@ msgstr "Atalak"
 msgid "Sections could not be loaded."
 msgstr ""
 
-#: packages/admin/src/components/SetupWizard.tsx:621
+#: packages/admin/src/components/SetupWizard.tsx:638
 msgid "Secure your account"
 msgstr ""
 
@@ -13512,7 +13822,7 @@ msgstr ""
 #: packages/admin/src/components/Settings.tsx:90
 #: packages/admin/src/components/settings/EmailSettings.tsx:261
 #: packages/admin/src/components/settings/EmailSettings.tsx:350
-#: packages/admin/src/router.tsx:3235
+#: packages/admin/src/router.tsx:3244
 msgid "Security"
 msgstr "Segurtasuna"
 
@@ -13550,11 +13860,11 @@ msgid "Security error. Make sure you're on a secure connection."
 msgstr ""
 
 #: packages/admin/src/components/AdminCommandPalette.tsx:263
-#: packages/admin/src/components/Header.tsx:114
+#: packages/admin/src/components/Header.tsx:161
 #: packages/admin/src/components/Settings.tsx:86
 #: packages/admin/src/components/settings/SecuritySettings.tsx:93
 #: packages/admin/src/components/settings/SecuritySettings.tsx:115
-#: packages/admin/src/router.tsx:3234
+#: packages/admin/src/router.tsx:3243
 msgid "Security Settings"
 msgstr "Segurtasun-ezarpenak"
 
@@ -13750,7 +14060,7 @@ msgstr ""
 #: packages/admin/src/components/Settings.tsx:97
 #: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:219
 #: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:241
-#: packages/admin/src/router.tsx:3259
+#: packages/admin/src/router.tsx:3268
 msgid "Self-Signup Domains"
 msgstr "Automatikoki sartzeko domeinuak"
 
@@ -13774,7 +14084,7 @@ msgstr ""
 msgid "Send Invite"
 msgstr ""
 
-#: packages/admin/src/components/LoginPage.tsx:153
+#: packages/admin/src/components/LoginPage.tsx:154
 msgid "Send magic link"
 msgstr "Bidali esteka magikoa"
 
@@ -13802,7 +14112,7 @@ msgstr ""
 msgid "Sender name (optional)"
 msgstr ""
 
-#: packages/admin/src/components/LoginPage.tsx:153
+#: packages/admin/src/components/LoginPage.tsx:154
 #: packages/admin/src/components/settings/EmailSettings.tsx:410
 #: packages/admin/src/components/settings/GeneralSettings.tsx:662
 #: packages/admin/src/components/SignupPage.tsx:109
@@ -13816,7 +14126,7 @@ msgstr "Bidaltzen..."
 #: packages/admin/src/components/ContentTypeEditor.tsx:689
 #: packages/admin/src/components/Settings.tsx:68
 #: packages/admin/src/lib/editor-sections.ts:37
-#: packages/admin/src/router.tsx:3371
+#: packages/admin/src/router.tsx:3380
 msgid "SEO"
 msgstr "SEO"
 
@@ -13827,7 +14137,7 @@ msgid "SEO settings"
 msgstr ""
 
 #: packages/admin/src/components/settings/SeoSettings.tsx:126
-#: packages/admin/src/router.tsx:3370
+#: packages/admin/src/router.tsx:3379
 msgid "SEO Settings"
 msgstr ""
 
@@ -13889,7 +14199,11 @@ msgstr ""
 msgid "Set up Windows Hello"
 msgstr ""
 
-#: packages/admin/src/components/SetupWizard.tsx:619
+#: packages/admin/src/components/SetupWizard.tsx:622
+msgid "Set up your organizations"
+msgstr ""
+
+#: packages/admin/src/components/SetupWizard.tsx:636
 msgid "Set up your site"
 msgstr ""
 
@@ -13898,19 +14212,19 @@ msgstr ""
 msgid "Setting up"
 msgstr ""
 
-#: packages/admin/src/components/SetupWizard.tsx:202
+#: packages/admin/src/components/SetupWizard.tsx:208
 msgid "Setting up..."
 msgstr ""
 
 #: packages/admin/src/components/AdminCommandPalette.tsx:247
 #: packages/admin/src/components/ContentEditor.tsx:3132
 #: packages/admin/src/components/ContentTypeEditor.tsx:485
-#: packages/admin/src/components/Header.tsx:122
+#: packages/admin/src/components/Header.tsx:169
 #: packages/admin/src/components/PluginManager.tsx:546
 #: packages/admin/src/components/Settings.tsx:47
-#: packages/admin/src/components/Sidebar.tsx:611
+#: packages/admin/src/components/Sidebar.tsx:615
 #: packages/admin/src/components/WordPressImport.tsx:1861
-#: packages/admin/src/router.tsx:3215
+#: packages/admin/src/router.tsx:3224
 msgid "Settings"
 msgstr "Ezarpenak"
 
@@ -13927,7 +14241,7 @@ msgstr ""
 msgid "Settings saved successfully"
 msgstr ""
 
-#: packages/admin/src/router.tsx:479
+#: packages/admin/src/router.tsx:482
 msgid "Setup"
 msgstr ""
 
@@ -13935,8 +14249,8 @@ msgstr ""
 msgid "Setup couldn’t continue. Try again."
 msgstr ""
 
-#: packages/admin/src/components/SetupWizard.tsx:524
-#: packages/admin/src/components/SetupWizard.tsx:527
+#: packages/admin/src/components/SetupWizard.tsx:530
+#: packages/admin/src/components/SetupWizard.tsx:533
 msgid "Setup failed"
 msgstr ""
 
@@ -14032,10 +14346,11 @@ msgstr ""
 
 #: packages/admin/src/components/Settings.tsx:142
 #: packages/admin/src/components/settings/SidebarsSettings.tsx:80
-#: packages/admin/src/router.tsx:3320
+#: packages/admin/src/router.tsx:3329
 msgid "Sidebars"
 msgstr ""
 
+#: packages/admin/src/components/LoginPage.tsx:246
 #: packages/admin/src/components/SignupPage.tsx:466
 #: packages/admin/src/locales/emails.ts:65
 #: packages/auth-atproto/src/admin.tsx:112
@@ -14043,7 +14358,7 @@ msgstr ""
 msgid "Sign in"
 msgstr ""
 
-#: packages/admin/src/components/SetupWizard.tsx:411
+#: packages/admin/src/components/SetupWizard.tsx:417
 msgid "Sign In"
 msgstr ""
 
@@ -14056,28 +14371,32 @@ msgstr ""
 msgid "Sign in to {siteName}"
 msgstr ""
 
-#: packages/admin/src/components/LoginPage.tsx:253
+#: packages/admin/src/components/SetupWizard.tsx:623
+msgid "Sign in to become the first administrator. Only accounts from {domains} can sign in. Next you'll create organizations and their sites."
+msgstr ""
+
+#: packages/admin/src/components/LoginPage.tsx:264
 msgid "Sign in to your site"
 msgstr "Sartu zure webgunera"
 
 #. placeholder {0}: activeProviderEntry.label ?? activeProvider
 #. placeholder {0}: provider.label
-#: packages/admin/src/components/LoginPage.tsx:252
-#: packages/admin/src/components/SetupWizard.tsx:328
+#: packages/admin/src/components/LoginPage.tsx:263
+#: packages/admin/src/components/SetupWizard.tsx:334
 msgid "Sign in with {0}"
 msgstr ""
 
-#: packages/admin/src/components/LoginPage.tsx:250
+#: packages/admin/src/components/LoginPage.tsx:261
 #: packages/admin/src/components/MagicLinkConfirmPage.tsx:63
 msgid "Sign in with email"
 msgstr "Sartu emailarekin"
 
-#: packages/admin/src/components/LoginPage.tsx:311
+#: packages/admin/src/components/LoginPage.tsx:322
 msgid "Sign in with email link"
 msgstr "Sartu email bidezko estekarekin"
 
 #: packages/admin/src/components/auth/PasskeyLogin.tsx:134
-#: packages/admin/src/components/LoginPage.tsx:273
+#: packages/admin/src/components/LoginPage.tsx:284
 msgid "Sign in with Passkey"
 msgstr "Sartu sarbide-gakoarekin"
 
@@ -14085,7 +14404,7 @@ msgstr "Sartu sarbide-gakoarekin"
 msgid "Sign in with your Bluesky/Atmosphere handle"
 msgstr ""
 
-#: packages/admin/src/router.tsx:519
+#: packages/admin/src/router.tsx:522
 msgid "Sign up"
 msgstr ""
 
@@ -14119,8 +14438,12 @@ msgid "Single line text input"
 msgstr ""
 
 #: packages/admin/src/components/Settings.tsx:52
-#: packages/admin/src/components/SetupWizard.tsx:409
+#: packages/admin/src/components/SetupWizard.tsx:415
 msgid "Site"
+msgstr ""
+
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:330
+msgid "Site added"
 msgstr ""
 
 #: packages/admin/src/components/settings/ApiTokenSettings.tsx:102
@@ -14152,8 +14475,17 @@ msgstr ""
 msgid "Site Import Analysis"
 msgstr ""
 
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:522
+msgid "Site is online"
+msgstr ""
+
 #: packages/admin/src/components/settings/EmailSettings.tsx:294
 msgid "Site Name"
+msgstr ""
+
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:670
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:866
+msgid "Site roles of {label}"
 msgstr ""
 
 #: packages/admin/src/components/settings/transfer/labels.ts:36
@@ -14161,7 +14493,7 @@ msgid "Site settings"
 msgstr ""
 
 #: packages/admin/src/components/MediaUsedIn.tsx:298
-#: packages/admin/src/components/SetupWizard.tsx:407
+#: packages/admin/src/components/SetupWizard.tsx:413
 #: packages/admin/src/components/WordPressImport.tsx:1203
 msgid "Site Settings"
 msgstr ""
@@ -14179,7 +14511,7 @@ msgid "Site title"
 msgstr ""
 
 #: packages/admin/src/components/settings/GeneralSettings.tsx:356
-#: packages/admin/src/components/SetupWizard.tsx:138
+#: packages/admin/src/components/SetupWizard.tsx:144
 msgid "Site Title"
 msgstr ""
 
@@ -14187,7 +14519,7 @@ msgstr ""
 msgid "Site title & tagline"
 msgstr ""
 
-#: packages/admin/src/components/SetupWizard.tsx:122
+#: packages/admin/src/components/SetupWizard.tsx:128
 msgid "Site title is required"
 msgstr ""
 
@@ -14205,6 +14537,10 @@ msgstr ""
 
 #: packages/admin/src/components/settings/ChangeDomainDialog.tsx:149
 msgid "Sitemaps and absolute URLs in search and social metadata will use the new domain. Links in emails and plugins keep using {configuredUrl}, set by the deployment configuration."
+msgstr ""
+
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:220
+msgid "Sites"
 msgstr ""
 
 #: packages/admin/src/components/settings/BackupSettings.tsx:347
@@ -14232,6 +14568,11 @@ msgstr ""
 msgid "Skipped"
 msgstr ""
 
+#. placeholder {0}: conflicts.join(", ")
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:459
+msgid "Skipped because another account uses the email: {0}"
+msgstr ""
+
 #: packages/admin/src/components/BlockTypeList.tsx:39
 #: packages/admin/src/components/BylineFieldEditor.tsx:354
 #: packages/admin/src/components/BylineFieldEditor.tsx:357
@@ -14250,6 +14591,8 @@ msgstr ""
 #: packages/admin/src/components/FieldEditor.tsx:1662
 #: packages/admin/src/components/FieldEditor.tsx:1665
 #: packages/admin/src/components/FieldEditor.tsx:1668
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:381
+#: packages/admin/src/components/multisite/OrganizationsPage.tsx:161
 #: packages/admin/src/components/RelationForm.tsx:435
 #: packages/admin/src/components/RelationForm.tsx:440
 #: packages/admin/src/components/RelationForm.tsx:444
@@ -14311,7 +14654,7 @@ msgstr ""
 
 #: packages/admin/src/components/Settings.tsx:62
 #: packages/admin/src/components/settings/SocialSettings.tsx:89
-#: packages/admin/src/router.tsx:3356
+#: packages/admin/src/router.tsx:3365
 msgid "Social Links"
 msgstr "Sare-sozialen estekak"
 
@@ -14328,7 +14671,7 @@ msgstr "Sare-sozialetako profiletako estekak"
 msgid "Social Profiles"
 msgstr ""
 
-#: packages/admin/src/router.tsx:3355
+#: packages/admin/src/router.tsx:3364
 msgid "Social Settings"
 msgstr ""
 
@@ -14373,7 +14716,7 @@ msgstr ""
 msgid "Some references point to content that is not in the package"
 msgstr ""
 
-#: packages/admin/src/router.tsx:1277
+#: packages/admin/src/router.tsx:1286
 msgid "Someone"
 msgstr ""
 
@@ -14463,7 +14806,7 @@ msgstr ""
 msgid "Stable identifier for your site, such as primary or footer."
 msgstr ""
 
-#: packages/admin/src/components/Header.tsx:52
+#: packages/admin/src/components/Header.tsx:94
 #: packages/admin/src/components/settings/GeneralSettings.tsx:114
 msgid "Staging"
 msgstr ""
@@ -14481,11 +14824,11 @@ msgstr ""
 msgid "Start Import"
 msgstr ""
 
-#: packages/admin/src/components/SetupWizard.tsx:175
+#: packages/admin/src/components/SetupWizard.tsx:181
 msgid "Start with the template’s content types and no content."
 msgstr ""
 
-#: packages/admin/src/components/SetupWizard.tsx:169
+#: packages/admin/src/components/SetupWizard.tsx:175
 msgid "Start with the template’s example posts and pages. Recommended for new sites."
 msgstr ""
 
@@ -14536,7 +14879,7 @@ msgstr ""
 #: packages/admin/src/components/settings/MediaUsageSettings.tsx:382
 #: packages/admin/src/components/settings/MediaUsageSettings.tsx:613
 #: packages/admin/src/components/settings/MediaUsageSettings.tsx:639
-#: packages/admin/src/components/users/UserList.tsx:102
+#: packages/admin/src/components/users/UserList.tsx:110
 msgid "Status"
 msgstr "Egoera"
 
@@ -14632,6 +14975,10 @@ msgstr ""
 msgid "Switch back to staging"
 msgstr ""
 
+#: packages/admin/src/components/multisite/SiteSwitcher.tsx:33
+msgid "Switch site, current: {label}"
+msgstr ""
+
 #: packages/admin/src/components/ThemeToggle.tsx:19
 msgid "Switch to dark"
 msgstr ""
@@ -14691,7 +15038,7 @@ msgstr ""
 
 #: packages/admin/src/components/settings/GeneralSettings.tsx:364
 #: packages/admin/src/components/settings/transfer/ImportReview.tsx:375
-#: packages/admin/src/components/SetupWizard.tsx:149
+#: packages/admin/src/components/SetupWizard.tsx:155
 msgid "Tagline"
 msgstr ""
 
@@ -14727,7 +15074,7 @@ msgstr ""
 #: packages/admin/src/components/settings/transfer/labels.ts:13
 #: packages/admin/src/components/TaxonomySidebar.tsx:989
 #: packages/admin/src/lib/editor-sections.ts:36
-#: packages/admin/src/router.tsx:3544
+#: packages/admin/src/router.tsx:3553
 msgid "Taxonomies"
 msgstr ""
 
@@ -14776,7 +15123,7 @@ msgstr ""
 msgid "Tell users where to sign in"
 msgstr ""
 
-#: packages/admin/src/components/SetupWizard.tsx:219
+#: packages/admin/src/components/SetupWizard.tsx:225
 msgid "Template:"
 msgstr ""
 
@@ -14855,7 +15202,7 @@ msgstr ""
 msgid "the {0} field on {1}, which picks entries it links to"
 msgstr ""
 
-#: packages/admin/src/router.tsx:1210
+#: packages/admin/src/router.tsx:1219
 msgid "The admin was updated"
 msgstr ""
 
@@ -15020,7 +15367,7 @@ msgstr ""
 msgid "The latest media request failed. Showing the previous page."
 msgstr ""
 
-#: packages/admin/src/components/LoginPage.tsx:116
+#: packages/admin/src/components/LoginPage.tsx:117
 #: packages/admin/src/components/SignupPage.tsx:159
 msgid "The link will expire in 15 minutes."
 msgstr "Esteka hau 15 minutuan iraungiko da."
@@ -15126,7 +15473,7 @@ msgstr ""
 msgid "The package’s file index is not valid."
 msgstr ""
 
-#: packages/admin/src/router.tsx:4188
+#: packages/admin/src/router.tsx:4219
 msgid "The page you're looking for doesn't exist."
 msgstr ""
 
@@ -15189,7 +15536,7 @@ msgstr ""
 msgid "The relationship decides the referenced collection and how many entries this field accepts."
 msgstr ""
 
-#: packages/admin/src/components/SetupWizard.tsx:189
+#: packages/admin/src/components/SetupWizard.tsx:195
 msgid "The sample content added so far is kept. Continue to add the rest."
 msgstr ""
 
@@ -15215,6 +15562,10 @@ msgstr ""
 
 #: packages/admin/src/components/CapabilityConsentDialog.tsx:160
 msgid "The signed publisher records and package are valid. Build provenance was not provided."
+msgstr ""
+
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:358
+msgid "The site gets its own content and media, kept in the database and storage you choose. You can add its domain now or later."
 msgstr ""
 
 #: packages/admin/src/components/settings/transfer/labels.ts:186
@@ -15281,7 +15632,7 @@ msgstr ""
 msgid "Theme \"{id}\" not found"
 msgstr ""
 
-#: packages/admin/src/router.tsx:3495
+#: packages/admin/src/router.tsx:3504
 msgid "Theme Details"
 msgstr ""
 
@@ -15290,7 +15641,7 @@ msgstr ""
 msgid "Theme ID: {0}"
 msgstr ""
 
-#: packages/admin/src/router.tsx:3487
+#: packages/admin/src/router.tsx:3496
 msgid "Theme Marketplace"
 msgstr ""
 
@@ -15322,11 +15673,15 @@ msgstr ""
 msgid "These entries are password-protected in WordPress. EmDash has no per-entry passwords, so they were imported as drafts. Review each one before you publish it."
 msgstr ""
 
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:914
+msgid "These people join when they first sign in with the invited email."
+msgstr ""
+
 #: packages/admin/src/components/CapabilityConsentDialog.tsx:295
 msgid "These tools remain disabled after installation until you explicitly enable agent access."
 msgstr ""
 
-#: packages/admin/src/router.tsx:1280
+#: packages/admin/src/router.tsx:1289
 msgid "They changed its publishing or schedule, or replaced its draft."
 msgstr ""
 
@@ -15422,15 +15777,15 @@ msgid "This entry changed somewhere else after you opened it."
 msgstr ""
 
 #: packages/admin/src/components/ContentEditor.tsx:2334
-#: packages/admin/src/router.tsx:1583
+#: packages/admin/src/router.tsx:1592
 msgid "This entry changed somewhere else. Save anyway, or reload to get the newer version."
 msgstr ""
 
-#: packages/admin/src/router.tsx:2572
+#: packages/admin/src/router.tsx:2581
 msgid "This entry doesn't exist or isn't published. Your role can only view published content."
 msgstr ""
 
-#: packages/admin/src/router.tsx:2573
+#: packages/admin/src/router.tsx:2582
 msgid "This entry doesn't exist or was deleted."
 msgstr ""
 
@@ -15454,7 +15809,7 @@ msgstr ""
 msgid "This entry was due {lateness} but hasn't published. Scheduled publishing may not be running."
 msgstr ""
 
-#: packages/admin/src/router.tsx:2622
+#: packages/admin/src/router.tsx:2631
 msgid "This entry was moved to Trash or deleted"
 msgstr ""
 
@@ -15564,6 +15919,7 @@ msgstr ""
 msgid "This link expires in 15 minutes."
 msgstr ""
 
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:782
 #: packages/admin/src/components/users/InviteUserModal.tsx:159
 msgid "This link expires in 7 days and can only be used once."
 msgstr ""
@@ -15803,7 +16159,7 @@ msgstr ""
 msgid "This will revert to the published version. Your draft changes will be lost."
 msgstr ""
 
-#: packages/admin/src/components/SetupWizard.tsx:153
+#: packages/admin/src/components/SetupWizard.tsx:159
 msgid "Thoughts, tutorials, and more"
 msgstr ""
 
@@ -15925,7 +16281,7 @@ msgstr ""
 #: packages/admin/src/components/Settings.tsx:132
 #: packages/admin/src/components/settings/TransferSettings.tsx:46
 #: packages/admin/src/components/settings/TransferSettings.tsx:79
-#: packages/admin/src/router.tsx:3306
+#: packages/admin/src/router.tsx:3315
 msgid "Transfer"
 msgstr ""
 
@@ -15954,7 +16310,7 @@ msgstr ""
 #: packages/admin/src/components/MenuEditor.tsx:211
 #: packages/admin/src/components/TaxonomyManager.tsx:1173
 #: packages/admin/src/components/TaxonomySidebar.tsx:870
-#: packages/admin/src/router.tsx:2130
+#: packages/admin/src/router.tsx:2139
 msgid "Translation created"
 msgstr ""
 
@@ -16026,7 +16382,7 @@ msgstr ""
 #: packages/admin/src/components/settings/transfer/ExportSection.tsx:333
 #: packages/admin/src/components/settings/transfer/ImportReview.tsx:471
 #: packages/admin/src/components/settings/transfer/ImportSection.tsx:460
-#: packages/admin/src/routes/users.tsx:215
+#: packages/admin/src/routes/users.tsx:240
 msgid "Try again"
 msgstr ""
 
@@ -16034,7 +16390,7 @@ msgstr ""
 msgid "Try Again"
 msgstr ""
 
-#: packages/admin/src/router.tsx:1468
+#: packages/admin/src/router.tsx:1477
 msgid "Try again in a moment."
 msgstr ""
 
@@ -16255,7 +16611,7 @@ msgstr ""
 msgid "Unpublish {itemLabel}?"
 msgstr ""
 
-#: packages/admin/src/router.tsx:2014
+#: packages/admin/src/router.tsx:2023
 msgid "Unpublished"
 msgstr ""
 
@@ -16286,7 +16642,7 @@ msgstr ""
 msgid "Unsaved content may leave your site"
 msgstr ""
 
-#: packages/admin/src/router.tsx:2099
+#: packages/admin/src/router.tsx:2108
 msgid "Unscheduled"
 msgstr ""
 
@@ -16680,7 +17036,11 @@ msgstr ""
 msgid "Use your device's biometric authentication, security key, or PIN to sign in."
 msgstr ""
 
-#: packages/admin/src/components/LoginPage.tsx:227
+#: packages/admin/src/components/LoginPage.tsx:247
+msgid "Use your organization account to continue."
+msgstr ""
+
+#: packages/admin/src/components/LoginPage.tsx:228
 msgid "Use your registered passkey to sign in securely."
 msgstr "Erabili zuk erregistratutako sarbide-gakoa era seguruan sartzeko."
 
@@ -16715,9 +17075,9 @@ msgid "Used to identify this section. Lowercase letters, numbers, and hyphens on
 msgstr ""
 
 #: packages/admin/src/components/DeviceAuthorizePage.tsx:254
-#: packages/admin/src/components/Header.tsx:47
-#: packages/admin/src/components/Header.tsx:102
-#: packages/admin/src/components/users/UserList.tsx:97
+#: packages/admin/src/components/Header.tsx:89
+#: packages/admin/src/components/Header.tsx:149
+#: packages/admin/src/components/users/UserList.tsx:105
 msgid "User"
 msgstr ""
 
@@ -16752,9 +17112,9 @@ msgid "Username"
 msgstr ""
 
 #: packages/admin/src/components/AdminCommandPalette.tsx:223
-#: packages/admin/src/components/Sidebar.tsx:585
-#: packages/admin/src/components/users/UserList.tsx:64
-#: packages/admin/src/router.tsx:3595
+#: packages/admin/src/components/Sidebar.tsx:586
+#: packages/admin/src/components/users/UserList.tsx:69
+#: packages/admin/src/router.tsx:3624
 msgid "Users"
 msgstr "Erabiltzaileak"
 
@@ -16874,6 +17234,11 @@ msgstr ""
 msgid "Video upload failed. Try again."
 msgstr ""
 
+#. placeholder {0}: site.name
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:256
+msgid "View {0}"
+msgstr ""
+
 #: packages/admin/src/components/Settings.tsx:121
 msgid "View email provider status and send test emails"
 msgstr "Erakutsi email hornitzailearen egoera eta bidali probako emailak"
@@ -16895,8 +17260,10 @@ msgstr ""
 msgid "View setup"
 msgstr ""
 
-#: packages/admin/src/components/Header.tsx:78
-#: packages/admin/src/components/Header.tsx:80
+#: packages/admin/src/components/Header.tsx:69
+#: packages/admin/src/components/Header.tsx:73
+#: packages/admin/src/components/Header.tsx:124
+#: packages/admin/src/components/Header.tsx:126
 msgid "View Site"
 msgstr ""
 
@@ -16992,7 +17359,7 @@ msgstr ""
 msgid "We'll check what import options are available for your site."
 msgstr ""
 
-#: packages/admin/src/components/LoginPage.tsx:220
+#: packages/admin/src/components/LoginPage.tsx:221
 msgid "We'll send you a link to sign in without a password."
 msgstr "Pasahitz gabe sartzeko esteka bat bidaliko dizugu."
 
@@ -17185,10 +17552,10 @@ msgstr ""
 #: packages/admin/src/components/PluginManager.tsx:494
 #: packages/admin/src/components/settings/transfer/labels.ts:31
 #: packages/admin/src/components/settings/transfer/labels.ts:91
-#: packages/admin/src/components/Sidebar.tsx:536
+#: packages/admin/src/components/Sidebar.tsx:537
 #: packages/admin/src/components/Widgets.tsx:456
 #: packages/admin/src/components/WordPressImport.tsx:1209
-#: packages/admin/src/router.tsx:3558
+#: packages/admin/src/router.tsx:3567
 msgid "Widgets"
 msgstr "Widgetak"
 
@@ -17300,6 +17667,14 @@ msgstr ""
 msgid "Yoast/RankMath"
 msgstr ""
 
+#: packages/admin/src/components/multisite/OrganizationsPage.tsx:134
+msgid "You aren't a member of any organization yet. Ask an organization Admin to add you."
+msgstr ""
+
+#: packages/admin/src/components/multisite/OrganizationsPage.tsx:146
+msgid "You become the organization's Admin. Deployment Admins can then add its sites."
+msgstr ""
+
 #: packages/admin/src/components/DeviceAuthorizePage.tsx:221
 msgid "You can close this page and return to your terminal."
 msgstr ""
@@ -17333,6 +17708,10 @@ msgstr ""
 msgid "You do not have permission to edit this asset."
 msgstr ""
 
+#: packages/admin/src/components/multisite/SiteSwitcher.tsx:66
+msgid "You don't have access to any sites yet"
+msgstr ""
+
 #: packages/admin/src/components/MediaLibrary.tsx:627
 msgid "You don’t have permission to move this file."
 msgstr ""
@@ -17361,7 +17740,7 @@ msgstr ""
 msgid "You need admin permissions to view this page."
 msgstr ""
 
-#: packages/admin/src/router.tsx:3171
+#: packages/admin/src/router.tsx:3180
 msgid "You need Editor permissions to moderate comments."
 msgstr ""
 
@@ -17408,7 +17787,7 @@ msgstr ""
 msgid "You're signed in at {0}"
 msgstr ""
 
-#: packages/admin/src/components/SetupWizard.tsx:624
+#: packages/admin/src/components/SetupWizard.tsx:641
 msgid "You're signed in via Cloudflare Access"
 msgstr ""
 
@@ -17429,7 +17808,7 @@ msgid "you@company.com"
 msgstr ""
 
 #: packages/admin/src/components/settings/EmailSettings.tsx:276
-#: packages/admin/src/components/SetupWizard.tsx:266
+#: packages/admin/src/components/SetupWizard.tsx:272
 msgid "you@example.com"
 msgstr ""
 
@@ -17489,15 +17868,15 @@ msgstr ""
 msgid "Your earlier edits weren’t kept"
 msgstr ""
 
-#: packages/admin/src/router.tsx:1211
+#: packages/admin/src/router.tsx:1220
 msgid "Your edits are still on this page. Reload it to edit with others."
 msgstr ""
 
-#: packages/admin/src/router.tsx:1432
+#: packages/admin/src/router.tsx:1441
 msgid "Your edits couldn’t be saved, so this didn’t run. Try again."
 msgstr ""
 
-#: packages/admin/src/components/SetupWizard.tsx:262
+#: packages/admin/src/components/SetupWizard.tsx:268
 msgid "Your Email"
 msgstr ""
 
@@ -17517,7 +17896,7 @@ msgstr ""
 msgid "Your last edits weren’t saved"
 msgstr ""
 
-#: packages/admin/src/router.tsx:1244
+#: packages/admin/src/router.tsx:1253
 msgid "Your latest edits couldn’t be saved"
 msgstr ""
 
@@ -17530,7 +17909,7 @@ msgstr ""
 msgid "Your media library is empty"
 msgstr ""
 
-#: packages/admin/src/components/SetupWizard.tsx:274
+#: packages/admin/src/components/SetupWizard.tsx:280
 msgid "Your Name"
 msgstr ""
 
@@ -17539,15 +17918,19 @@ msgstr ""
 msgid "Your name (optional)"
 msgstr ""
 
+#: packages/admin/src/components/multisite/OrganizationsPage.tsx:108
+msgid "Your organizations"
+msgstr ""
+
 #: packages/admin/src/components/WelcomeModal.tsx:47
 msgid "Your Role"
 msgstr "Zure rola"
 
-#: packages/admin/src/router.tsx:2588
+#: packages/admin/src/router.tsx:2597
 msgid "Your role can edit your own entries only while they are drafts."
 msgstr ""
 
-#: packages/admin/src/router.tsx:2589
+#: packages/admin/src/router.tsx:2598
 msgid "Your role can't edit this entry."
 msgstr ""
 
@@ -17582,15 +17965,15 @@ msgstr ""
 msgid "Your unsaved changes will be lost."
 msgstr ""
 
-#: packages/admin/src/router.tsx:1234
+#: packages/admin/src/router.tsx:1243
 msgid "Your unsaved edits are in a recovery revision"
 msgstr ""
 
-#: packages/admin/src/router.tsx:1219
+#: packages/admin/src/router.tsx:1228
 msgid "Your unsaved edits are in a recovery revision. Reload the page to edit with others."
 msgstr ""
 
-#: packages/admin/src/router.tsx:1223
+#: packages/admin/src/router.tsx:1232
 msgid "Your unsaved edits couldn’t be kept"
 msgstr ""
 

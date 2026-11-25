@@ -208,7 +208,7 @@ msgid "{0, plural, one {# byline} other {# bylines}}"
 msgstr "{0, plural, one {# बायलाइन} other {# बायलाइन}}"
 
 #. placeholder {0}: seedInfo.collections
-#: packages/admin/src/components/SetupWizard.tsx:220
+#: packages/admin/src/components/SetupWizard.tsx:226
 msgid "{0, plural, one {# collection} other {# collections}}"
 msgstr "{0, plural, one {# संग्रह} other {# संग्रह}}"
 
@@ -218,7 +218,7 @@ msgid "{0, plural, one {# comment imported} other {# comments imported}}"
 msgstr "{0, plural, one {# टिप्पणी आयातित} other {# टिप्पणियाँ आयात की गईं}}"
 
 #. placeholder {0}: result.affected
-#: packages/admin/src/router.tsx:3148
+#: packages/admin/src/router.tsx:3157
 msgid "{0, plural, one {# comment updated} other {# comments updated}}"
 msgstr "{0, plural, one {# टिप्पणी अपडेट की गई} other {# टिप्पणियाँ अपडेट की गईं}}"
 
@@ -308,6 +308,11 @@ msgstr "{0, plural, one {# मीडिया एरर} other {# मीडि�
 msgid "{0, plural, one {# media file imported} other {# media files imported}}"
 msgstr "{0, plural, one {# मीडिया फ़ाइल आयात की गई} other {# मीडिया फ़ाइलें आयात की गईं}}"
 
+#. placeholder {0}: org.memberCount
+#: packages/admin/src/components/multisite/OrganizationsPage.tsx:123
+msgid "{0, plural, one {# member} other {# members}}"
+msgstr ""
+
 #. placeholder {0}: result.menus.created
 #: packages/admin/src/components/WordPressImport.tsx:2306
 msgid "{0, plural, one {# menu imported} other {# menus imported}}"
@@ -374,6 +379,11 @@ msgstr "{0, plural, one {यह कंटेंट टाइप # संबं�
 msgid "{0, plural, one {# row} other {# rows}} × {1, plural, one {# column} other {# columns}} selected"
 msgstr "{0, plural, one {# पंक्ति} other {# पंक्तियाँ}} × {1, plural, one {# कॉलम} other {# कॉलम}} चयनित"
 
+#. placeholder {0}: org.siteCount
+#: packages/admin/src/components/multisite/OrganizationsPage.tsx:122
+msgid "{0, plural, one {# site} other {# sites}}"
+msgstr ""
+
 #. placeholder {0}: result.skipped
 #: packages/admin/src/components/WordPressImport.tsx:2273
 msgid "{0, plural, one {# skipped (already exists)} other {# skipped (already exist)}}"
@@ -428,6 +438,11 @@ msgstr "{0, plural, one {कम से कम # अक्षर} other {कम �
 #: packages/admin/src/components/editor/TableControls.tsx:230
 msgid "{0, plural, one {Column deleted} other {# columns deleted}}"
 msgstr "{0, plural, one {कॉलम हटा दिया गया} other {# कॉलम हटा दिए गए}}"
+
+#. placeholder {0}: member.siteRoles.length
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:648
+msgid "{0, plural, one {Different role on # site} other {Different role on # sites}}"
+msgstr ""
 
 #. placeholder {0}: fields.length
 #: packages/admin/src/components/ContentTypeEditor.tsx:802
@@ -537,6 +552,12 @@ msgstr "{0} आइटम → {1}"
 msgid "{0} items will be imported"
 msgstr "{0} आइटम आयात किए जाएंगे"
 
+#. placeholder {0}: removing?.name || removing?.email || ""
+#. placeholder {1}: org.name
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:704
+msgid "{0} loses access to every site in {1}, including any API tokens they created there."
+msgstr ""
+
 #. placeholder {0}: i18n.number(progress.filesDone)
 #. placeholder {1}: i18n.number(progress.filesTotal)
 #. placeholder {2}: formatFileSize(progress.bytesDone)
@@ -548,7 +569,7 @@ msgstr "{1} में से {0} फ़ाइलें · {3} में से {
 
 #. placeholder {0}: i18n.number(seedProgress.done)
 #. placeholder {1}: i18n.number(seedProgress.total)
-#: packages/admin/src/components/SetupWizard.tsx:211
+#: packages/admin/src/components/SetupWizard.tsx:217
 msgid "{0} of {1} items"
 msgstr "{1} में से {0} आइटम"
 
@@ -574,17 +595,17 @@ msgid "{0} of {1} steps · {2} of {3}"
 msgstr "{1} में से {0} चरण · {3} में से {2}"
 
 #. placeholder {0}: failedIds.length
-#: packages/admin/src/router.tsx:845
+#: packages/admin/src/router.tsx:854
 msgid "{0} of {total} could not be deleted"
 msgstr "{total} में से {0} को हटाया नहीं जा सका"
 
 #. placeholder {0}: failedIds.length
-#: packages/admin/src/router.tsx:801
+#: packages/admin/src/router.tsx:810
 msgid "{0} of {total} could not be published"
 msgstr "{total} का {0} प्रकाशित नहीं किया जा सका"
 
 #. placeholder {0}: failedIds.length
-#: packages/admin/src/router.tsx:824
+#: packages/admin/src/router.tsx:833
 msgid "{0} of {total} could not be updated"
 msgstr "{total} में से {0} को अद्यतन नहीं किया जा सका"
 
@@ -876,7 +897,7 @@ msgstr ""
 msgid "{name} · Viewing"
 msgstr ""
 
-#: packages/admin/src/router.tsx:1279
+#: packages/admin/src/router.tsx:1288
 msgid "{name} changed this entry"
 msgstr ""
 
@@ -1165,8 +1186,8 @@ msgstr "• आपके EmDash मीडिया स्टोरेज पर 
 msgid "• URLs in your content are updated automatically"
 msgstr "• आपके कंटेंट के URL स्वचालित रूप से अपडेट हो जाते हैं"
 
-#: packages/admin/src/components/SetupWizard.tsx:290
-#: packages/admin/src/components/SetupWizard.tsx:341
+#: packages/admin/src/components/SetupWizard.tsx:296
+#: packages/admin/src/components/SetupWizard.tsx:347
 #: packages/admin/src/components/WordPressImport.tsx:1658
 msgid "← Back"
 msgstr "← वापस"
@@ -1343,6 +1364,10 @@ msgstr "एक मीडिया फ़ाइल का आकार इस स
 msgid "A media file is missing from the package"
 msgstr "पैकेज में एक मीडिया फ़ाइल गायब है"
 
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:125
+msgid "A member's role here applies to every site in the organization, unless a site gives them a different role."
+msgstr ""
+
 #: packages/admin/src/components/TaxonomyManager.tsx:126
 #: packages/admin/src/components/TaxonomyManager.tsx:918
 msgid "A name cannot be generated from this label. Type one manually using lowercase letters, numbers, and underscores."
@@ -1385,6 +1410,10 @@ msgstr "संबंध तय करता है कि दो कंटें
 #: packages/admin/src/components/settings/GeneralSettings.tsx:367
 msgid "A short description of your site"
 msgstr "आपकी साइट का संक्षिप्त विवरण"
+
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:525
+msgid "A site that isn't online answers every request with \"Site not found\", and nobody can manage it until it is back online."
+msgstr ""
 
 #: packages/admin/src/components/RelationForm.tsx:81
 msgid "A slug cannot be generated from these role names. Type one manually using lowercase letters, numbers, and underscores."
@@ -1449,7 +1478,7 @@ msgstr "स्वीकार करें और इंस्टॉल कर�
 msgid "Accept & Update"
 msgstr "स्वीकार करें और अपडेट करें"
 
-#: packages/admin/src/router.tsx:527
+#: packages/admin/src/router.tsx:530
 msgid "Accept invitation"
 msgstr "आमंत्रण स्वीकार करें"
 
@@ -1465,7 +1494,7 @@ msgstr "आमंत्रण स्वीकार करें"
 msgid "Access denied"
 msgstr "पहुंच अस्वीकृत"
 
-#: packages/admin/src/router.tsx:3170
+#: packages/admin/src/router.tsx:3179
 msgid "Access Denied"
 msgstr "पहुंच अस्वीकृत"
 
@@ -1474,7 +1503,7 @@ msgstr "पहुंच अस्वीकृत"
 msgid "Access your media library"
 msgstr "अपनी मीडिया लाइब्रेरी तक पहुंचें"
 
-#: packages/admin/src/components/SetupWizard.tsx:410
+#: packages/admin/src/components/SetupWizard.tsx:416
 msgid "Account"
 msgstr "खाता"
 
@@ -1538,7 +1567,7 @@ msgid "Activation cannot be confirmed. Keep editing paused and refresh the statu
 msgstr "एक्टिवेशन की पुष्टि नहीं की जा सकती. संपादन रोके रखें और स्थिति रिफ़्रेश करें."
 
 #: packages/admin/src/components/users/UserDetail.tsx:210
-#: packages/admin/src/components/users/UserList.tsx:211
+#: packages/admin/src/components/users/UserList.tsx:235
 msgid "Active"
 msgstr "सक्रिय"
 
@@ -1739,6 +1768,12 @@ msgstr "लिंक जोड़ें"
 msgid "Add links to build your navigation menu"
 msgstr "अपना नेविगेशन मेनू बनाने के लिए लिंक जोड़ें"
 
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:629
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:769
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:830
+msgid "Add member"
+msgstr ""
+
 #: packages/admin/src/components/AllowedTypesEditor.tsx:196
 msgid "Add MIME type or extension"
 msgstr "MIME प्रकार या एक्सटेंशन जोड़ें"
@@ -1795,6 +1830,12 @@ msgstr "चयनित जोड़ें"
 #: packages/admin/src/components/ContentTypeEditor.tsx:691
 msgid "Add SEO metadata fields (title, description, image) and include in sitemap"
 msgstr "SEO मेटाडेटा फ़ील्ड (शीर्षक, विवरण, छवि) जोड़ें और साइटमैप में शामिल करें"
+
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:224
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:356
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:427
+msgid "Add site"
+msgstr ""
 
 #: packages/admin/src/components/FieldEditor.tsx:1610
 msgid "Add Sub-Field"
@@ -1892,6 +1933,8 @@ msgid "Added:"
 msgstr "जोड़ा गया:"
 
 #: packages/admin/src/components/MenuEditor.tsx:670
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:427
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:830
 #: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:384
 msgid "Adding..."
 msgstr "जोड़ा जा रहा है..."
@@ -1921,12 +1964,12 @@ msgstr "व्यवस्थापक"
 msgid "Admin"
 msgstr "व्यवस्थापक"
 
-#: packages/admin/src/components/Sidebar.tsx:461
+#: packages/admin/src/components/Sidebar.tsx:462
 msgctxt "navigation group"
 msgid "Admin"
 msgstr ""
 
-#: packages/admin/src/components/Sidebar.tsx:742
+#: packages/admin/src/components/Sidebar.tsx:746
 msgid "Admin navigation"
 msgstr "व्यवस्थापक नेविगेशन"
 
@@ -2034,8 +2077,8 @@ msgstr "सभी आयातित कंटेंट अनअसाइन �
 msgid "All locales"
 msgstr "सभी स्थान"
 
-#: packages/admin/src/components/users/UserList.tsx:52
-#: packages/admin/src/components/users/UserList.tsx:56
+#: packages/admin/src/components/users/UserList.tsx:57
+#: packages/admin/src/components/users/UserList.tsx:61
 msgid "All roles"
 msgstr "सभी भूमिकाएँ"
 
@@ -2081,7 +2124,7 @@ msgid "Allowed block types"
 msgstr "अनुमत ब्लॉक प्रकार"
 
 #: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:265
-#: packages/admin/src/router.tsx:3258
+#: packages/admin/src/router.tsx:3267
 msgid "Allowed Domains"
 msgstr "अनुमत डोमेन"
 
@@ -2195,21 +2238,21 @@ msgstr "एक एन्क्रिप्टेड डिजिटल कुं
 #: packages/admin/src/components/TaxonomySidebar.tsx:712
 #: packages/admin/src/components/TaxonomySidebar.tsx:875
 #: packages/admin/src/components/ThemeMarketplaceBrowse.tsx:114
-#: packages/admin/src/router.tsx:755
-#: packages/admin/src/router.tsx:776
-#: packages/admin/src/router.tsx:1001
-#: packages/admin/src/router.tsx:1224
-#: packages/admin/src/router.tsx:1390
-#: packages/admin/src/router.tsx:1458
-#: packages/admin/src/router.tsx:1817
-#: packages/admin/src/router.tsx:1995
-#: packages/admin/src/router.tsx:2020
-#: packages/admin/src/router.tsx:2107
-#: packages/admin/src/router.tsx:2139
-#: packages/admin/src/router.tsx:3120
-#: packages/admin/src/router.tsx:3156
-#: packages/admin/src/router.tsx:3691
-#: packages/admin/src/router.tsx:3885
+#: packages/admin/src/router.tsx:764
+#: packages/admin/src/router.tsx:785
+#: packages/admin/src/router.tsx:1010
+#: packages/admin/src/router.tsx:1233
+#: packages/admin/src/router.tsx:1399
+#: packages/admin/src/router.tsx:1467
+#: packages/admin/src/router.tsx:1826
+#: packages/admin/src/router.tsx:2004
+#: packages/admin/src/router.tsx:2029
+#: packages/admin/src/router.tsx:2116
+#: packages/admin/src/router.tsx:2148
+#: packages/admin/src/router.tsx:3129
+#: packages/admin/src/router.tsx:3165
+#: packages/admin/src/router.tsx:3720
+#: packages/admin/src/router.tsx:3914
 #: packages/admin/src/routes/byline-schema.tsx:143
 msgid "An error occurred"
 msgstr "एक एरर हुआ"
@@ -2312,7 +2355,7 @@ msgstr ""
 #: packages/admin/src/components/Settings.tsx:109
 #: packages/admin/src/components/settings/ApiTokenSettings.tsx:210
 #: packages/admin/src/components/settings/ApiTokenSettings.tsx:351
-#: packages/admin/src/router.tsx:3272
+#: packages/admin/src/router.tsx:3281
 msgid "API Tokens"
 msgstr "एपीआई टोकन"
 
@@ -2476,7 +2519,7 @@ msgstr "ऑडियो"
 msgid "Authentication error: {0}"
 msgstr "ऑथेंटिकेशन एरर: {0}"
 
-#: packages/admin/src/components/LoginPage.tsx:200
+#: packages/admin/src/components/LoginPage.tsx:201
 msgid "Authentication error: {error}"
 msgstr "ऑथेंटिकेशन एरर: {error}"
 
@@ -2517,7 +2560,7 @@ msgstr "ऑथराइज़ेशन असफल रहा"
 msgid "Authorize"
 msgstr "अधिकृत"
 
-#: packages/admin/src/router.tsx:538
+#: packages/admin/src/router.tsx:541
 msgid "Authorize device"
 msgstr "डिवाइस को अधिकृत करें"
 
@@ -2581,7 +2624,7 @@ msgstr "ऑटोमेटिक बैकअप"
 msgid "Automatic backups need a storage backend (R2, S3, or local storage). Configure storage in your EmDash config to enable them."
 msgstr "ऑटोमेटिक बैकअप के लिए स्टोरेज बैकएंड (R2, S3, या लोकल स्टोरेज) की आवश्यकता होती है। उन्हें सक्षम करने के लिए अपने EmDash कॉन्फ़िगरेशन में स्टोरेज कॉन्फ़िगर करें।"
 
-#: packages/admin/src/router.tsx:1962
+#: packages/admin/src/router.tsx:1971
 msgid "Autosave failed"
 msgstr "ऑटोसेव असफल रहा"
 
@@ -2645,9 +2688,9 @@ msgid "Back to editing."
 msgstr "एडिटिंग पर वापस आ गए।"
 
 #: packages/admin/src/components/InviteAcceptPage.tsx:177
-#: packages/admin/src/components/LoginPage.tsx:120
-#: packages/admin/src/components/LoginPage.tsx:157
-#: packages/admin/src/components/LoginPage.tsx:332
+#: packages/admin/src/components/LoginPage.tsx:121
+#: packages/admin/src/components/LoginPage.tsx:158
+#: packages/admin/src/components/LoginPage.tsx:343
 #: packages/admin/src/components/MagicLinkConfirmPage.tsx:92
 #: packages/admin/src/components/SignupPage.tsx:307
 msgid "Back to login"
@@ -2686,7 +2729,7 @@ msgstr "बैकअप सेटिंग्स सहेजी गईं"
 
 #: packages/admin/src/components/Settings.tsx:126
 #: packages/admin/src/components/settings/BackupSettings.tsx:144
-#: packages/admin/src/router.tsx:3299
+#: packages/admin/src/router.tsx:3308
 msgid "Backups"
 msgstr "बैकअप"
 
@@ -2887,8 +2930,8 @@ msgstr "बायलाइन फ़ील्ड"
 msgid "Byline schema"
 msgstr "बाइलाइन स्कीमा"
 
-#: packages/admin/src/components/Sidebar.tsx:584
-#: packages/admin/src/router.tsx:3628
+#: packages/admin/src/components/Sidebar.tsx:585
+#: packages/admin/src/router.tsx:3657
 msgid "Byline Schema"
 msgstr "बाइलाइन स्कीमा"
 
@@ -2901,9 +2944,9 @@ msgstr "बायलाइन अपडेट की गई"
 #: packages/admin/src/components/ContentSettingsPanel.tsx:1219
 #: packages/admin/src/components/settings/transfer/labels.ts:19
 #: packages/admin/src/components/settings/transfer/labels.ts:79
-#: packages/admin/src/components/Sidebar.tsx:550
+#: packages/admin/src/components/Sidebar.tsx:551
 #: packages/admin/src/lib/editor-sections.ts:34
-#: packages/admin/src/router.tsx:3617
+#: packages/admin/src/router.tsx:3646
 #: packages/admin/src/routes/bylines.tsx:302
 msgid "Bylines"
 msgstr "नाम पंक्तियां"
@@ -2922,8 +2965,8 @@ msgstr "सी++"
 
 #: packages/admin/src/components/AdminCommandPalette.tsx:142
 #: packages/admin/src/components/ContentTypeEditor.tsx:586
-#: packages/admin/src/components/Sidebar.tsx:479
-#: packages/admin/src/router.tsx:610
+#: packages/admin/src/components/Sidebar.tsx:480
+#: packages/admin/src/router.tsx:619
 #: packages/admin/src/routes/calendar.tsx:286
 msgid "Calendar"
 msgstr "कैलेंडर"
@@ -2967,6 +3010,11 @@ msgstr ""
 #: packages/admin/src/components/MenuEditor.tsx:664
 #: packages/admin/src/components/MenuEditor.tsx:894
 #: packages/admin/src/components/MenuList.tsx:238
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:198
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:425
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:546
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:824
+#: packages/admin/src/components/multisite/OrganizationsPage.tsx:173
 #: packages/admin/src/components/PortableTextEditor.tsx:1431
 #: packages/admin/src/components/PortableTextEditor.tsx:4636
 #: packages/admin/src/components/PortableTextEditor.tsx:4662
@@ -3004,6 +3052,10 @@ msgstr "{0} रद्द करें"
 #: packages/admin/src/components/settings/transfer/ImportSection.tsx:355
 msgid "Cancel import"
 msgstr "आयात रद्द करें"
+
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:931
+msgid "Cancel invitation"
+msgstr ""
 
 #: packages/admin/src/components/MediaUploadDialog.tsx:334
 msgid "Cancel remaining"
@@ -3095,7 +3147,7 @@ msgstr "परिवर्तन"
 #. placeholder {0}: selectedUser?.name || selectedUser?.email
 #. placeholder {1}: getRoleLabel(selectedUser?.role ?? 0)
 #. placeholder {2}: getRoleLabel(pendingSaveData?.role ?? 0)
-#: packages/admin/src/routes/users.tsx:307
+#: packages/admin/src/routes/users.tsx:351
 msgid "Change <0>{0}</0> from <1>{1}</1> to <2>{2}</2>? They will lose access to higher-level features."
 msgstr "<0>{0}</0> को <1>{1}</1> से <2>{2}</2> में बदलें? वे उच्च-स्तरीय सुविधाओं तक पहुंच खो देंगे."
 
@@ -3216,7 +3268,7 @@ msgstr "बदलाव का"
 msgid "Changes apply everywhere this byline appears."
 msgstr "परिवर्तन हर उस जगह लागू होते हैं जहाँ यह बायलाइन दिखती है।"
 
-#: packages/admin/src/router.tsx:2038
+#: packages/admin/src/router.tsx:2047
 msgid "Changes discarded"
 msgstr "परिवर्तन खारिज कर दिए गए"
 
@@ -3272,7 +3324,7 @@ msgstr "सर्वर लॉग जाँचें, फिर असफल क
 msgid "Check your connection and try again."
 msgstr "अपना कनेक्शन जाँचें और फिर कोशिश करें।"
 
-#: packages/admin/src/components/LoginPage.tsx:102
+#: packages/admin/src/components/LoginPage.tsx:103
 #: packages/admin/src/components/SignupPage.tsx:151
 #: packages/admin/src/components/SignupPage.tsx:427
 msgid "Check your email"
@@ -3371,6 +3423,10 @@ msgstr "तारीख़ दिखाने के लिए एक मान�
 #: packages/admin/src/components/FieldEditor.tsx:426
 msgid "Choose a relationship."
 msgstr "कोई रिलेशनशिप चुनें।"
+
+#: packages/admin/src/components/multisite/SiteSwitcher.tsx:23
+msgid "Choose a site"
+msgstr ""
 
 #: packages/admin/src/components/BulkTagDialog.tsx:184
 msgid "Choose a term and enter between 1 and 50 posts."
@@ -3493,7 +3549,7 @@ msgstr "पूर्ण हुए साफ़ करें"
 #: packages/admin/src/components/ContentList.tsx:1177
 #: packages/admin/src/components/MediaLibrary.tsx:1021
 #: packages/admin/src/components/Sections.tsx:369
-#: packages/admin/src/components/users/UserList.tsx:126
+#: packages/admin/src/components/users/UserList.tsx:134
 #: packages/admin/src/routes/bylines.tsx:472
 msgid "Clear filters"
 msgstr "फ़िल्टर साफ़ करें"
@@ -3532,7 +3588,7 @@ msgstr "साइन इन करने के लिए नीचे दिए
 msgid "Click the link in the email to continue setting up your account."
 msgstr "अपना खाता सेट करना जारी रखने के लिए ईमेल में दिए गए लिंक पर क्लिक करें।"
 
-#: packages/admin/src/components/LoginPage.tsx:115
+#: packages/admin/src/components/LoginPage.tsx:116
 msgid "Click the link in the email to sign in."
 msgstr "साइन इन करने के लिए ईमेल में दिए गए लिंक पर क्लिक करें।"
 
@@ -3643,9 +3699,9 @@ msgstr "संग्रह “{0}” में एंट्रीज़ है�
 msgid "Collection “{0}” was created on this site"
 msgstr "संग्रह “{0}” इस साइट पर बनाया गया था"
 
-#: packages/admin/src/router.tsx:865
-#: packages/admin/src/router.tsx:1068
-#: packages/admin/src/router.tsx:2560
+#: packages/admin/src/router.tsx:874
+#: packages/admin/src/router.tsx:1077
+#: packages/admin/src/router.tsx:2569
 msgid "Collection \"{collection}\" not found"
 msgstr "कलेक्शन \"{collection}\" नहीं मिला"
 
@@ -3727,8 +3783,8 @@ msgstr "टिप्पणी रिएक्शंस"
 #: packages/admin/src/components/ContentTypeEditor.tsx:702
 #: packages/admin/src/components/settings/transfer/labels.ts:34
 #: packages/admin/src/components/settings/transfer/labels.ts:88
-#: packages/admin/src/components/Sidebar.tsx:514
-#: packages/admin/src/router.tsx:3045
+#: packages/admin/src/components/Sidebar.tsx:515
+#: packages/admin/src/router.tsx:3054
 msgid "Comments"
 msgstr "टिप्पणियाँ"
 
@@ -3764,7 +3820,7 @@ msgstr "ईमेल प्रोवाइडर कॉन्फ़िगर क
 msgid "Confirm"
 msgstr "पुष्टि करना"
 
-#: packages/admin/src/router.tsx:501
+#: packages/admin/src/router.tsx:504
 msgid "Confirm magic link"
 msgstr "मैजिक लिंक की पुष्टि करें"
 
@@ -3835,9 +3891,9 @@ msgstr "कंटेंट"
 #: packages/admin/src/components/comments/CommentInbox.tsx:359
 #: packages/admin/src/components/Dashboard.tsx:499
 #: packages/admin/src/components/SectionEditor.tsx:197
-#: packages/admin/src/components/Sidebar.tsx:459
+#: packages/admin/src/components/Sidebar.tsx:460
 #: packages/admin/src/components/Widgets.tsx:986
-#: packages/admin/src/router.tsx:622
+#: packages/admin/src/router.tsx:631
 msgid "Content"
 msgstr "कंटेंट"
 
@@ -3858,7 +3914,7 @@ msgstr "कंटेंट एरर्स ({0})"
 msgid "Content found:"
 msgstr "कंटेंट मिला:"
 
-#: packages/admin/src/router.tsx:2088
+#: packages/admin/src/router.tsx:2097
 msgid "Content has been scheduled for publishing"
 msgstr "कंटेंट प्रकाशन के लिए निर्धारित किया गया है"
 
@@ -3866,7 +3922,7 @@ msgstr "कंटेंट प्रकाशन के लिए निर्�
 msgid "Content ID:"
 msgstr "कंटेंट आईडी:"
 
-#: packages/admin/src/router.tsx:1989
+#: packages/admin/src/router.tsx:1998
 msgid "Content is now live"
 msgstr "कंटेंट अब लाइव है"
 
@@ -3891,11 +3947,11 @@ msgstr "कंटेंट मीडिया को अमान्य तर�
 msgid "Content refers to media that is not in the package"
 msgstr "कंटेंट उस मीडिया को संदर्भित करता है जो पैकेज में नहीं है"
 
-#: packages/admin/src/router.tsx:2014
+#: packages/admin/src/router.tsx:2023
 msgid "Content removed from public view"
 msgstr "कंटेंट को सार्वजनिक दृश्य से हटा दिया गया"
 
-#: packages/admin/src/router.tsx:2100
+#: packages/admin/src/router.tsx:2109
 msgid "Content reverted to draft"
 msgstr "कंटेंट को ड्राफ्ट में वापस लाया गया"
 
@@ -3921,8 +3977,8 @@ msgstr "कंटेंट टाइप"
 
 #: packages/admin/src/components/AdminCommandPalette.tsx:197
 #: packages/admin/src/components/ContentTypeList.tsx:148
-#: packages/admin/src/components/Sidebar.tsx:580
-#: packages/admin/src/router.tsx:3636
+#: packages/admin/src/components/Sidebar.tsx:581
+#: packages/admin/src/router.tsx:3665
 msgid "Content Types"
 msgstr "कंटेंट टाइप"
 
@@ -3948,8 +4004,8 @@ msgstr "कंटेंट लिखें"
 msgid "Continue"
 msgstr "जारी रखना"
 
-#: packages/admin/src/components/SetupWizard.tsx:202
-#: packages/admin/src/components/SetupWizard.tsx:298
+#: packages/admin/src/components/SetupWizard.tsx:208
+#: packages/admin/src/components/SetupWizard.tsx:304
 msgid "Continue →"
 msgstr "जारी रखें →"
 
@@ -3970,12 +4026,12 @@ msgstr "{handoverHost} पर जारी रखें"
 msgid "Continue to finish signing in. The link works only once."
 msgstr "साइन इन पूरा करने के लिए जारी रखें। यह लिंक केवल एक बार काम करता है।"
 
-#: packages/admin/src/components/SetupWizard.tsx:357
+#: packages/admin/src/components/SetupWizard.tsx:363
 msgid "Continue to import"
 msgstr "आयात के लिए जारी रखें"
 
 #. placeholder {0}: activeProviderEntry.label
-#: packages/admin/src/components/LoginPage.tsx:225
+#: packages/admin/src/components/LoginPage.tsx:226
 msgid "Continue with {0}."
 msgstr "{0} के साथ आगे बढ़ें।"
 
@@ -3995,6 +4051,7 @@ msgstr "योगदानकर्ता"
 #: packages/admin/src/components/co-editing/SyncStatus.tsx:240
 #: packages/admin/src/components/editor/CodeBlockNode.tsx:254
 #: packages/admin/src/components/editor/CodeBlockNode.tsx:278
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:820
 #: packages/admin/src/components/settings/transfer/CopyableDigest.tsx:43
 #: packages/admin/src/components/settings/transfer/ImportSection.tsx:576
 msgid "Copied"
@@ -4022,6 +4079,7 @@ msgstr "कोड कॉपी करें"
 msgid "Copy failed"
 msgstr "कॉपी करना असफल रहा"
 
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:820
 #: packages/admin/src/components/users/InviteUserModal.tsx:228
 msgid "Copy invite link"
 msgstr "आमंत्रण लिंक कॉपी करें"
@@ -4353,6 +4411,10 @@ msgstr "वर्डप्रेस में एक बनाएं: उपय�
 msgid "Create one to let entries here link to entries in another content type."
 msgstr "यहाँ की एंट्रीज़ को किसी अन्य कंटेंट टाइप की एंट्रीज़ से जोड़ने के लिए एक बनाएं।"
 
+#: packages/admin/src/components/multisite/OrganizationsPage.tsx:179
+msgid "Create organization"
+msgstr ""
+
 #: packages/admin/src/components/auth/PasskeyRegistration.tsx:741
 msgid "Create passkey"
 msgstr "पासकी बनाएं"
@@ -4417,7 +4479,7 @@ msgstr "टोकन बनाएं"
 msgid "Create Widget Area"
 msgstr "विजेट क्षेत्र बनाएं"
 
-#: packages/admin/src/components/SetupWizard.tsx:620
+#: packages/admin/src/components/SetupWizard.tsx:637
 msgid "Create your account"
 msgstr "अपना खाता बनाएं"
 
@@ -4473,7 +4535,7 @@ msgid "Created {0}"
 msgstr "बनाया गया {0}"
 
 #. placeholder {0}: result.locale?.toUpperCase() ?? t`new`
-#: packages/admin/src/router.tsx:2131
+#: packages/admin/src/router.tsx:2140
 msgid "Created {0} translation"
 msgstr "{0} अनुवाद बनाया गया"
 
@@ -4498,6 +4560,7 @@ msgid "Creating cropped copy..."
 msgstr "क्रॉप की गई कॉपी बनाई जा रही है..."
 
 #: packages/admin/src/components/MenuList.tsx:244
+#: packages/admin/src/components/multisite/OrganizationsPage.tsx:179
 #: packages/admin/src/components/Redirects.tsx:311
 #: packages/admin/src/components/RelationFormPanel.tsx:148
 #: packages/admin/src/components/Sections.tsx:306
@@ -4588,7 +4651,7 @@ msgid "Custom Taxonomies"
 msgstr "कस्टम वर्गीकरण"
 
 #: packages/admin/src/components/ContentEditor.tsx:3235
-#: packages/admin/src/components/Sidebar.tsx:797
+#: packages/admin/src/components/Sidebar.tsx:801
 msgid "Customize sidebar"
 msgstr ""
 
@@ -4606,10 +4669,14 @@ msgstr "डार्क मोड वेरिएंट"
 #: packages/admin/src/components/ContentTypeList.tsx:408
 #: packages/admin/src/components/Dashboard.tsx:75
 #: packages/admin/src/components/Shell.tsx:90
-#: packages/admin/src/components/Sidebar.tsx:476
-#: packages/admin/src/router.tsx:592
+#: packages/admin/src/components/Sidebar.tsx:477
+#: packages/admin/src/router.tsx:595
 msgid "Dashboard"
 msgstr "डैशबोर्ड"
+
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:399
+msgid "Database"
+msgstr ""
 
 #: packages/admin/src/components/BlockTypeList.tsx:31
 msgid "Database-owned definitions available to blocks fields."
@@ -4988,15 +5055,15 @@ msgstr "आपकी साइट द्वारा भेजे जाने �
 msgid "Demo"
 msgstr "डेमो"
 
-#: packages/admin/src/routes/users.tsx:314
+#: packages/admin/src/routes/users.tsx:358
 msgid "Demote User"
 msgstr "उपयोगकर्ता को पदावनत करें"
 
-#: packages/admin/src/routes/users.tsx:305
+#: packages/admin/src/routes/users.tsx:349
 msgid "Demote User?"
 msgstr "उपयोगकर्ता को पदावनत करें?"
 
-#: packages/admin/src/routes/users.tsx:315
+#: packages/admin/src/routes/users.tsx:359
 msgid "Demoting..."
 msgstr "पदावनत..."
 
@@ -5082,6 +5149,10 @@ msgstr "डिवाइस-बाध्य"
 msgid "Device-bound passkey"
 msgstr "डिवाइस-बाउंड पासकी"
 
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:531
+msgid "Did this site have its own accounts before it joined? Import them so those people can sign in here, with the roles they had on the site."
+msgstr ""
+
 #: packages/admin/src/components/SignupPage.tsx:163
 msgid "Didn't receive the email?"
 msgstr "ईमेल प्राप्त नहीं हुआ?"
@@ -5115,18 +5186,19 @@ msgstr "प्लगइन एमसीपी उपकरण अक्षम �
 msgid "Disable redirect {0}"
 msgstr "रीडायरेक्ट {0} बंद करें"
 
-#: packages/admin/src/routes/users.tsx:289
+#: packages/admin/src/routes/users.tsx:333
 msgid "Disable User"
 msgstr "उपयोगकर्ता को अक्षम करें"
 
-#: packages/admin/src/routes/users.tsx:282
+#: packages/admin/src/routes/users.tsx:326
 msgid "Disable User?"
 msgstr "उपयोगकर्ता को अक्षम करें?"
 
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:236
 #: packages/admin/src/components/PluginManager.tsx:461
 #: packages/admin/src/components/Redirects.tsx:706
 #: packages/admin/src/components/users/UserDetail.tsx:205
-#: packages/admin/src/components/users/UserList.tsx:179
+#: packages/admin/src/components/users/UserList.tsx:197
 msgid "Disabled"
 msgstr "अक्षम"
 
@@ -5135,11 +5207,11 @@ msgid "Disabled:"
 msgstr "अक्षम:"
 
 #. placeholder {0}: selectedUser?.name || selectedUser?.email
-#: packages/admin/src/routes/users.tsx:284
+#: packages/admin/src/routes/users.tsx:328
 msgid "Disabling <0>{0}</0> will prevent them from logging in until re-enabled. Their content will be preserved."
 msgstr "<0>{0}</0> को अक्षम करने से उन्हें पुन: सक्षम होने तक लॉग इन करने से रोका जा सकेगा। उनके कंटेंट को संरक्षित किया जाएगा."
 
-#: packages/admin/src/routes/users.tsx:290
+#: packages/admin/src/routes/users.tsx:334
 msgid "Disabling..."
 msgstr "अक्षम किया जा रहा है..."
 
@@ -5274,7 +5346,7 @@ msgstr "डोमेन हटा दिया गया"
 msgid "Domain updated"
 msgstr "डोमेन अद्यतन किया गया"
 
-#: packages/admin/src/components/LoginPage.tsx:347
+#: packages/admin/src/components/LoginPage.tsx:358
 msgid "Don't have an account? <0>Sign up</0>"
 msgstr "कोई खाता नहीं है? <0>साइन अप करें</0>"
 
@@ -5286,6 +5358,8 @@ msgstr "मैप न करें"
 #: packages/admin/src/components/BylineCreditsEditor.tsx:777
 #: packages/admin/src/components/ContentList.tsx:1280
 #: packages/admin/src/components/MediaUploadDialog.tsx:338
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:812
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:896
 #: packages/admin/src/components/users/InviteUserModal.tsx:225
 #: packages/admin/src/components/WordPressImport.tsx:2178
 msgid "Done"
@@ -5529,6 +5603,8 @@ msgstr "संपादन करना"
 #. placeholder {0}: collection.label
 #. placeholder {0}: domain.domain
 #: packages/admin/src/components/ContentTypeList.tsx:379
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:268
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:496
 #: packages/admin/src/components/PortableTextEditor.tsx:1372
 #: packages/admin/src/components/RelationFormPanel.tsx:128
 #: packages/admin/src/components/RelationList.tsx:183
@@ -5587,12 +5663,12 @@ msgstr "बायलाइन फ़ील्ड संपादित करे
 msgid "Edit caption"
 msgstr "कैप्शन एडिट करें"
 
-#: packages/admin/src/router.tsx:1112
+#: packages/admin/src/router.tsx:1121
 msgid "Edit content"
 msgstr "कंटेंट एडिट करें"
 
-#: packages/admin/src/router.tsx:3831
-#: packages/admin/src/router.tsx:3850
+#: packages/admin/src/router.tsx:3860
+#: packages/admin/src/router.tsx:3879
 msgid "Edit content type"
 msgstr "कंटेंट टाइप एडिट करें"
 
@@ -5644,7 +5720,7 @@ msgid "Edit media alt text, captions, and focal points"
 msgstr "मीडिया का ऑल्ट टेक्स्ट, कैप्शन और फ़ोकल पॉइंट संपादित करें"
 
 #: packages/admin/src/components/MenuEditor.tsx:186
-#: packages/admin/src/router.tsx:3531
+#: packages/admin/src/router.tsx:3540
 msgid "Edit menu"
 msgstr "मेनू एडिट करें"
 
@@ -5675,7 +5751,7 @@ msgid "Edit role"
 msgstr "भूमिका संपादित करें"
 
 #: packages/admin/src/components/SectionEditor.tsx:50
-#: packages/admin/src/router.tsx:3581
+#: packages/admin/src/router.tsx:3610
 msgid "Edit section"
 msgstr "सेक्शन एडिट करें"
 
@@ -5789,14 +5865,15 @@ msgid "em1.…"
 msgstr "em1.…"
 
 #: packages/admin/src/components/InviteAcceptPage.tsx:65
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:798
 #: packages/admin/src/components/Settings.tsx:120
 #: packages/admin/src/components/SignupPage.tsx:220
 #: packages/admin/src/components/users/UserDetail.tsx:158
-#: packages/admin/src/router.tsx:3286
+#: packages/admin/src/router.tsx:3295
 msgid "Email"
 msgstr "ईमेल"
 
-#: packages/admin/src/components/LoginPage.tsx:130
+#: packages/admin/src/components/LoginPage.tsx:131
 #: packages/admin/src/components/SignupPage.tsx:87
 #: packages/admin/src/components/users/InviteUserModal.tsx:183
 msgid "Email address"
@@ -5810,7 +5887,7 @@ msgstr "सभी उपयोगकर्ताओं को ईमेल क�
 msgid "Email every other user a link to the sign-in page at {siteHost}."
 msgstr "बाकी सभी उपयोगकर्ताओं को {siteHost} पर साइन-इन पेज का लिंक ईमेल करें।"
 
-#: packages/admin/src/components/SetupWizard.tsx:243
+#: packages/admin/src/components/SetupWizard.tsx:249
 #: packages/admin/src/components/SignupPage.tsx:69
 msgid "Email is required"
 msgstr "ईमेल की जरूरत है"
@@ -5833,7 +5910,7 @@ msgstr "ईमेल प्रदाता सक्रिय"
 
 #: packages/admin/src/components/Settings.tsx:116
 #: packages/admin/src/components/settings/EmailSettings.tsx:181
-#: packages/admin/src/router.tsx:3285
+#: packages/admin/src/router.tsx:3294
 msgid "Email Settings"
 msgstr "ईमेल सेटिंग्स"
 
@@ -5921,7 +5998,7 @@ msgstr "EmDash मौजूदा कंटेंट स्कैन कर र�
 msgid "EmDash never receives your PIN, password, or biometric information."
 msgstr "EmDash को आपका PIN, पासवर्ड या बायोमेट्रिक जानकारी कभी नहीं मिलती।"
 
-#: packages/admin/src/router.tsx:2602
+#: packages/admin/src/router.tsx:2611
 msgid "EmDash or this entry’s fields changed since you opened it."
 msgstr ""
 
@@ -5947,7 +6024,7 @@ msgstr "खाली"
 msgid "Empty gallery — open settings to add images"
 msgstr "खाली गैलरी - छवियाँ जोड़ने के लिए सेटिंग्स खोलें"
 
-#: packages/admin/src/components/SetupWizard.tsx:174
+#: packages/admin/src/components/SetupWizard.tsx:180
 msgid "Empty site"
 msgstr "खाली साइट"
 
@@ -6227,9 +6304,9 @@ msgstr "लिंक करने वाली ओर की एंट्री"
 
 #: packages/admin/src/components/MenuEditor.tsx:223
 #: packages/admin/src/components/MenuEditor.tsx:358
-#: packages/admin/src/components/SetupWizard.tsx:603
+#: packages/admin/src/components/SetupWizard.tsx:609
 #: packages/admin/src/components/TaxonomyManager.tsx:1127
-#: packages/admin/src/router.tsx:4171
+#: packages/admin/src/router.tsx:4202
 msgid "Error"
 msgstr "एरर"
 
@@ -6280,6 +6357,10 @@ msgstr "इस प्लगइन की प्रत्येक प्रक�
 #: packages/admin/src/components/ContentTypeList.tsx:281
 msgid "Every relationship this content type takes part in goes too:"
 msgstr "यह कंटेंट टाइप जिन संबंधों में शामिल है, वे सभी भी हट जाएँगे:"
+
+#: packages/admin/src/routes/users.tsx:56
+msgid "Everyone in this site's organization can work on it with their organization role. Add or remove people, and change roles, on the organization's page."
+msgstr ""
 
 #: packages/admin/src/components/settings/SidebarsSettings.tsx:65
 msgid "Everything is shown again, in the default order."
@@ -6407,9 +6488,17 @@ msgstr "ब्लॉक टाइप का वर्शन एक्टिव�
 msgid "Failed to add domain"
 msgstr "डोमेन जोड़ने में असफल"
 
+#: packages/admin/src/lib/api/multisite.ts:158
+msgid "Failed to add member"
+msgstr ""
+
 #: packages/admin/src/components/settings/SecuritySettings.tsx:186
 msgid "Failed to add passkey"
 msgstr "पासकी जोड़ने में असफल"
+
+#: packages/admin/src/lib/api/multisite.ts:139
+msgid "Failed to add site"
+msgstr ""
 
 #: packages/admin/src/lib/api/taxonomies.ts:120
 msgid "Failed to add term to entries"
@@ -6435,6 +6524,19 @@ msgstr "रिक्वेस्ट मंज़ूर करने में �
 #: packages/admin/src/lib/api/transfer.ts:489
 msgid "Failed to cancel import"
 msgstr "इम्पोर्ट रद्द करने में असफल"
+
+#: packages/admin/src/lib/api/multisite.ts:182
+msgid "Failed to cancel invitation"
+msgstr ""
+
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:609
+#: packages/admin/src/lib/api/multisite.ts:166
+msgid "Failed to change role"
+msgstr ""
+
+#: packages/admin/src/lib/api/multisite.ts:193
+msgid "Failed to change site role"
+msgstr ""
 
 #: packages/admin/src/lib/api/settings.ts:127
 msgid "Failed to change the domain"
@@ -6474,7 +6576,7 @@ msgstr "{0} बनाने में असफल"
 msgid "Failed to create a sign-in link"
 msgstr "साइन-इन लिंक बनाने में असफल"
 
-#: packages/admin/src/components/SetupWizard.tsx:557
+#: packages/admin/src/components/SetupWizard.tsx:563
 msgid "Failed to create admin"
 msgstr "एडमिन बनाने में असफल"
 
@@ -6535,6 +6637,10 @@ msgstr "मेनू आइटम बनाने में असफल"
 msgid "Failed to create menu translation"
 msgstr "मेनू अनुवाद बनाने में असफल"
 
+#: packages/admin/src/lib/api/multisite.ts:113
+msgid "Failed to create organization"
+msgstr ""
+
 #: packages/admin/src/lib/api/redirects.ts:89
 msgid "Failed to create redirect"
 msgstr "रीडायरेक्ट बनाने में असफल"
@@ -6565,7 +6671,7 @@ msgid "Failed to create term translation"
 msgstr "टर्म अनुवाद बनाने में असफल"
 
 #: packages/admin/src/components/TaxonomySidebar.tsx:874
-#: packages/admin/src/router.tsx:2136
+#: packages/admin/src/router.tsx:2145
 msgid "Failed to create translation"
 msgstr "अनुवाद बनाने में असफल"
 
@@ -6577,7 +6683,7 @@ msgstr "विजेट बनाने में असफल"
 msgid "Failed to create widget area"
 msgstr "विजेट क्षेत्र बनाने में असफल"
 
-#: packages/admin/src/router.tsx:844
+#: packages/admin/src/router.tsx:853
 msgid "Failed to delete"
 msgstr "हटाने में असफल"
 
@@ -6699,7 +6805,7 @@ msgstr "वेलकम स्क्रीन बंद करने में �
 msgid "Failed to download a package file"
 msgstr "पैकेज फ़ाइल डाउनलोड करने में असफल"
 
-#: packages/admin/src/router.tsx:775
+#: packages/admin/src/router.tsx:784
 msgid "Failed to duplicate"
 msgstr "कॉपी बनाने में असफल"
 
@@ -6740,7 +6846,7 @@ msgstr "अनुमत डोमेन लाने में असफल"
 msgid "Failed to fetch API tokens"
 msgstr "API टोकन लाने में असफल"
 
-#: packages/admin/src/lib/api/client.ts:408
+#: packages/admin/src/lib/api/client.ts:413
 msgid "Failed to fetch auth mode"
 msgstr "ऑथेंटिकेशन मोड लाने में असफल"
 
@@ -6814,7 +6920,7 @@ msgstr "प्रवेश शर्तें लाने में असफ�
 msgid "Failed to fetch fields"
 msgstr "फ़ील्ड प्राप्त करने में असफल"
 
-#: packages/admin/src/lib/api/client.ts:391
+#: packages/admin/src/lib/api/client.ts:396
 msgid "Failed to fetch manifest"
 msgstr "मेनिफ़ेस्ट लाने में असफल"
 
@@ -6925,7 +7031,7 @@ msgstr "अनुभाग लाने में असफल"
 msgid "Failed to fetch settings"
 msgstr "सेटिंग लाने में असफल"
 
-#: packages/admin/src/components/SetupWizard.tsx:504
+#: packages/admin/src/components/SetupWizard.tsx:510
 msgid "Failed to fetch setup status"
 msgstr "सेटअप स्थिति लाने में असफल"
 
@@ -6965,7 +7071,7 @@ msgstr "अपडेट की स्थिति प्राप्त कर�
 #: packages/admin/src/lib/api/current-user.ts:30
 #: packages/admin/src/lib/api/users.ts:91
 #: packages/admin/src/lib/api/users.ts:96
-#: packages/admin/src/router.tsx:3066
+#: packages/admin/src/router.tsx:3075
 msgid "Failed to fetch user"
 msgstr "उपयोगकर्ता लाने में असफल"
 
@@ -7010,6 +7116,10 @@ msgstr "अपलोड URL प्राप्त करने में अस�
 msgid "Failed to import"
 msgstr "इम्पोर्ट करने में असफल"
 
+#: packages/admin/src/lib/api/multisite.ts:208
+msgid "Failed to import accounts"
+msgstr ""
+
 #: packages/admin/src/components/WordPressImport.tsx:464
 #: packages/admin/src/lib/api/import.ts:262
 msgid "Failed to import from WordPress"
@@ -7038,7 +7148,7 @@ msgstr "बायलाइन फ़ील्ड सूचीबद्ध कर
 msgid "Failed to list files to upload"
 msgstr "अपलोड की जाने वाली फ़ाइलों की सूची प्राप्त करने में असफल"
 
-#: packages/admin/src/router.tsx:576
+#: packages/admin/src/router.tsx:579
 msgid "Failed to load admin"
 msgstr "व्यवस्थापक लोड करने में असफल"
 
@@ -7099,6 +7209,16 @@ msgstr "इम्पोर्ट लोड करने में असफल"
 msgid "visualEditing.mediaLoadFailed"
 msgstr "मीडिया लोड करने में असफल"
 
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:115
+#: packages/admin/src/lib/api/multisite.ts:118
+msgid "Failed to load organization"
+msgstr ""
+
+#: packages/admin/src/components/multisite/OrganizationsPage.tsx:74
+#: packages/admin/src/lib/api/multisite.ts:105
+msgid "Failed to load organizations"
+msgstr ""
+
 #: packages/admin/src/components/settings/SecuritySettings.tsx:128
 msgid "Failed to load passkeys"
 msgstr "पासकीज़ लोड करने में असफल"
@@ -7120,9 +7240,17 @@ msgstr "प्लगइन्स लोड करने में असफल: 
 msgid "Failed to load plugins. The registry aggregator may be unreachable."
 msgstr "प्लगइन्स लोड करने में असफल. रजिस्ट्री एग्रीगेटर पहुंच योग्य नहीं हो सकता है."
 
-#: packages/admin/src/components/SetupWizard.tsx:605
+#: packages/admin/src/components/SetupWizard.tsx:611
 msgid "Failed to load setup"
 msgstr "सेटअप लोड करने में असफल"
+
+#: packages/admin/src/lib/api/multisite.ts:131
+msgid "Failed to load site storage options"
+msgstr ""
+
+#: packages/admin/src/lib/api/multisite.ts:95
+msgid "Failed to load sites"
+msgstr ""
 
 #: packages/admin/src/lib/api/calendar.ts:49
 msgid "Failed to load the calendar"
@@ -7141,7 +7269,7 @@ msgid "Failed to load transfer settings"
 msgstr "ट्रांसफ़र सेटिंग्स लोड करने में असफल"
 
 #. placeholder {0}: usersQuery.error.message
-#: packages/admin/src/routes/users.tsx:210
+#: packages/admin/src/routes/users.tsx:235
 msgid "Failed to load users: {0}"
 msgstr "उपयोगकर्ताओं को लोड करने में असफल: {0}"
 
@@ -7153,8 +7281,13 @@ msgstr "विजेट लोड करने में असफल"
 msgid "Failed to lock the entry"
 msgstr "एंट्री लॉक करने में असफल"
 
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:80
+#: packages/admin/src/lib/api/multisite.ts:217
+msgid "Failed to open the site"
+msgstr ""
+
 #: packages/admin/src/lib/api/comments.ts:131
-#: packages/admin/src/router.tsx:3155
+#: packages/admin/src/router.tsx:3164
 msgid "Failed to perform bulk action"
 msgstr "थोक कार्रवाई करने में असफल"
 
@@ -7171,9 +7304,9 @@ msgstr "आयात तैयार करने में असफल"
 msgid "Failed to probe URL"
 msgstr "URL की जाँच करने में असफल"
 
-#: packages/admin/src/router.tsx:800
-#: packages/admin/src/router.tsx:1994
-#: packages/admin/src/router.tsx:2346
+#: packages/admin/src/router.tsx:809
+#: packages/admin/src/router.tsx:2003
+#: packages/admin/src/router.tsx:2355
 msgid "Failed to publish"
 msgstr "प्रकाशित करने में असफल"
 
@@ -7185,7 +7318,7 @@ msgstr "कंटेंट प्रकाशित करने में अ�
 msgid "Failed to read byline field usage"
 msgstr "बायलाइन फ़ील्ड उपयोग को पढ़ने में असफल"
 
-#: packages/admin/src/router.tsx:3690
+#: packages/admin/src/router.tsx:3719
 msgid "Failed to register {slug}"
 msgstr "{slug} को रजिस्टर करने में असफल"
 
@@ -7197,6 +7330,10 @@ msgstr "ऑर्फ़न टेबल रजिस्टर करने म�
 msgid "Failed to release the entry lock"
 msgstr "एंट्री का लॉक हटाने में असफल"
 
+#: packages/admin/src/lib/api/multisite.ts:174
+msgid "Failed to remove member"
+msgstr ""
+
 #: packages/admin/src/components/settings/PasskeyItem.tsx:73
 #: packages/admin/src/components/settings/SecuritySettings.tsx:71
 msgid "Failed to remove passkey"
@@ -7205,6 +7342,10 @@ msgstr "पासकी निकालने में असफल"
 #: packages/admin/src/lib/api/media.ts:271
 msgid "Failed to rename media folder"
 msgstr "मीडिया फ़ोल्डर का नाम बदलने में असफल"
+
+#: packages/admin/src/lib/api/multisite.ts:126
+msgid "Failed to rename organization"
+msgstr ""
 
 #: packages/admin/src/components/settings/SecuritySettings.tsx:55
 #: packages/admin/src/lib/api/users.ts:250
@@ -7240,7 +7381,7 @@ msgstr "विजेट्स को पुन: व्यवस्थित क�
 msgid "Failed to replace media image"
 msgstr "मीडिया इमेज बदलने में असफल"
 
-#: packages/admin/src/router.tsx:754
+#: packages/admin/src/router.tsx:763
 msgid "Failed to restore"
 msgstr "पुनर्स्थापित करने में असफल"
 
@@ -7264,9 +7405,9 @@ msgstr "URL पुनः लिखने में असफल"
 
 #: packages/admin/src/components/ContentEditor.tsx:3275
 #: packages/admin/src/components/ContentEditor.tsx:3527
-#: packages/admin/src/router.tsx:996
-#: packages/admin/src/router.tsx:1812
-#: packages/admin/src/router.tsx:3884
+#: packages/admin/src/router.tsx:1005
+#: packages/admin/src/router.tsx:1821
+#: packages/admin/src/router.tsx:3913
 msgid "Failed to save"
 msgstr "सहेजने में असफल"
 
@@ -7299,8 +7440,8 @@ msgstr ""
 msgid "Failed to schedule content"
 msgstr "कंटेंट शेड्यूल करने में असफल"
 
-#: packages/admin/src/components/LoginPage.tsx:71
-#: packages/admin/src/components/LoginPage.tsx:76
+#: packages/admin/src/components/LoginPage.tsx:72
+#: packages/admin/src/components/LoginPage.tsx:77
 msgid "Failed to send magic link"
 msgstr "जादुई लिंक भेजने में असफल"
 
@@ -7342,8 +7483,8 @@ msgstr "इम्पोर्ट शुरू करने में असफ�
 msgid "Failed to uninstall plugin"
 msgstr "प्लगइन अनइंस्टॉल करने में असफल"
 
-#: packages/admin/src/router.tsx:2019
-#: packages/admin/src/router.tsx:2393
+#: packages/admin/src/router.tsx:2028
+#: packages/admin/src/router.tsx:2402
 msgid "Failed to unpublish"
 msgstr "अप्रकाशित करने में असफल"
 
@@ -7351,8 +7492,8 @@ msgstr "अप्रकाशित करने में असफल"
 msgid "Failed to unpublish content"
 msgstr "कंटेंट अप्रकाशित करने में असफल"
 
-#: packages/admin/src/router.tsx:2106
-#: packages/admin/src/router.tsx:2487
+#: packages/admin/src/router.tsx:2115
+#: packages/admin/src/router.tsx:2496
 msgid "Failed to unschedule"
 msgstr "शेड्यूल अनिर्धारित करने में असफल"
 
@@ -7360,7 +7501,7 @@ msgstr "शेड्यूल अनिर्धारित करने मे
 msgid "Failed to unschedule content"
 msgstr "कंटेंट का शेड्यूल हटाने में असफल"
 
-#: packages/admin/src/router.tsx:823
+#: packages/admin/src/router.tsx:832
 msgid "Failed to update"
 msgstr "अद्यतन करने में असफल"
 
@@ -7451,7 +7592,11 @@ msgstr "अनुभाग अद्यतन करने में असफ�
 msgid "Failed to update settings"
 msgstr "सेटिंग्स अपडेट करने में असफल"
 
-#: packages/admin/src/router.tsx:3119
+#: packages/admin/src/lib/api/multisite.ts:147
+msgid "Failed to update site"
+msgstr ""
+
+#: packages/admin/src/router.tsx:3128
 msgid "Failed to update status"
 msgstr "स्थिति अपडेट करने में असफल"
 
@@ -7636,7 +7781,7 @@ msgstr "तारीख़ की रेंज के अनुसार फ़�
 msgid "Filter by group"
 msgstr ""
 
-#: packages/admin/src/components/users/UserList.tsx:84
+#: packages/admin/src/components/users/UserList.tsx:92
 msgid "Filter by role"
 msgstr "भूमिका के अनुसार फ़िल्टर करें"
 
@@ -7663,7 +7808,7 @@ msgstr "फ़िल्टर बायलाइन प्रकार"
 msgid "Filter: {activeCount} selected"
 msgstr "फ़िल्टर: {activeCount} चुने गए"
 
-#: packages/admin/src/router.tsx:1235
+#: packages/admin/src/router.tsx:1244
 msgid "Find it in this entry’s revisions."
 msgstr ""
 
@@ -7718,7 +7863,7 @@ msgid "Focal point. Use arrow keys to move it."
 msgstr "फ़ोकल पॉइंट। इसे खिसकाने के लिए ऐरो कीज़ का उपयोग करें।"
 
 #: packages/admin/src/components/MediaPickerModal.tsx:1247
-#: packages/admin/src/router.tsx:2976
+#: packages/admin/src/router.tsx:2985
 msgid "Folder"
 msgstr "फ़ोल्डर"
 
@@ -7726,7 +7871,7 @@ msgstr "फ़ोल्डर"
 msgid "Folder deleted"
 msgstr "फ़ोल्डर हटा दिया गया"
 
-#: packages/admin/src/router.tsx:2769
+#: packages/admin/src/router.tsx:2778
 msgid "Folder no longer exists"
 msgstr "फ़ोल्डर अब मौजूद नहीं है"
 
@@ -7829,12 +7974,12 @@ msgid "Gallery settings"
 msgstr "गैलरी सेटिंग्स"
 
 #: packages/admin/src/components/Settings.tsx:56
-#: packages/admin/src/router.tsx:3341
+#: packages/admin/src/router.tsx:3350
 msgid "General"
 msgstr "सामान्य"
 
 #: packages/admin/src/components/settings/GeneralSettings.tsx:307
-#: packages/admin/src/router.tsx:3340
+#: packages/admin/src/router.tsx:3349
 msgid "General Settings"
 msgstr "सामान्य सेटिंग्स"
 
@@ -7849,6 +7994,10 @@ msgstr "शुरू हो जाओ"
 #: packages/admin/src/components/settings/SocialSettings.tsx:149
 msgid "GitHub"
 msgstr "GitHub"
+
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:868
+msgid "Give {label} a different role on a site, or keep their organization role."
+msgstr ""
 
 #: packages/admin/src/components/MenuEditor.tsx:537
 msgid "Give this menu a new label."
@@ -7879,7 +8028,7 @@ msgid "Go live {countdown}"
 msgstr ""
 
 #: packages/admin/src/components/WordPressImport.tsx:2510
-#: packages/admin/src/router.tsx:4191
+#: packages/admin/src/router.tsx:4222
 msgid "Go to Dashboard"
 msgstr "डैशबोर्ड पर जाएँ"
 
@@ -8032,8 +8181,8 @@ msgstr "हीरो, बैनर, सीटीए"
 msgid "Hidden from search engines"
 msgstr ""
 
-#: packages/admin/src/components/Header.tsx:70
-#: packages/admin/src/components/Header.tsx:74
+#: packages/admin/src/components/Header.tsx:113
+#: packages/admin/src/components/Header.tsx:117
 msgid "Hidden from search engines until you go live"
 msgstr ""
 
@@ -8115,11 +8264,16 @@ msgstr ""
 msgid "Host and user are required."
 msgstr ""
 
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:391
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:516
+msgid "Hostnames"
+msgstr ""
+
 #: packages/admin/src/components/PublishingDateTimeEditor.tsx:226
 msgid "Hour"
 msgstr ""
 
-#: packages/admin/src/components/SetupWizard.tsx:159
+#: packages/admin/src/components/SetupWizard.tsx:165
 msgid "How do you want to start?"
 msgstr ""
 
@@ -8205,9 +8359,14 @@ msgstr "छवि ऑडिट के कारण आइकन धुंधल�
 msgid "ID"
 msgstr "पहचान"
 
-#: packages/admin/src/components/LoginPage.tsx:104
+#: packages/admin/src/components/LoginPage.tsx:105
 msgid "If an account exists for <0>{email}</0>, we've sent a sign-in link."
 msgstr "यदि कोई खाता <0>{email}</0> के लिए मौजूद है, तो हमने एक साइन-इन लिंक भेजा है।"
+
+#. placeholder {0}: org.name
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:773
+msgid "If nobody has an account with this email yet, they're invited to create one and join {0}."
+msgstr ""
 
 #: packages/admin/src/components/settings/ChangeDomainDialog.tsx:188
 msgid "If the site can't be reached from the internet yet, for example on localhost or behind a login, you can use the address without the check."
@@ -8325,7 +8484,7 @@ msgstr ""
 
 #: packages/admin/src/components/AdminCommandPalette.tsx:239
 #: packages/admin/src/components/settings/transfer/ImportSection.tsx:210
-#: packages/admin/src/components/Sidebar.tsx:606
+#: packages/admin/src/components/Sidebar.tsx:610
 #: packages/admin/src/components/WordPressImport.tsx:785
 msgid "Import"
 msgstr "आयात"
@@ -8343,11 +8502,15 @@ msgstr ""
 msgid "Import a site package into this site while it is empty, overwriting its initial setup. Admin includes this; choose it instead of Admin to give an agent narrower access."
 msgstr ""
 
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:539
+msgid "Import accounts"
+msgstr ""
+
 #: packages/admin/src/components/WordPressImport.tsx:1422
 msgid "Import all content directly including drafts, custom post types, ACF fields, and SEO data. No file download needed."
 msgstr "ड्राफ्ट, कस्टम पोस्ट प्रकार, एसीएफ फ़ील्ड और एसईओ डेटा सहित सभी कंटेंट सीधे आयात करें। किसी फ़ाइल डाउनलोड की आवश्यकता नहीं है."
 
-#: packages/admin/src/components/SetupWizard.tsx:179
+#: packages/admin/src/components/SetupWizard.tsx:185
 msgid "Import an existing EmDash site"
 msgstr ""
 
@@ -8377,7 +8540,7 @@ msgid "Import failed"
 msgstr "आयात असफल"
 
 #: packages/admin/src/components/WordPressImport.tsx:738
-#: packages/admin/src/router.tsx:3516
+#: packages/admin/src/router.tsx:3525
 msgid "Import from WordPress"
 msgstr "वर्डप्रेस से आयात करें"
 
@@ -8412,6 +8575,10 @@ msgstr "EmDash निर्यातक के माध्यम से आय�
 #: packages/admin/src/components/Sections.tsx:68
 msgid "Imported"
 msgstr "आयातित"
+
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:456
+msgid "Imported {imported} accounts, {linked} already here"
+msgstr ""
 
 #: packages/admin/src/components/WordPressImport.tsx:2404
 msgid "Imported by Collection"
@@ -8462,6 +8629,10 @@ msgstr ""
 
 #: packages/admin/src/components/settings/transfer/labels.ts:60
 msgid "Importing terms and bylines"
+msgstr ""
+
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:539
+msgid "Importing..."
 msgstr ""
 
 #: packages/admin/src/components/MediaUsedIn.tsx:355
@@ -8682,7 +8853,15 @@ msgstr "अमान्य लिंक"
 msgid "Invalid port"
 msgstr ""
 
-#: packages/admin/src/routes/users.tsx:132
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:769
+msgid "Invitation created"
+msgstr ""
+
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:746
+msgid "Invitation saved. They join when they sign in with this email."
+msgstr ""
+
+#: packages/admin/src/routes/users.tsx:157
 msgid "Invitation sent to {email}"
 msgstr ""
 
@@ -8699,7 +8878,7 @@ msgid "Invite Link Created"
 msgstr "आमंत्रण लिंक बनाया गया"
 
 #: packages/admin/src/components/users/InviteUserModal.tsx:144
-#: packages/admin/src/components/users/UserList.tsx:66
+#: packages/admin/src/components/users/UserList.tsx:72
 msgid "Invite User"
 msgstr "उपयोगकर्ता को आमंत्रित करें"
 
@@ -8707,7 +8886,7 @@ msgstr "उपयोगकर्ता को आमंत्रित करे
 msgid "Invite validation failed"
 msgstr ""
 
-#: packages/admin/src/components/users/UserList.tsx:133
+#: packages/admin/src/components/users/UserList.tsx:146
 msgid "Invite your first team member"
 msgstr "अपने पहले टीम सदस्य को आमंत्रित करें"
 
@@ -8739,7 +8918,7 @@ msgstr ""
 msgid "It was started somewhere else, so its plan can no longer be changed. Its progress will appear here."
 msgstr ""
 
-#: packages/admin/src/router.tsx:2623
+#: packages/admin/src/router.tsx:2632
 msgid "It’s shown read-only. An entry in Trash can be restored from there."
 msgstr ""
 
@@ -8773,7 +8952,7 @@ msgid "Its listing has not been approved for display. Check back later."
 msgstr ""
 
 #: packages/admin/src/components/InviteAcceptPage.tsx:76
-#: packages/admin/src/components/SetupWizard.tsx:278
+#: packages/admin/src/components/SetupWizard.tsx:284
 #: packages/admin/src/components/SignupPage.tsx:231
 msgid "Jane Doe"
 msgstr "जेन डो"
@@ -8923,7 +9102,7 @@ msgid "Landscape"
 msgstr ""
 
 #: packages/admin/src/components/editor/CodeBlockNode.tsx:286
-#: packages/admin/src/components/LoginPage.tsx:360
+#: packages/admin/src/components/LoginPage.tsx:371
 #: packages/admin/src/components/Settings.tsx:155
 #: packages/admin/src/components/Settings.tsx:169
 msgid "Language"
@@ -8945,7 +9124,7 @@ msgstr "अंतिम सक्षम:"
 msgid "Last login"
 msgstr "आखरी लॉगइन"
 
-#: packages/admin/src/components/users/UserList.tsx:105
+#: packages/admin/src/components/users/UserList.tsx:113
 msgid "Last Login"
 msgstr "आखरी लॉगइन"
 
@@ -9173,7 +9352,7 @@ msgstr "और लोड करें"
 #: packages/admin/src/components/ContentList.tsx:950
 #: packages/admin/src/components/ContentList.tsx:1013
 #: packages/admin/src/components/MediaLibrary.tsx:1254
-#: packages/admin/src/components/users/UserList.tsx:158
+#: packages/admin/src/components/users/UserList.tsx:176
 msgid "Load More"
 msgstr "और लोड करें"
 
@@ -9190,7 +9369,7 @@ msgstr ""
 
 #: packages/admin/src/components/calendar/CalendarToolbar.tsx:113
 #: packages/admin/src/components/ContentEditor.tsx:3011
-#: packages/admin/src/router.tsx:4146
+#: packages/admin/src/router.tsx:4177
 msgid "Loading"
 msgstr "लोड हो रहा है"
 
@@ -9219,8 +9398,8 @@ msgstr "संग्रह लोड हो रहा है..."
 msgid "Loading comments..."
 msgstr "टिप्पणियाँ लोड हो रही हैं..."
 
-#: packages/admin/src/router.tsx:4148
-#: packages/admin/src/router.tsx:4160
+#: packages/admin/src/router.tsx:4179
+#: packages/admin/src/router.tsx:4191
 msgid "Loading configuration..."
 msgstr "कॉन्फ़िगरेशन लोड हो रहा है..."
 
@@ -9299,7 +9478,7 @@ msgstr "अनुभाग लोड हो रहे हैं..."
 msgid "Loading settings..."
 msgstr "सेटिंग लोड हो रही है..."
 
-#: packages/admin/src/components/SetupWizard.tsx:592
+#: packages/admin/src/components/SetupWizard.tsx:598
 msgid "Loading setup..."
 msgstr "सेटअप लोड हो रहा है..."
 
@@ -9331,6 +9510,8 @@ msgstr "विजेट लोड हो रहे हैं..."
 #: packages/admin/src/components/MediaDetailPanel.tsx:1731
 #: packages/admin/src/components/MediaLibrary.tsx:1254
 #: packages/admin/src/components/MediaUsedIn.tsx:245
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:107
+#: packages/admin/src/components/multisite/OrganizationsPage.tsx:63
 #: packages/admin/src/components/PortableTextEditor.tsx:1925
 #: packages/admin/src/components/Redirects.tsx:851
 #: packages/admin/src/components/RegistryBrowse.tsx:179
@@ -9345,7 +9526,7 @@ msgstr "विजेट लोड हो रहे हैं..."
 #: packages/admin/src/components/ThemeMarketplaceBrowse.tsx:170
 #: packages/admin/src/components/ThemeMarketplaceBrowse.tsx:244
 #: packages/admin/src/components/ThemeMarketplaceDetail.tsx:143
-#: packages/admin/src/components/users/UserList.tsx:147
+#: packages/admin/src/components/users/UserList.tsx:165
 #: packages/admin/src/routes/bylines.tsx:491
 msgid "Loading..."
 msgstr "लोड हो रहा है..."
@@ -9399,11 +9580,11 @@ msgstr "पहलू अनुपात लॉक करें"
 msgid "Locked because this field has stored values. Delete the values (or the field) to change this."
 msgstr "लॉक किया गया क्योंकि इस फ़ील्ड में मान संग्रहीत हैं। इसे बदलने के लिए मान (या फ़ील्ड) हटाएं।"
 
-#: packages/admin/src/router.tsx:487
+#: packages/admin/src/router.tsx:490
 msgid "Log in"
 msgstr ""
 
-#: packages/admin/src/components/Header.tsx:130
+#: packages/admin/src/components/Header.tsx:177
 msgid "Log out"
 msgstr "लॉग आउट"
 
@@ -9430,6 +9611,10 @@ msgstr "लंबा पाठ"
 msgid "Lowercase letters, numbers and underscores. Reference fields store this."
 msgstr ""
 
+#: packages/admin/src/components/multisite/OrganizationsPage.tsx:162
+msgid "Lowercase letters, numbers, and hyphens."
+msgstr ""
+
 #: packages/admin/src/components/editor/codeBlockLanguages.ts:44
 msgid "Lua"
 msgstr ""
@@ -9443,7 +9628,8 @@ msgstr ""
 msgid "Main Sidebar"
 msgstr "मुख्य साइडबार"
 
-#: packages/admin/src/components/Sidebar.tsx:460
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:250
+#: packages/admin/src/components/Sidebar.tsx:461
 msgid "Manage"
 msgstr "प्रबंधित करना"
 
@@ -9464,6 +9650,10 @@ msgstr "अपने विजेट क्षेत्रों में क�
 #: packages/admin/src/components/PluginManager.tsx:202
 msgid "Manage installed plugins. Enable or disable plugins to control their functionality."
 msgstr "इंस्टॉल किए गए प्लगइन्स प्रबंधित करें. प्लगइन्स की कार्यक्षमता को नियंत्रित करने के लिए उन्हें सक्षम या अक्षम करें।"
+
+#: packages/admin/src/routes/users.tsx:65
+msgid "Manage members"
+msgstr ""
 
 #: packages/admin/src/components/MenuList.tsx:161
 msgid "Manage navigation menus for your site"
@@ -9529,11 +9719,11 @@ msgstr "markdown"
 msgid "Marketplace"
 msgstr "बाजार"
 
-#: packages/admin/src/router.tsx:3504
+#: packages/admin/src/router.tsx:3513
 msgid "Marketplace browsing is no longer available."
 msgstr ""
 
-#: packages/admin/src/router.tsx:3477
+#: packages/admin/src/router.tsx:3486
 msgid "Marketplace browsing is no longer available. Manage installed plugins from Plugins."
 msgstr ""
 
@@ -9581,11 +9771,11 @@ msgstr "एमडीएक्स"
 #: packages/admin/src/components/Settings.tsx:75
 #: packages/admin/src/components/settings/transfer/labels.ts:17
 #: packages/admin/src/components/settings/transfer/labels.ts:84
-#: packages/admin/src/components/Sidebar.tsx:501
+#: packages/admin/src/components/Sidebar.tsx:502
 #: packages/admin/src/components/WordPressImport.tsx:799
 #: packages/admin/src/components/WordPressImport.tsx:1197
 #: packages/admin/src/components/WordPressImport.tsx:1390
-#: packages/admin/src/router.tsx:2728
+#: packages/admin/src/router.tsx:2737
 msgid "Media"
 msgstr "मीडिया"
 
@@ -9647,13 +9837,17 @@ msgstr "मीडिया पढ़ें"
 msgid "Media results"
 msgstr ""
 
-#: packages/admin/src/router.tsx:3223
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:411
+msgid "Media storage"
+msgstr ""
+
+#: packages/admin/src/router.tsx:3232
 msgid "Media Usage"
 msgstr ""
 
 #: packages/admin/src/components/Settings.tsx:79
 #: packages/admin/src/components/settings/MediaUsageSettings.tsx:299
-#: packages/admin/src/router.tsx:3224
+#: packages/admin/src/router.tsx:3233
 msgid "Media usage tracking"
 msgstr ""
 
@@ -9684,6 +9878,14 @@ msgstr "मीडिया लिखें"
 #: packages/admin/src/components/PortableTextEditor.tsx:538
 msgid "Medium section heading"
 msgstr "मध्यम अनुभाग शीर्षक"
+
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:745
+msgid "Member added"
+msgstr ""
+
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:625
+msgid "Members"
+msgstr ""
 
 #: packages/admin/src/components/Widgets.tsx:119
 #: packages/admin/src/components/Widgets.tsx:1001
@@ -9742,9 +9944,9 @@ msgstr ""
 #: packages/admin/src/components/AdminCommandPalette.tsx:173
 #: packages/admin/src/components/MenuList.tsx:159
 #: packages/admin/src/components/settings/transfer/labels.ts:28
-#: packages/admin/src/components/Sidebar.tsx:522
+#: packages/admin/src/components/Sidebar.tsx:523
 #: packages/admin/src/components/WordPressImport.tsx:1201
-#: packages/admin/src/router.tsx:3524
+#: packages/admin/src/router.tsx:3533
 msgid "Menus"
 msgstr "मेनू"
 
@@ -9991,11 +10193,11 @@ msgstr ""
 msgid "Moved {name} to position {position} of {total}"
 msgstr ""
 
-#: packages/admin/src/router.tsx:820
+#: packages/admin/src/router.tsx:829
 msgid "Moved {total} items to draft"
 msgstr "ड्राफ्ट में {total} आइटम ले जाया गया"
 
-#: packages/admin/src/router.tsx:841
+#: packages/admin/src/router.tsx:850
 msgid "Moved {total} items to trash"
 msgstr "{total} आइटम को कूड़ेदान में ले जाया गया"
 
@@ -10092,7 +10294,7 @@ msgstr "बहु-पंक्ति सादा पाठ"
 msgid "Multiple choices from options"
 msgstr "विकल्पों में से अनेक विकल्प"
 
-#: packages/admin/src/components/SetupWizard.tsx:142
+#: packages/admin/src/components/SetupWizard.tsx:148
 msgid "My Awesome Blog"
 msgstr "मेरा अद्भुत ब्लॉग"
 
@@ -10102,6 +10304,10 @@ msgstr "मेरा अद्भुत ब्लॉग"
 #: packages/admin/src/components/MediaFolderDialog.tsx:169
 #: packages/admin/src/components/MenuList.tsx:220
 #: packages/admin/src/components/MenuList.tsx:223
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:190
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:371
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:509
+#: packages/admin/src/components/multisite/OrganizationsPage.tsx:151
 #: packages/admin/src/components/TaxonomyManager.tsx:726
 #: packages/admin/src/components/TaxonomyManager.tsx:977
 #: packages/admin/src/components/TaxonomyManager.tsx:980
@@ -10147,11 +10353,11 @@ msgid "Needs attention"
 msgstr ""
 
 #: packages/admin/src/components/users/UserDetail.tsx:240
-#: packages/admin/src/components/users/UserList.tsx:174
+#: packages/admin/src/components/users/UserList.tsx:192
 msgid "Never"
 msgstr "कभी नहीं"
 
-#: packages/admin/src/router.tsx:2131
+#: packages/admin/src/router.tsx:2140
 msgid "new"
 msgstr "नया"
 
@@ -10182,11 +10388,11 @@ msgstr "नया बायलाइन फ़ील्ड"
 msgid "New collection"
 msgstr "नया संग्रह"
 
-#: packages/admin/src/router.tsx:948
+#: packages/admin/src/router.tsx:957
 msgid "New content"
 msgstr ""
 
-#: packages/admin/src/router.tsx:3733
+#: packages/admin/src/router.tsx:3762
 msgid "New content type"
 msgstr ""
 
@@ -10205,6 +10411,11 @@ msgstr "नया क्षेत्र"
 
 #: packages/admin/src/components/MediaLibrary.tsx:793
 msgid "New folder"
+msgstr ""
+
+#: packages/admin/src/components/multisite/OrganizationsPage.tsx:103
+#: packages/admin/src/components/multisite/OrganizationsPage.tsx:144
+msgid "New organization"
 msgstr ""
 
 #: packages/admin/src/components/MarketplaceMigrationBanner.tsx:15
@@ -10420,6 +10631,10 @@ msgstr ""
 msgid "No detailed description available."
 msgstr "कोई विस्तृत विवरण उपलब्ध नहीं है."
 
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:242
+msgid "No domain yet"
+msgstr ""
+
 #: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:353
 msgid "No domains configured. Users must be invited individually."
 msgstr "कोई डोमेन कॉन्फ़िगर नहीं किया गया. उपयोगकर्ताओं को व्यक्तिगत रूप से आमंत्रित किया जाना चाहिए."
@@ -10439,6 +10654,12 @@ msgstr "कोई ईमेल प्रदाता कॉन्फ़िगर
 #: packages/admin/src/components/users/InviteUserModal.tsx:147
 msgid "No email provider configured. Share this link manually."
 msgstr "कोई ईमेल प्रदाता कॉन्फ़िगर नहीं किया गया. इस लिंक को मैन्युअल रूप से साझा करें."
+
+#. placeholder {0}: email.trim()
+#. placeholder {1}: org.name
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:772
+msgid "No email provider is configured. Send this link to {0} so they can create an account and join {1}."
+msgstr ""
 
 #: packages/admin/src/components/WordPressImport.tsx:2608
 msgid "No EmDash users found"
@@ -10600,6 +10821,10 @@ msgstr "कोई न्यूनतम नहीं"
 msgid "No moderation (auto-approve all)"
 msgstr "कोई मॉडरेशन नहीं (सभी को स्वतः स्वीकृत करें)"
 
+#: packages/admin/src/components/multisite/OrganizationsPage.tsx:133
+msgid "No organizations yet. Create one to add sites and members."
+msgstr ""
+
 #: packages/admin/src/components/MenuEditor.tsx:482
 msgid "No parent (top level)"
 msgstr "कोई अभिभावक नहीं (शीर्ष स्तर)"
@@ -10693,6 +10918,18 @@ msgstr "कोई अनुभाग नहीं मिला"
 msgid "No sections yet"
 msgstr "अभी तक कोई अनुभाग नहीं"
 
+#: packages/admin/src/components/multisite/ProviderSignIn.tsx:52
+msgid "No sign-in provider is configured. Add one to authProviders in the EmDash config."
+msgstr ""
+
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:282
+msgid "No sites yet. A deployment Admin can add them."
+msgstr ""
+
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:281
+msgid "No sites yet. Add one to start publishing."
+msgstr ""
+
 #: packages/admin/src/components/comments/CommentInbox.tsx:629
 msgid "No spam comments."
 msgstr "कोई स्पैम टिप्पणियाँ नहीं."
@@ -10709,11 +10946,11 @@ msgstr ""
 msgid "No usage to show yet"
 msgstr ""
 
-#: packages/admin/src/components/users/UserList.tsx:117
+#: packages/admin/src/components/users/UserList.tsx:125
 msgid "No users found matching your filters."
 msgstr "आपके फ़िल्टर से मेल खाता कोई उपयोगकर्ता नहीं मिला."
 
-#: packages/admin/src/components/users/UserList.tsx:131
+#: packages/admin/src/components/users/UserList.tsx:139
 msgid "No users yet."
 msgstr "अभी तक कोई उपयोगकर्ता नहीं."
 
@@ -10862,13 +11099,17 @@ msgstr ""
 msgid "On the site"
 msgstr ""
 
-#: packages/admin/src/components/SetupWizard.tsx:180
+#: packages/admin/src/components/SetupWizard.tsx:186
 msgid "Once setup is done, upload a .emdash package exported from another EmDash site."
 msgstr ""
 
 #: packages/admin/src/components/RelationForm.tsx:409
 #: packages/admin/src/components/RelationForm.tsx:419
 msgid "One"
+msgstr ""
+
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:517
+msgid "One per line. The first is the site's main address."
 msgstr ""
 
 #: packages/admin/src/components/DeviceAuthorizePage.tsx:310
@@ -10950,7 +11191,7 @@ msgid "Open setup"
 msgstr ""
 
 #: packages/admin/src/components/InviteAcceptPage.tsx:89
-#: packages/admin/src/components/SetupWizard.tsx:357
+#: packages/admin/src/components/SetupWizard.tsx:363
 #: packages/admin/src/components/SignupPage.tsx:246
 msgid "Open the dashboard"
 msgstr ""
@@ -11003,6 +11244,10 @@ msgstr ""
 msgid "Optional tooltip on hover"
 msgstr "होवर पर वैकल्पिक टूलटिप"
 
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:392
+msgid "Optional. One per line; the first is the site's main address. Point each domain at this deployment."
+msgstr ""
+
 #: packages/admin/src/components/BylineFieldEditor.tsx:432
 #: packages/admin/src/components/FieldEditor.tsx:1292
 #: packages/admin/src/components/FieldEditor.tsx:1714
@@ -11022,8 +11267,8 @@ msgid "or connect by URL"
 msgstr "या URL द्वारा कनेक्ट करें"
 
 #: packages/admin/src/components/InviteAcceptPage.tsx:102
-#: packages/admin/src/components/LoginPage.tsx:282
-#: packages/admin/src/components/SetupWizard.tsx:370
+#: packages/admin/src/components/LoginPage.tsx:293
+#: packages/admin/src/components/SetupWizard.tsx:376
 msgid "Or continue with"
 msgstr "या जारी रखें"
 
@@ -11045,6 +11290,31 @@ msgstr "ऑर्डर सहेजा गया"
 
 #: packages/admin/src/components/FieldEditor.tsx:754
 msgid "Ordered page-building blocks"
+msgstr ""
+
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:101
+#: packages/admin/src/router.tsx:3593
+msgid "Organization"
+msgstr ""
+
+#: packages/admin/src/components/multisite/OrganizationsPage.tsx:50
+msgid "Organization created"
+msgstr ""
+
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:572
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:584
+msgid "Organization role"
+msgstr ""
+
+#: packages/admin/src/components/multisite/OrganizationsPage.tsx:55
+#: packages/admin/src/components/multisite/SiteSwitcher.tsx:73
+#: packages/admin/src/components/Sidebar.tsx:588
+#: packages/admin/src/router.tsx:3582
+msgid "Organizations"
+msgstr ""
+
+#: packages/admin/src/components/multisite/OrganizationsPage.tsx:56
+msgid "Organizations group sites and the people who work on them. A member's role in an organization applies to all of its sites."
 msgstr ""
 
 #: packages/admin/src/components/MediaDetailPanel.tsx:539
@@ -11118,11 +11388,11 @@ msgstr ""
 msgid "Package downloaded"
 msgstr ""
 
-#: packages/admin/src/router.tsx:4058
+#: packages/admin/src/router.tsx:4087
 msgid "Page not found"
 msgstr ""
 
-#: packages/admin/src/router.tsx:4186
+#: packages/admin/src/router.tsx:4217
 msgid "Page Not Found"
 msgstr "पृष्ठ नहीं मिला"
 
@@ -11158,6 +11428,11 @@ msgstr ""
 #: packages/admin/src/components/TaxonomyManager.tsx:763
 msgid "Parent"
 msgstr "माता-पिता"
+
+#. placeholder {0}: org.name
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:497
+msgid "Part of {0}."
+msgstr ""
 
 #: packages/admin/src/components/Redirects.tsx:457
 #: packages/admin/src/components/Redirects.tsx:463
@@ -11202,7 +11477,7 @@ msgid "Passkey renamed"
 msgstr "पासकी का नाम बदला गया"
 
 #: packages/admin/src/components/settings/SecuritySettings.tsx:140
-#: packages/admin/src/components/users/UserList.tsx:108
+#: packages/admin/src/components/users/UserList.tsx:116
 msgid "Passkeys"
 msgstr "पासकीज़"
 
@@ -11316,9 +11591,17 @@ msgstr "लंबित"
 msgid "Pending changes"
 msgstr "लंबित परिवर्तन"
 
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:913
+msgid "Pending invitations"
+msgstr ""
+
 #: packages/admin/src/components/EntryLockNotice.tsx:162
 #: packages/admin/src/components/EntryLockNotice.tsx:189
 msgid "People are editing this entry together"
+msgstr ""
+
+#: packages/admin/src/routes/users.tsx:55
+msgid "People are managed by the organization"
 msgstr ""
 
 #: packages/admin/src/components/presence/PresenceAvatars.tsx:288
@@ -11397,7 +11680,7 @@ msgstr ""
 msgid "Please ask your administrator to send a new invite."
 msgstr "कृपया अपने व्यवस्थापक से नया आमंत्रण भेजने के लिए कहें।"
 
-#: packages/admin/src/components/SetupWizard.tsx:245
+#: packages/admin/src/components/SetupWizard.tsx:251
 msgid "Please enter a valid email"
 msgstr "कृपया एक मान्य ईमेल दर्ज करें"
 
@@ -11410,7 +11693,7 @@ msgid "Please enter a valid URL"
 msgstr "क्रुपया मान्य URL दर्ज करें"
 
 #: packages/admin/src/components/WordPressImport.tsx:1234
-#: packages/admin/src/router.tsx:4034
+#: packages/admin/src/router.tsx:4063
 msgid "Plugin"
 msgstr "लगाना"
 
@@ -11448,8 +11731,8 @@ msgid "Plugin details"
 msgstr "प्लगइन विवरण"
 
 #: packages/admin/src/components/RegistryPluginDetail.tsx:461
-#: packages/admin/src/router.tsx:3446
-#: packages/admin/src/router.tsx:3454
+#: packages/admin/src/router.tsx:3455
+#: packages/admin/src/router.tsx:3463
 msgid "Plugin Details"
 msgstr ""
 
@@ -11474,7 +11757,7 @@ msgstr "प्लगइन एरर ({0})"
 msgid "Plugin installation requires explicit consent"
 msgstr ""
 
-#: packages/admin/src/router.tsx:3438
+#: packages/admin/src/router.tsx:3447
 msgid "Plugin Marketplace"
 msgstr ""
 
@@ -11514,7 +11797,7 @@ msgid "Plugin Permissions"
 msgstr "प्लगइन अनुमतियाँ"
 
 #: packages/admin/src/components/RegistryBrowse.tsx:104
-#: packages/admin/src/router.tsx:3395
+#: packages/admin/src/router.tsx:3404
 msgid "Plugin Registry"
 msgstr "प्लगइन रजिस्ट्री"
 
@@ -11523,8 +11806,8 @@ msgstr "प्लगइन रजिस्ट्री"
 msgid "Plugin registry configuration error"
 msgstr ""
 
-#: packages/admin/src/router.tsx:3431
-#: packages/admin/src/router.tsx:3468
+#: packages/admin/src/router.tsx:3440
+#: packages/admin/src/router.tsx:3477
 msgid "Plugin registry is not configured."
 msgstr ""
 
@@ -11534,7 +11817,7 @@ msgid "Plugin responded with {0}: {text}"
 msgstr "प्लगइन ने {0} के साथ प्रतिक्रिया दी: {text}"
 
 #: packages/admin/src/components/PluginSettings.tsx:38
-#: packages/admin/src/router.tsx:4019
+#: packages/admin/src/router.tsx:4048
 msgid "Plugin Settings"
 msgstr ""
 
@@ -11565,9 +11848,9 @@ msgstr "प्लगइन विजेट एरर"
 #: packages/admin/src/components/PluginManager.tsx:181
 #: packages/admin/src/components/PluginManager.tsx:190
 #: packages/admin/src/components/PluginManager.tsx:200
-#: packages/admin/src/components/Sidebar.tsx:462
-#: packages/admin/src/components/Sidebar.tsx:588
-#: packages/admin/src/router.tsx:3380
+#: packages/admin/src/components/Sidebar.tsx:463
+#: packages/admin/src/components/Sidebar.tsx:592
+#: packages/admin/src/router.tsx:3389
 msgid "Plugins"
 msgstr "प्लग-इन"
 
@@ -11644,7 +11927,7 @@ msgid "Preparing to download files from WordPress..."
 msgstr "वर्डप्रेस से फ़ाइलें डाउनलोड करने की तैयारी हो रही है..."
 
 #: packages/admin/src/components/auth/PasskeyLogin.tsx:163
-#: packages/admin/src/components/SetupWizard.tsx:298
+#: packages/admin/src/components/SetupWizard.tsx:304
 msgid "Preparing..."
 msgstr "तैयारी..."
 
@@ -11683,7 +11966,7 @@ msgstr "ड्राफ्ट का पूर्वावलोकन करे
 msgid "Preview of {0}"
 msgstr ""
 
-#: packages/admin/src/router.tsx:1467
+#: packages/admin/src/router.tsx:1476
 msgid "Preview opens once your edits are saved"
 msgstr ""
 
@@ -11806,11 +12089,6 @@ msgstr ""
 msgid "Publish, unpublish, schedule, and unschedule content"
 msgstr ""
 
-#. js-lingui-explicit-id
-#: packages/admin/src/locales/server.ts:54
-msgid "visualEditing.published"
-msgstr ""
-
 #: packages/admin/src/components/calendar/CalendarEntry.tsx:43
 #: packages/admin/src/components/calendar/CalendarEntryPanel.tsx:226
 #: packages/admin/src/components/ContentList.tsx:1072
@@ -11820,9 +12098,14 @@ msgstr ""
 #: packages/admin/src/components/Dashboard.tsx:527
 #: packages/admin/src/components/revisions/RevisionList.tsx:268
 #: packages/admin/src/components/revisions/RevisionViewBar.tsx:164
-#: packages/admin/src/router.tsx:1989
+#: packages/admin/src/router.tsx:1998
 msgid "Published"
 msgstr "प्रकाशित"
+
+#. js-lingui-explicit-id
+#: packages/admin/src/locales/server.ts:54
+msgid "visualEditing.published"
+msgstr ""
 
 #. placeholder {0}: isolate(formatDate(latest.publishedAt, i18n.locale))
 #: packages/admin/src/components/MarketplacePluginDetail.tsx:348
@@ -11833,7 +12116,7 @@ msgstr "प्रकाशित {0}"
 msgid "Published {liveSince}"
 msgstr ""
 
-#: packages/admin/src/router.tsx:797
+#: packages/admin/src/router.tsx:806
 msgid "Published {total} items"
 msgstr "{total} आइटम प्रकाशित"
 
@@ -11973,7 +12256,7 @@ msgid "Read your taxonomies and terms"
 msgstr "अपनी वर्गीकरण और शर्तें पढ़ें"
 
 #: packages/admin/src/components/EntryLockNotice.tsx:96
-#: packages/admin/src/router.tsx:2585
+#: packages/admin/src/router.tsx:2594
 msgid "Read-only"
 msgstr ""
 
@@ -12063,8 +12346,8 @@ msgstr "लॉगिन करने के लिए पुनः निर्�
 #: packages/admin/src/components/Redirects.tsx:731
 #: packages/admin/src/components/settings/transfer/labels.ts:33
 #: packages/admin/src/components/settings/transfer/labels.ts:90
-#: packages/admin/src/components/Sidebar.tsx:529
-#: packages/admin/src/router.tsx:3566
+#: packages/admin/src/components/Sidebar.tsx:530
+#: packages/admin/src/router.tsx:3575
 msgid "Redirects"
 msgstr "रीडायरेक्ट"
 
@@ -12134,8 +12417,8 @@ msgstr "पंजीकरण रद्द कर दिया गया था 
 
 #: packages/admin/src/components/PluginManager.tsx:218
 #: packages/admin/src/components/PluginManager.tsx:463
-#: packages/admin/src/components/Sidebar.tsx:597
-#: packages/admin/src/router.tsx:3395
+#: packages/admin/src/components/Sidebar.tsx:601
+#: packages/admin/src/router.tsx:3404
 msgid "Registry"
 msgstr "रजिस्ट्री"
 
@@ -12144,7 +12427,7 @@ msgstr "रजिस्ट्री"
 #: packages/admin/src/components/RelationsPanel.tsx:65
 #: packages/admin/src/components/settings/transfer/labels.ts:14
 #: packages/admin/src/components/settings/transfer/labels.ts:77
-#: packages/admin/src/router.tsx:3769
+#: packages/admin/src/router.tsx:3798
 msgid "Relations"
 msgstr ""
 
@@ -12168,7 +12451,7 @@ msgid "Release notes"
 msgstr ""
 
 #: packages/admin/src/components/co-editing/SyncStatus.tsx:109
-#: packages/admin/src/router.tsx:2610
+#: packages/admin/src/router.tsx:2619
 msgid "Reload"
 msgstr ""
 
@@ -12180,7 +12463,7 @@ msgstr ""
 msgid "Reload page"
 msgstr ""
 
-#: packages/admin/src/router.tsx:2601
+#: packages/admin/src/router.tsx:2610
 msgid "Reloading the admin"
 msgstr ""
 
@@ -12204,6 +12487,7 @@ msgstr ""
 #: packages/admin/src/components/ImageFieldRenderer.tsx:605
 #: packages/admin/src/components/ImageFieldRenderer.tsx:846
 #: packages/admin/src/components/media/MediaBrowserItems.tsx:224
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:705
 #: packages/admin/src/components/PortableTextEditor.tsx:5422
 #: packages/admin/src/components/settings/GeneralSettings.tsx:478
 #: packages/admin/src/components/settings/GeneralSettings.tsx:538
@@ -12237,6 +12521,7 @@ msgstr "{entry} हटाएं"
 #: packages/admin/src/components/ContentEditor.tsx:5189
 #: packages/admin/src/components/ContentEditor.tsx:5255
 #: packages/admin/src/components/ImageFieldRenderer.tsx:833
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:679
 #: packages/admin/src/components/SeoImageField.tsx:206
 #: packages/admin/src/components/SeoImageField.tsx:207
 msgid "Remove {label}"
@@ -12289,6 +12574,10 @@ msgstr "आइटम हटाएं {0}"
 #: packages/admin/src/components/PortableTextEditor.tsx:4658
 msgid "Remove link"
 msgstr "लिंक हटाएँ"
+
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:703
+msgid "Remove member?"
+msgstr ""
 
 #: packages/admin/src/components/settings/PasskeyItem.tsx:161
 msgid "Remove passkey"
@@ -12399,11 +12688,13 @@ msgid "Removing starter content"
 msgstr ""
 
 #: packages/admin/src/components/editor/ImageDetailPanel.tsx:360
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:706
 #: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:441
 #: packages/admin/src/components/settings/PasskeyItem.tsx:183
 msgid "Removing..."
 msgstr "हटाया जा रहा है..."
 
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:129
 #: packages/admin/src/components/settings/PasskeyItem.tsx:149
 msgid "Rename"
 msgstr "नाम बदलें"
@@ -12416,6 +12707,10 @@ msgstr "नाम बदलें{0}"
 #: packages/admin/src/components/MenuEditor.tsx:531
 #: packages/admin/src/components/MenuEditor.tsx:536
 msgid "Rename menu"
+msgstr ""
+
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:178
+msgid "Rename organization"
 msgstr ""
 
 #: packages/admin/src/components/settings/PasskeyItem.tsx:150
@@ -12573,7 +12868,7 @@ msgstr "कोष"
 msgid "Request a new link"
 msgstr "एक नये लिंक का अनुरोध करें"
 
-#: packages/admin/src/lib/api/client.ts:379
+#: packages/admin/src/lib/api/client.ts:384
 msgid "Request failed"
 msgstr "अनुरोध असफल रहा"
 
@@ -12753,7 +13048,7 @@ msgstr ""
 #: packages/admin/src/components/settings/SidebarsSettings.tsx:92
 #: packages/admin/src/components/ThemeMarketplaceBrowse.tsx:122
 #: packages/admin/src/lib/content-editor-panels.tsx:319
-#: packages/admin/src/router.tsx:4174
+#: packages/admin/src/router.tsx:4205
 #: packages/admin/src/routes/byline-schema.tsx:264
 #: packages/admin/src/routes/calendar.tsx:319
 msgid "Retry"
@@ -12804,7 +13099,7 @@ msgstr ""
 msgid "Reusable content blocks you can insert into any content"
 msgstr "पुन: प्रयोज्य कंटेंट ब्लॉक आप किसी भी कंटेंट में सम्मिलित कर सकते हैं"
 
-#: packages/admin/src/router.tsx:2039
+#: packages/admin/src/router.tsx:2048
 msgid "Reverted to published version"
 msgstr "प्रकाशित संस्करण पर वापस लौटाया गया"
 
@@ -12915,17 +13210,28 @@ msgstr "जोखिम स्कोर: {0}/100"
 msgid "robots.txt"
 msgstr ""
 
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:804
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:805
 #: packages/admin/src/components/users/InviteUserModal.tsx:200
 #: packages/admin/src/components/users/InviteUserModal.tsx:203
 #: packages/admin/src/components/users/UserDetail.tsx:173
 #: packages/admin/src/components/users/UserDetail.tsx:185
-#: packages/admin/src/components/users/UserList.tsx:99
+#: packages/admin/src/components/users/UserList.tsx:107
 msgid "Role"
 msgstr "भूमिका"
 
 #: packages/admin/src/components/users/roleDefinitions.ts:61
 msgid "Role {role}"
 msgstr "भूमिका {role}"
+
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:659
+msgid "Role of {label}"
+msgstr ""
+
+#. placeholder {0}: site.name
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:878
+msgid "Role on {0}"
+msgstr ""
 
 #: packages/admin/src/components/BylineCreditsEditor.tsx:763
 msgid "Role on this post (optional)"
@@ -12992,8 +13298,8 @@ msgstr ""
 msgid "Same window"
 msgstr "वही खिड़की"
 
-#: packages/admin/src/components/SetupWizard.tsx:168
-#: packages/admin/src/components/SetupWizard.tsx:208
+#: packages/admin/src/components/SetupWizard.tsx:174
+#: packages/admin/src/components/SetupWizard.tsx:214
 msgid "Sample content"
 msgstr ""
 
@@ -13004,6 +13310,8 @@ msgstr ""
 #: packages/admin/src/components/MediaFolderDialog.tsx:207
 #: packages/admin/src/components/MenuEditor.tsx:571
 #: packages/admin/src/components/MenuEditor.tsx:896
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:204
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:548
 #: packages/admin/src/components/PortableTextEditor.tsx:1433
 #: packages/admin/src/components/Redirects.tsx:313
 #: packages/admin/src/components/SaveButton.tsx:51
@@ -13117,6 +13425,8 @@ msgstr ""
 #: packages/admin/src/components/MediaFolderDialog.tsx:207
 #: packages/admin/src/components/MenuEditor.tsx:571
 #: packages/admin/src/components/MenuEditor.tsx:896
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:204
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:548
 #: packages/admin/src/components/PluginSettings.tsx:150
 #: packages/admin/src/components/PluginSettings.tsx:193
 #: packages/admin/src/components/Redirects.tsx:310
@@ -13178,7 +13488,7 @@ msgstr ""
 #: packages/admin/src/components/calendar/CalendarEntryPanel.tsx:420
 #: packages/admin/src/components/ContentList.tsx:1074
 #: packages/admin/src/components/ContentStatusBadge.tsx:63
-#: packages/admin/src/router.tsx:2087
+#: packages/admin/src/router.tsx:2096
 msgid "Scheduled"
 msgstr "अनुसूचित"
 
@@ -13304,7 +13614,7 @@ msgstr ""
 msgid "Search by filename..."
 msgstr "फ़ाइल नाम से खोजें..."
 
-#: packages/admin/src/components/users/UserList.tsx:72
+#: packages/admin/src/components/users/UserList.tsx:80
 msgid "Search by name or email..."
 msgstr "नाम या ईमेल से खोजें..."
 
@@ -13446,7 +13756,7 @@ msgstr ""
 msgid "Search to narrow the list"
 msgstr ""
 
-#: packages/admin/src/components/users/UserList.tsx:75
+#: packages/admin/src/components/users/UserList.tsx:83
 msgid "Search users"
 msgstr "उपयोगकर्ता खोजें"
 
@@ -13501,8 +13811,8 @@ msgstr "अनुभाग शीर्षक"
 #: packages/admin/src/components/Sections.tsx:218
 #: packages/admin/src/components/settings/transfer/labels.ts:32
 #: packages/admin/src/components/settings/transfer/labels.ts:93
-#: packages/admin/src/components/Sidebar.tsx:543
-#: packages/admin/src/router.tsx:3573
+#: packages/admin/src/components/Sidebar.tsx:544
+#: packages/admin/src/router.tsx:3602
 msgid "Sections"
 msgstr "धारा"
 
@@ -13510,7 +13820,7 @@ msgstr "धारा"
 msgid "Sections could not be loaded."
 msgstr ""
 
-#: packages/admin/src/components/SetupWizard.tsx:621
+#: packages/admin/src/components/SetupWizard.tsx:638
 msgid "Secure your account"
 msgstr "अपने खाते को सुरक्षित करें"
 
@@ -13518,7 +13828,7 @@ msgstr "अपने खाते को सुरक्षित करें"
 #: packages/admin/src/components/Settings.tsx:90
 #: packages/admin/src/components/settings/EmailSettings.tsx:261
 #: packages/admin/src/components/settings/EmailSettings.tsx:350
-#: packages/admin/src/router.tsx:3235
+#: packages/admin/src/router.tsx:3244
 msgid "Security"
 msgstr "सुरक्षा"
 
@@ -13556,11 +13866,11 @@ msgid "Security error. Make sure you're on a secure connection."
 msgstr "सुरक्षा एरर। सुनिश्चित करें कि आप सुरक्षित कनेक्शन पर हैं।"
 
 #: packages/admin/src/components/AdminCommandPalette.tsx:263
-#: packages/admin/src/components/Header.tsx:114
+#: packages/admin/src/components/Header.tsx:161
 #: packages/admin/src/components/Settings.tsx:86
 #: packages/admin/src/components/settings/SecuritySettings.tsx:93
 #: packages/admin/src/components/settings/SecuritySettings.tsx:115
-#: packages/admin/src/router.tsx:3234
+#: packages/admin/src/router.tsx:3243
 msgid "Security Settings"
 msgstr "सुरक्षा सेटिंग्स"
 
@@ -13756,7 +14066,7 @@ msgstr ""
 #: packages/admin/src/components/Settings.tsx:97
 #: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:219
 #: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:241
-#: packages/admin/src/router.tsx:3259
+#: packages/admin/src/router.tsx:3268
 msgid "Self-Signup Domains"
 msgstr "स्व-साइनअप डोमेन"
 
@@ -13780,7 +14090,7 @@ msgstr ""
 msgid "Send Invite"
 msgstr "आमंत्रण भेजो"
 
-#: packages/admin/src/components/LoginPage.tsx:153
+#: packages/admin/src/components/LoginPage.tsx:154
 msgid "Send magic link"
 msgstr "जादुई लिंक भेजें"
 
@@ -13808,7 +14118,7 @@ msgstr ""
 msgid "Sender name (optional)"
 msgstr ""
 
-#: packages/admin/src/components/LoginPage.tsx:153
+#: packages/admin/src/components/LoginPage.tsx:154
 #: packages/admin/src/components/settings/EmailSettings.tsx:410
 #: packages/admin/src/components/settings/GeneralSettings.tsx:662
 #: packages/admin/src/components/SignupPage.tsx:109
@@ -13822,7 +14132,7 @@ msgstr "भेजा जा रहा है..."
 #: packages/admin/src/components/ContentTypeEditor.tsx:689
 #: packages/admin/src/components/Settings.tsx:68
 #: packages/admin/src/lib/editor-sections.ts:37
-#: packages/admin/src/router.tsx:3371
+#: packages/admin/src/router.tsx:3380
 msgid "SEO"
 msgstr "एसईओ"
 
@@ -13833,7 +14143,7 @@ msgid "SEO settings"
 msgstr ""
 
 #: packages/admin/src/components/settings/SeoSettings.tsx:126
-#: packages/admin/src/router.tsx:3370
+#: packages/admin/src/router.tsx:3379
 msgid "SEO Settings"
 msgstr "एसईओ सेटिंग्स"
 
@@ -13895,7 +14205,11 @@ msgstr ""
 msgid "Set up Windows Hello"
 msgstr ""
 
-#: packages/admin/src/components/SetupWizard.tsx:619
+#: packages/admin/src/components/SetupWizard.tsx:622
+msgid "Set up your organizations"
+msgstr ""
+
+#: packages/admin/src/components/SetupWizard.tsx:636
 msgid "Set up your site"
 msgstr "अपनी साइट सेट करें"
 
@@ -13904,19 +14218,19 @@ msgstr "अपनी साइट सेट करें"
 msgid "Setting up"
 msgstr ""
 
-#: packages/admin/src/components/SetupWizard.tsx:202
+#: packages/admin/src/components/SetupWizard.tsx:208
 msgid "Setting up..."
 msgstr "की स्थापना..."
 
 #: packages/admin/src/components/AdminCommandPalette.tsx:247
 #: packages/admin/src/components/ContentEditor.tsx:3132
 #: packages/admin/src/components/ContentTypeEditor.tsx:485
-#: packages/admin/src/components/Header.tsx:122
+#: packages/admin/src/components/Header.tsx:169
 #: packages/admin/src/components/PluginManager.tsx:546
 #: packages/admin/src/components/Settings.tsx:47
-#: packages/admin/src/components/Sidebar.tsx:611
+#: packages/admin/src/components/Sidebar.tsx:615
 #: packages/admin/src/components/WordPressImport.tsx:1861
-#: packages/admin/src/router.tsx:3215
+#: packages/admin/src/router.tsx:3224
 msgid "Settings"
 msgstr "सेटिंग्स"
 
@@ -13933,7 +14247,7 @@ msgstr "सेटिंग्स पढ़ें"
 msgid "Settings saved successfully"
 msgstr "सेटिंग्स सफलतापूर्वक सहेजी गईं"
 
-#: packages/admin/src/router.tsx:479
+#: packages/admin/src/router.tsx:482
 msgid "Setup"
 msgstr ""
 
@@ -13941,8 +14255,8 @@ msgstr ""
 msgid "Setup couldn’t continue. Try again."
 msgstr ""
 
-#: packages/admin/src/components/SetupWizard.tsx:524
-#: packages/admin/src/components/SetupWizard.tsx:527
+#: packages/admin/src/components/SetupWizard.tsx:530
+#: packages/admin/src/components/SetupWizard.tsx:533
 msgid "Setup failed"
 msgstr "सेटअप असफल रहा"
 
@@ -14038,10 +14352,11 @@ msgstr ""
 
 #: packages/admin/src/components/Settings.tsx:142
 #: packages/admin/src/components/settings/SidebarsSettings.tsx:80
-#: packages/admin/src/router.tsx:3320
+#: packages/admin/src/router.tsx:3329
 msgid "Sidebars"
 msgstr ""
 
+#: packages/admin/src/components/LoginPage.tsx:246
 #: packages/admin/src/components/SignupPage.tsx:466
 #: packages/admin/src/locales/emails.ts:65
 #: packages/auth-atproto/src/admin.tsx:112
@@ -14049,7 +14364,7 @@ msgstr ""
 msgid "Sign in"
 msgstr "दाखिल करना"
 
-#: packages/admin/src/components/SetupWizard.tsx:411
+#: packages/admin/src/components/SetupWizard.tsx:417
 msgid "Sign In"
 msgstr "दाखिल करना"
 
@@ -14062,28 +14377,32 @@ msgstr "इसके बजाय साइन इन करें"
 msgid "Sign in to {siteName}"
 msgstr ""
 
-#: packages/admin/src/components/LoginPage.tsx:253
+#: packages/admin/src/components/SetupWizard.tsx:623
+msgid "Sign in to become the first administrator. Only accounts from {domains} can sign in. Next you'll create organizations and their sites."
+msgstr ""
+
+#: packages/admin/src/components/LoginPage.tsx:264
 msgid "Sign in to your site"
 msgstr "अपनी साइट पर साइन इन करें"
 
 #. placeholder {0}: activeProviderEntry.label ?? activeProvider
 #. placeholder {0}: provider.label
-#: packages/admin/src/components/LoginPage.tsx:252
-#: packages/admin/src/components/SetupWizard.tsx:328
+#: packages/admin/src/components/LoginPage.tsx:263
+#: packages/admin/src/components/SetupWizard.tsx:334
 msgid "Sign in with {0}"
 msgstr "{0} से साइन इन करें"
 
-#: packages/admin/src/components/LoginPage.tsx:250
+#: packages/admin/src/components/LoginPage.tsx:261
 #: packages/admin/src/components/MagicLinkConfirmPage.tsx:63
 msgid "Sign in with email"
 msgstr "ईमेल से साइन इन करें"
 
-#: packages/admin/src/components/LoginPage.tsx:311
+#: packages/admin/src/components/LoginPage.tsx:322
 msgid "Sign in with email link"
 msgstr "ईमेल लिंक से साइन इन करें"
 
 #: packages/admin/src/components/auth/PasskeyLogin.tsx:134
-#: packages/admin/src/components/LoginPage.tsx:273
+#: packages/admin/src/components/LoginPage.tsx:284
 msgid "Sign in with Passkey"
 msgstr "पासकी से साइन इन करें"
 
@@ -14091,7 +14410,7 @@ msgstr "पासकी से साइन इन करें"
 msgid "Sign in with your Bluesky/Atmosphere handle"
 msgstr ""
 
-#: packages/admin/src/router.tsx:519
+#: packages/admin/src/router.tsx:522
 msgid "Sign up"
 msgstr ""
 
@@ -14125,9 +14444,13 @@ msgid "Single line text input"
 msgstr "सिंगल लाइन टेक्स्ट इनपुट"
 
 #: packages/admin/src/components/Settings.tsx:52
-#: packages/admin/src/components/SetupWizard.tsx:409
+#: packages/admin/src/components/SetupWizard.tsx:415
 msgid "Site"
 msgstr "साइट"
+
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:330
+msgid "Site added"
+msgstr ""
 
 #: packages/admin/src/components/settings/ApiTokenSettings.tsx:102
 msgid "Site Export"
@@ -14158,8 +14481,17 @@ msgstr ""
 msgid "Site Import Analysis"
 msgstr ""
 
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:522
+msgid "Site is online"
+msgstr ""
+
 #: packages/admin/src/components/settings/EmailSettings.tsx:294
 msgid "Site Name"
+msgstr ""
+
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:670
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:866
+msgid "Site roles of {label}"
 msgstr ""
 
 #: packages/admin/src/components/settings/transfer/labels.ts:36
@@ -14167,7 +14499,7 @@ msgid "Site settings"
 msgstr ""
 
 #: packages/admin/src/components/MediaUsedIn.tsx:298
-#: packages/admin/src/components/SetupWizard.tsx:407
+#: packages/admin/src/components/SetupWizard.tsx:413
 #: packages/admin/src/components/WordPressImport.tsx:1203
 msgid "Site Settings"
 msgstr "साइट सेटिंग्स"
@@ -14185,7 +14517,7 @@ msgid "Site title"
 msgstr ""
 
 #: packages/admin/src/components/settings/GeneralSettings.tsx:356
-#: packages/admin/src/components/SetupWizard.tsx:138
+#: packages/admin/src/components/SetupWizard.tsx:144
 msgid "Site Title"
 msgstr "घटनास्थल शीर्षक"
 
@@ -14193,7 +14525,7 @@ msgstr "घटनास्थल शीर्षक"
 msgid "Site title & tagline"
 msgstr "साइट का शीर्षक और टैगलाइन"
 
-#: packages/admin/src/components/SetupWizard.tsx:122
+#: packages/admin/src/components/SetupWizard.tsx:128
 msgid "Site title is required"
 msgstr "साइट शीर्षक आवश्यक है"
 
@@ -14212,6 +14544,10 @@ msgstr ""
 #: packages/admin/src/components/settings/ChangeDomainDialog.tsx:149
 msgid "Sitemaps and absolute URLs in search and social metadata will use the new domain. Links in emails and plugins keep using {configuredUrl}, set by the deployment configuration."
 msgstr "साइटमैप और सर्च व सोशल मेटाडेटा के एब्सोल्यूट URL नए डोमेन का उपयोग करेंगे। ईमेल और प्लगइन के लिंक {configuredUrl} का ही उपयोग करते रहेंगे, जो डिप्लॉयमेंट कॉन्फ़िगरेशन में सेट है।"
+
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:220
+msgid "Sites"
+msgstr ""
 
 #: packages/admin/src/components/settings/BackupSettings.tsx:347
 msgid "Sites on Cloudflare D1 can additionally restore the database to any minute within the last 30 days using D1 Time Travel — always on, no setup required."
@@ -14238,6 +14574,11 @@ msgstr "मीडिया आयात छोड़ें"
 msgid "Skipped"
 msgstr "छोड़ा गया"
 
+#. placeholder {0}: conflicts.join(", ")
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:459
+msgid "Skipped because another account uses the email: {0}"
+msgstr ""
+
 #: packages/admin/src/components/BlockTypeList.tsx:39
 #: packages/admin/src/components/BylineFieldEditor.tsx:354
 #: packages/admin/src/components/BylineFieldEditor.tsx:357
@@ -14256,6 +14597,8 @@ msgstr "छोड़ा गया"
 #: packages/admin/src/components/FieldEditor.tsx:1662
 #: packages/admin/src/components/FieldEditor.tsx:1665
 #: packages/admin/src/components/FieldEditor.tsx:1668
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:381
+#: packages/admin/src/components/multisite/OrganizationsPage.tsx:161
 #: packages/admin/src/components/RelationForm.tsx:435
 #: packages/admin/src/components/RelationForm.tsx:440
 #: packages/admin/src/components/RelationForm.tsx:444
@@ -14317,7 +14660,7 @@ msgstr ""
 
 #: packages/admin/src/components/Settings.tsx:62
 #: packages/admin/src/components/settings/SocialSettings.tsx:89
-#: packages/admin/src/router.tsx:3356
+#: packages/admin/src/router.tsx:3365
 msgid "Social Links"
 msgstr "सामाजिक कड़ियाँ"
 
@@ -14334,7 +14677,7 @@ msgstr "सोशल मीडिया प्रोफ़ाइल लिंक
 msgid "Social Profiles"
 msgstr "सामाजिक रूपरेखाएं"
 
-#: packages/admin/src/router.tsx:3355
+#: packages/admin/src/router.tsx:3364
 msgid "Social Settings"
 msgstr ""
 
@@ -14379,7 +14722,7 @@ msgstr ""
 msgid "Some references point to content that is not in the package"
 msgstr ""
 
-#: packages/admin/src/router.tsx:1277
+#: packages/admin/src/router.tsx:1286
 msgid "Someone"
 msgstr ""
 
@@ -14469,7 +14812,7 @@ msgstr ""
 msgid "Stable identifier for your site, such as primary or footer."
 msgstr ""
 
-#: packages/admin/src/components/Header.tsx:52
+#: packages/admin/src/components/Header.tsx:94
 #: packages/admin/src/components/settings/GeneralSettings.tsx:114
 msgid "Staging"
 msgstr ""
@@ -14487,11 +14830,11 @@ msgstr ""
 msgid "Start Import"
 msgstr "आयात प्रारंभ करें"
 
-#: packages/admin/src/components/SetupWizard.tsx:175
+#: packages/admin/src/components/SetupWizard.tsx:181
 msgid "Start with the template’s content types and no content."
 msgstr ""
 
-#: packages/admin/src/components/SetupWizard.tsx:169
+#: packages/admin/src/components/SetupWizard.tsx:175
 msgid "Start with the template’s example posts and pages. Recommended for new sites."
 msgstr ""
 
@@ -14542,7 +14885,7 @@ msgstr ""
 #: packages/admin/src/components/settings/MediaUsageSettings.tsx:382
 #: packages/admin/src/components/settings/MediaUsageSettings.tsx:613
 #: packages/admin/src/components/settings/MediaUsageSettings.tsx:639
-#: packages/admin/src/components/users/UserList.tsx:102
+#: packages/admin/src/components/users/UserList.tsx:110
 msgid "Status"
 msgstr "स्थिति"
 
@@ -14638,6 +14981,10 @@ msgstr "तीव्र"
 msgid "Switch back to staging"
 msgstr ""
 
+#: packages/admin/src/components/multisite/SiteSwitcher.tsx:33
+msgid "Switch site, current: {label}"
+msgstr ""
+
 #: packages/admin/src/components/ThemeToggle.tsx:19
 msgid "Switch to dark"
 msgstr ""
@@ -14697,7 +15044,7 @@ msgstr ""
 
 #: packages/admin/src/components/settings/GeneralSettings.tsx:364
 #: packages/admin/src/components/settings/transfer/ImportReview.tsx:375
-#: packages/admin/src/components/SetupWizard.tsx:149
+#: packages/admin/src/components/SetupWizard.tsx:155
 msgid "Tagline"
 msgstr "टैगलाइन"
 
@@ -14733,7 +15080,7 @@ msgstr "लक्ष्य स्थान"
 #: packages/admin/src/components/settings/transfer/labels.ts:13
 #: packages/admin/src/components/TaxonomySidebar.tsx:989
 #: packages/admin/src/lib/editor-sections.ts:36
-#: packages/admin/src/router.tsx:3544
+#: packages/admin/src/router.tsx:3553
 msgid "Taxonomies"
 msgstr "वर्गीकरण"
 
@@ -14782,7 +15129,7 @@ msgstr ""
 msgid "Tell users where to sign in"
 msgstr ""
 
-#: packages/admin/src/components/SetupWizard.tsx:219
+#: packages/admin/src/components/SetupWizard.tsx:225
 msgid "Template:"
 msgstr "टेम्पलेट:"
 
@@ -14861,7 +15208,7 @@ msgstr ""
 msgid "the {0} field on {1}, which picks entries it links to"
 msgstr ""
 
-#: packages/admin/src/router.tsx:1210
+#: packages/admin/src/router.tsx:1219
 msgid "The admin was updated"
 msgstr ""
 
@@ -15026,7 +15373,7 @@ msgstr ""
 msgid "The latest media request failed. Showing the previous page."
 msgstr ""
 
-#: packages/admin/src/components/LoginPage.tsx:116
+#: packages/admin/src/components/LoginPage.tsx:117
 #: packages/admin/src/components/SignupPage.tsx:159
 msgid "The link will expire in 15 minutes."
 msgstr "लिंक 15 मिनट में समाप्त हो जाएगा."
@@ -15132,7 +15479,7 @@ msgstr ""
 msgid "The package’s file index is not valid."
 msgstr ""
 
-#: packages/admin/src/router.tsx:4188
+#: packages/admin/src/router.tsx:4219
 msgid "The page you're looking for doesn't exist."
 msgstr "आप जिस पृष्ठ को खोज रहे हैं वह मौजूद नहीं है।"
 
@@ -15195,7 +15542,7 @@ msgstr ""
 msgid "The relationship decides the referenced collection and how many entries this field accepts."
 msgstr ""
 
-#: packages/admin/src/components/SetupWizard.tsx:189
+#: packages/admin/src/components/SetupWizard.tsx:195
 msgid "The sample content added so far is kept. Continue to add the rest."
 msgstr ""
 
@@ -15221,6 +15568,10 @@ msgstr ""
 
 #: packages/admin/src/components/CapabilityConsentDialog.tsx:160
 msgid "The signed publisher records and package are valid. Build provenance was not provided."
+msgstr ""
+
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:358
+msgid "The site gets its own content and media, kept in the database and storage you choose. You can add its domain now or later."
 msgstr ""
 
 #: packages/admin/src/components/settings/transfer/labels.ts:186
@@ -15287,7 +15638,7 @@ msgstr "विषय"
 msgid "Theme \"{id}\" not found"
 msgstr ""
 
-#: packages/admin/src/router.tsx:3495
+#: packages/admin/src/router.tsx:3504
 msgid "Theme Details"
 msgstr ""
 
@@ -15296,7 +15647,7 @@ msgstr ""
 msgid "Theme ID: {0}"
 msgstr "थीम आईडी: {0}"
 
-#: packages/admin/src/router.tsx:3487
+#: packages/admin/src/router.tsx:3496
 msgid "Theme Marketplace"
 msgstr ""
 
@@ -15328,11 +15679,15 @@ msgstr ""
 msgid "These entries are password-protected in WordPress. EmDash has no per-entry passwords, so they were imported as drafts. Review each one before you publish it."
 msgstr ""
 
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:914
+msgid "These people join when they first sign in with the invited email."
+msgstr ""
+
 #: packages/admin/src/components/CapabilityConsentDialog.tsx:295
 msgid "These tools remain disabled after installation until you explicitly enable agent access."
 msgstr "ये उपकरण इंस्टॉलेशन के बाद तब तक अक्षम रहते हैं जब तक आप एजेंट एक्सेस को स्पष्ट रूप से सक्षम नहीं करते।"
 
-#: packages/admin/src/router.tsx:1280
+#: packages/admin/src/router.tsx:1289
 msgid "They changed its publishing or schedule, or replaced its draft."
 msgstr ""
 
@@ -15428,15 +15783,15 @@ msgid "This entry changed somewhere else after you opened it."
 msgstr ""
 
 #: packages/admin/src/components/ContentEditor.tsx:2334
-#: packages/admin/src/router.tsx:1583
+#: packages/admin/src/router.tsx:1592
 msgid "This entry changed somewhere else. Save anyway, or reload to get the newer version."
 msgstr ""
 
-#: packages/admin/src/router.tsx:2572
+#: packages/admin/src/router.tsx:2581
 msgid "This entry doesn't exist or isn't published. Your role can only view published content."
 msgstr ""
 
-#: packages/admin/src/router.tsx:2573
+#: packages/admin/src/router.tsx:2582
 msgid "This entry doesn't exist or was deleted."
 msgstr ""
 
@@ -15460,7 +15815,7 @@ msgstr ""
 msgid "This entry was due {lateness} but hasn't published. Scheduled publishing may not be running."
 msgstr ""
 
-#: packages/admin/src/router.tsx:2622
+#: packages/admin/src/router.tsx:2631
 msgid "This entry was moved to Trash or deleted"
 msgstr ""
 
@@ -15570,6 +15925,7 @@ msgstr ""
 msgid "This link expires in 15 minutes."
 msgstr ""
 
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:782
 #: packages/admin/src/components/users/InviteUserModal.tsx:159
 msgid "This link expires in 7 days and can only be used once."
 msgstr "यह लिंक 7 दिनों में समाप्त हो जाता है और इसका उपयोग केवल एक बार किया जा सकता है।"
@@ -15809,7 +16165,7 @@ msgstr "यह आपकी साइट से प्लगइन और उस
 msgid "This will revert to the published version. Your draft changes will be lost."
 msgstr "यह प्रकाशित संस्करण पर वापस आ जाएगा. आपके ड्राफ्ट परिवर्तन खो जाएंगे."
 
-#: packages/admin/src/components/SetupWizard.tsx:153
+#: packages/admin/src/components/SetupWizard.tsx:159
 msgid "Thoughts, tutorials, and more"
 msgstr "विचार, ट्यूटोरियल और बहुत कुछ"
 
@@ -15931,7 +16287,7 @@ msgstr ""
 #: packages/admin/src/components/Settings.tsx:132
 #: packages/admin/src/components/settings/TransferSettings.tsx:46
 #: packages/admin/src/components/settings/TransferSettings.tsx:79
-#: packages/admin/src/router.tsx:3306
+#: packages/admin/src/router.tsx:3315
 msgid "Transfer"
 msgstr ""
 
@@ -15960,7 +16316,7 @@ msgstr "अनुवाद हो रहा है..."
 #: packages/admin/src/components/MenuEditor.tsx:211
 #: packages/admin/src/components/TaxonomyManager.tsx:1173
 #: packages/admin/src/components/TaxonomySidebar.tsx:870
-#: packages/admin/src/router.tsx:2130
+#: packages/admin/src/router.tsx:2139
 msgid "Translation created"
 msgstr "अनुवाद बनाया गया"
 
@@ -16032,7 +16388,7 @@ msgstr "अपनी खोज या फ़िल्टर समायोज�
 #: packages/admin/src/components/settings/transfer/ExportSection.tsx:333
 #: packages/admin/src/components/settings/transfer/ImportReview.tsx:471
 #: packages/admin/src/components/settings/transfer/ImportSection.tsx:460
-#: packages/admin/src/routes/users.tsx:215
+#: packages/admin/src/routes/users.tsx:240
 msgid "Try again"
 msgstr "पुनः प्रयास करें"
 
@@ -16040,7 +16396,7 @@ msgstr "पुनः प्रयास करें"
 msgid "Try Again"
 msgstr "पुनः प्रयास करें"
 
-#: packages/admin/src/router.tsx:1468
+#: packages/admin/src/router.tsx:1477
 msgid "Try again in a moment."
 msgstr ""
 
@@ -16261,7 +16617,7 @@ msgstr "अप्रकाशित करें {itemLabel}"
 msgid "Unpublish {itemLabel}?"
 msgstr ""
 
-#: packages/admin/src/router.tsx:2014
+#: packages/admin/src/router.tsx:2023
 msgid "Unpublished"
 msgstr "अप्रकाशित"
 
@@ -16292,7 +16648,7 @@ msgstr ""
 msgid "Unsaved content may leave your site"
 msgstr ""
 
-#: packages/admin/src/router.tsx:2099
+#: packages/admin/src/router.tsx:2108
 msgid "Unscheduled"
 msgstr "अनिर्धारित"
 
@@ -16686,7 +17042,11 @@ msgstr ""
 msgid "Use your device's biometric authentication, security key, or PIN to sign in."
 msgstr "साइन इन करने के लिए अपने डिवाइस के बायोमेट्रिक ऑथेंटिकेशन, सुरक्षा कुंजी या पिन का उपयोग करें।"
 
-#: packages/admin/src/components/LoginPage.tsx:227
+#: packages/admin/src/components/LoginPage.tsx:247
+msgid "Use your organization account to continue."
+msgstr ""
+
+#: packages/admin/src/components/LoginPage.tsx:228
 msgid "Use your registered passkey to sign in securely."
 msgstr "सुरक्षित रूप से साइन इन करने के लिए अपनी पंजीकृत पासकी का उपयोग करें।"
 
@@ -16721,9 +17081,9 @@ msgid "Used to identify this section. Lowercase letters, numbers, and hyphens on
 msgstr "इस अनुभाग की पहचान करने के लिए उपयोग किया जाता है. केवल छोटे अक्षर, संख्याएँ और हाइफ़न।"
 
 #: packages/admin/src/components/DeviceAuthorizePage.tsx:254
-#: packages/admin/src/components/Header.tsx:47
-#: packages/admin/src/components/Header.tsx:102
-#: packages/admin/src/components/users/UserList.tsx:97
+#: packages/admin/src/components/Header.tsx:89
+#: packages/admin/src/components/Header.tsx:149
+#: packages/admin/src/components/users/UserList.tsx:105
 msgid "User"
 msgstr "उपयोगकर्ता"
 
@@ -16758,9 +17118,9 @@ msgid "Username"
 msgstr ""
 
 #: packages/admin/src/components/AdminCommandPalette.tsx:223
-#: packages/admin/src/components/Sidebar.tsx:585
-#: packages/admin/src/components/users/UserList.tsx:64
-#: packages/admin/src/router.tsx:3595
+#: packages/admin/src/components/Sidebar.tsx:586
+#: packages/admin/src/components/users/UserList.tsx:69
+#: packages/admin/src/router.tsx:3624
 msgid "Users"
 msgstr "उपयोगकर्ताओं"
 
@@ -16880,6 +17240,11 @@ msgstr ""
 msgid "Video upload failed. Try again."
 msgstr ""
 
+#. placeholder {0}: site.name
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:256
+msgid "View {0}"
+msgstr ""
+
 #: packages/admin/src/components/Settings.tsx:121
 msgid "View email provider status and send test emails"
 msgstr "ईमेल प्रदाता स्थिति देखें और परीक्षण ईमेल भेजें"
@@ -16901,8 +17266,10 @@ msgstr ""
 msgid "View setup"
 msgstr ""
 
-#: packages/admin/src/components/Header.tsx:78
-#: packages/admin/src/components/Header.tsx:80
+#: packages/admin/src/components/Header.tsx:69
+#: packages/admin/src/components/Header.tsx:73
+#: packages/admin/src/components/Header.tsx:124
+#: packages/admin/src/components/Header.tsx:126
 msgid "View Site"
 msgstr "साइट देखें"
 
@@ -16998,7 +17365,7 @@ msgstr "हम {0} पर वर्डप्रेस साइट से कन
 msgid "We'll check what import options are available for your site."
 msgstr "हम जाँचेंगे कि आपकी साइट के लिए कौन से आयात विकल्प उपलब्ध हैं।"
 
-#: packages/admin/src/components/LoginPage.tsx:220
+#: packages/admin/src/components/LoginPage.tsx:221
 msgid "We'll send you a link to sign in without a password."
 msgstr "हम आपको बिना पासवर्ड के साइन इन करने के लिए एक लिंक भेजेंगे।"
 
@@ -17191,10 +17558,10 @@ msgstr "विजेट अद्यतन किया गया"
 #: packages/admin/src/components/PluginManager.tsx:494
 #: packages/admin/src/components/settings/transfer/labels.ts:31
 #: packages/admin/src/components/settings/transfer/labels.ts:91
-#: packages/admin/src/components/Sidebar.tsx:536
+#: packages/admin/src/components/Sidebar.tsx:537
 #: packages/admin/src/components/Widgets.tsx:456
 #: packages/admin/src/components/WordPressImport.tsx:1209
-#: packages/admin/src/router.tsx:3558
+#: packages/admin/src/router.tsx:3567
 msgid "Widgets"
 msgstr "विजेट"
 
@@ -17306,6 +17673,14 @@ msgstr ""
 msgid "Yoast/RankMath"
 msgstr "योस्ट/रैंकमैथ"
 
+#: packages/admin/src/components/multisite/OrganizationsPage.tsx:134
+msgid "You aren't a member of any organization yet. Ask an organization Admin to add you."
+msgstr ""
+
+#: packages/admin/src/components/multisite/OrganizationsPage.tsx:146
+msgid "You become the organization's Admin. Deployment Admins can then add its sites."
+msgstr ""
+
 #: packages/admin/src/components/DeviceAuthorizePage.tsx:221
 msgid "You can close this page and return to your terminal."
 msgstr "आप इस पृष्ठ को बंद कर सकते हैं और अपने टर्मिनल पर वापस लौट सकते हैं।"
@@ -17339,6 +17714,10 @@ msgstr "आप अपनी भूमिका नहीं बदल सकत�
 msgid "You do not have permission to edit this asset."
 msgstr ""
 
+#: packages/admin/src/components/multisite/SiteSwitcher.tsx:66
+msgid "You don't have access to any sites yet"
+msgstr ""
+
 #: packages/admin/src/components/MediaLibrary.tsx:627
 msgid "You don’t have permission to move this file."
 msgstr ""
@@ -17367,7 +17746,7 @@ msgstr ""
 msgid "You need admin permissions to view this page."
 msgstr ""
 
-#: packages/admin/src/router.tsx:3171
+#: packages/admin/src/router.tsx:3180
 msgid "You need Editor permissions to moderate comments."
 msgstr "टिप्पणियों को मॉडरेट करने के लिए आपको संपादक की अनुमति की आवश्यकता है।"
 
@@ -17414,7 +17793,7 @@ msgstr ""
 msgid "You're signed in at {0}"
 msgstr ""
 
-#: packages/admin/src/components/SetupWizard.tsx:624
+#: packages/admin/src/components/SetupWizard.tsx:641
 msgid "You're signed in via Cloudflare Access"
 msgstr "आप क्लाउडफ़ेयर एक्सेस के माध्यम से साइन इन हैं"
 
@@ -17435,7 +17814,7 @@ msgid "you@company.com"
 msgstr "you@company.com"
 
 #: packages/admin/src/components/settings/EmailSettings.tsx:276
-#: packages/admin/src/components/SetupWizard.tsx:266
+#: packages/admin/src/components/SetupWizard.tsx:272
 msgid "you@example.com"
 msgstr "you@example.com"
 
@@ -17495,15 +17874,15 @@ msgstr ""
 msgid "Your earlier edits weren’t kept"
 msgstr ""
 
-#: packages/admin/src/router.tsx:1211
+#: packages/admin/src/router.tsx:1220
 msgid "Your edits are still on this page. Reload it to edit with others."
 msgstr ""
 
-#: packages/admin/src/router.tsx:1432
+#: packages/admin/src/router.tsx:1441
 msgid "Your edits couldn’t be saved, so this didn’t run. Try again."
 msgstr ""
 
-#: packages/admin/src/components/SetupWizard.tsx:262
+#: packages/admin/src/components/SetupWizard.tsx:268
 msgid "Your Email"
 msgstr "आपका ईमेल"
 
@@ -17523,7 +17902,7 @@ msgstr "आपका इंस्टाग्राम उपयोगकर्�
 msgid "Your last edits weren’t saved"
 msgstr ""
 
-#: packages/admin/src/router.tsx:1244
+#: packages/admin/src/router.tsx:1253
 msgid "Your latest edits couldn’t be saved"
 msgstr ""
 
@@ -17536,7 +17915,7 @@ msgstr "आपका लिंक्डइन प्रोफ़ाइल उप
 msgid "Your media library is empty"
 msgstr "आपकी मीडिया लाइब्रेरी खाली है"
 
-#: packages/admin/src/components/SetupWizard.tsx:274
+#: packages/admin/src/components/SetupWizard.tsx:280
 msgid "Your Name"
 msgstr "आपका नाम"
 
@@ -17545,15 +17924,19 @@ msgstr "आपका नाम"
 msgid "Your name (optional)"
 msgstr "आपका नाम (वैकल्पिक)"
 
+#: packages/admin/src/components/multisite/OrganizationsPage.tsx:108
+msgid "Your organizations"
+msgstr ""
+
 #: packages/admin/src/components/WelcomeModal.tsx:47
 msgid "Your Role"
 msgstr "आपकी भूमिका"
 
-#: packages/admin/src/router.tsx:2588
+#: packages/admin/src/router.tsx:2597
 msgid "Your role can edit your own entries only while they are drafts."
 msgstr ""
 
-#: packages/admin/src/router.tsx:2589
+#: packages/admin/src/router.tsx:2598
 msgid "Your role can't edit this entry."
 msgstr ""
 
@@ -17588,15 +17971,15 @@ msgstr "आपका ट्विटर/एक्स हैंडल (जैस�
 msgid "Your unsaved changes will be lost."
 msgstr ""
 
-#: packages/admin/src/router.tsx:1234
+#: packages/admin/src/router.tsx:1243
 msgid "Your unsaved edits are in a recovery revision"
 msgstr ""
 
-#: packages/admin/src/router.tsx:1219
+#: packages/admin/src/router.tsx:1228
 msgid "Your unsaved edits are in a recovery revision. Reload the page to edit with others."
 msgstr ""
 
-#: packages/admin/src/router.tsx:1223
+#: packages/admin/src/router.tsx:1232
 msgid "Your unsaved edits couldn’t be kept"
 msgstr ""
 
