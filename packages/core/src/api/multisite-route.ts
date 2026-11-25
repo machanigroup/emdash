@@ -1,6 +1,7 @@
 import { createInvite, InviteError, Role, type RoleLevel } from "@emdash-cms/auth";
 import { createKyselyAdapter } from "@emdash-cms/auth/adapters/kysely";
 
+import { after } from "../after.js";
 import type { EmDashConfig } from "../astro/integration/runtime.js";
 import type { SiteRouter } from "../astro/middleware/site.js";
 import type { EmDashHandlers } from "../astro/types.js";
@@ -70,7 +71,11 @@ export function multiSiteRequest(
 			accounts: router.controlAccounts,
 			config: multiSite.config.multiSite,
 			deployment: router.deployment,
-			siteDatabase: (siteId: string) => router.siteDatabase(siteId),
+			siteDatabase: async (siteId: string) => {
+				const db = await router.siteDatabase(siteId);
+				if (db) after(() => db.destroy());
+				return db;
+			},
 			invalidateHosts: () => router.invalidate(),
 			...(emdash && request ? { inviteAccount: accountInviter(emdash, request) } : {}),
 		},
