@@ -1282,6 +1282,45 @@ async function routeAdminHost(
 	});
 }
 
+/** Marks a response as not for search engines, copying it when its headers are read-only. */
+function withNoIndex(response: Response): Response {
+	try {
+		response.headers.set("X-Robots-Tag", "noindex, nofollow");
+		return response;
+	} catch {
+		const copy = new Response(response.body, response);
+		const astroCookies = Reflect.get(response, ASTRO_COOKIES_SYMBOL);
+		if (astroCookies !== undefined) Reflect.set(copy, ASTRO_COOKIES_SYMBOL, astroCookies);
+		copy.headers.set("X-Robots-Tag", "noindex, nofollow");
+		return copy;
+	}
+}
+
+const ADMIN_HOST_ROBOTS_TXT = "User-agent: *\nDisallow: /\n";
+
+/**
+ * The shared admin host serves only the admin and its APIs: it has no public
+ * pages, and search engines must not index it. Returns the response for a
+ * public path on the admin host, or null for paths EmDash and Astro serve
+ * there (`/_emdash/*` and Astro's own `/_*` routes).
+ */
+function adminHostPageResponse(pathname: string): Response | null {
+	if (pathname.startsWith("/_")) return null;
+	const headers = { "Cache-Control": "public, max-age=3600", "X-Robots-Tag": "noindex, nofollow" };
+	if (pathname === "/robots.txt") {
+		return new Response(ADMIN_HOST_ROBOTS_TXT, {
+			headers: { ...headers, "Content-Type": "text/plain; charset=utf-8" },
+		});
+	}
+	if (pathname === "/") {
+		return new Response(null, { status: 302, headers: { ...headers, Location: "/_emdash/admin" } });
+	}
+	return new Response("Not found", {
+		status: 404,
+		headers: { ...headers, "Content-Type": "text/plain; charset=utf-8" },
+	});
+}
+
 /**
  * In a multi-site deployment, run the request as the site its hostname names,
  * or through the shared admin when the hostname is the admin host.
@@ -1299,7 +1338,9 @@ async function routeToSite(
 	const router = getSiteRouter({ ...config, multiSite: config.multiSite }, virtualCreateDialect);
 	ensureSiteSweep();
 	if (router.adminConfig && normalizeHostname(context.url.hostname) === router.adminHostname) {
-		return routeAdminHost(context, router, router.adminConfig, run);
+		const adminOnly = adminHostPageResponse(context.url.pathname);
+		if (adminOnly) return finalizeResponse(adminOnly);
+		return withNoIndex(await routeAdminHost(context, router, router.adminConfig, run));
 	}
 
 	let site: RequestSite | null;

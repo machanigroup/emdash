@@ -73,6 +73,8 @@ The site switcher in the admin header lists every site you can reach. Switching 
 
 **View Site** opens the site's own hostname in a new tab, signed in, so visual editing and previews work there. The site shows a confirmation page before it signs you in.
 
+The admin host serves only the admin. Its other paths return 404, `/` redirects to the admin, `robots.txt` disallows every crawler, and every response carries `X-Robots-Tag: noindex, nofollow`, so the shared admin stays out of search results and sitemaps.
+
 On a site's own hostname, `/_emdash/admin` redirects to the admin host with that site selected, and its sign-in and setup APIs return 404. Accounts are only created and signed in on the admin host.
 
 A site's **Users** page lists the accounts that have worked on it, read-only. People and roles are changed on the organization's page; the site's user API refuses changes with `409 USERS_MANAGED_BY_ORGANIZATION`.
