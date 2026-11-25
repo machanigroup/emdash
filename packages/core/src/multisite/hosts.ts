@@ -60,15 +60,22 @@ interface SiteTable {
  * resolve to null.
  */
 export class SiteHostResolver {
-	#hosts: Promise<SiteTable> | null = null;
+	#table: SiteTable | null = null;
 	#loadedAt = 0;
 	#refreshing = false;
 	readonly #refreshAfterMs: number;
+	readonly #db: () => Kysely<ControlPlaneDatabase>;
 
+	/**
+	 * `db` is called for every read, so a request-scoped connection can be
+	 * supplied per request. Only the loaded table is shared between requests,
+	 * never a connection or a pending read.
+	 */
 	constructor(
-		private readonly db: Kysely<ControlPlaneDatabase>,
+		db: Kysely<ControlPlaneDatabase> | (() => Kysely<ControlPlaneDatabase>),
 		options: { refreshAfterMs?: number } = {},
 	) {
+		this.#db = typeof db === "function" ? db : () => db;
 		this.#refreshAfterMs = options.refreshAfterMs ?? Number.POSITIVE_INFINITY;
 	}
 
@@ -94,38 +101,37 @@ export class SiteHostResolver {
 
 	/** Discards the table so the next lookup reloads it. Call after changing sites or hostnames. */
 	invalidate(): void {
-		this.#hosts = null;
+		this.#table = null;
 	}
 
-	#load(): Promise<SiteTable> {
-		if (!this.#hosts) {
-			const pending = this.#read();
-			this.#hosts = pending;
-			pending.catch(() => {
-				if (this.#hosts === pending) this.#hosts = null;
-			});
-		}
-		return this.#hosts;
+	async #load(): Promise<SiteTable> {
+		if (this.#table) return this.#table;
+		const table = await this.#read();
+		this.#table = table;
+		return table;
 	}
 
 	#refreshInBackground(): void {
 		if (this.#refreshing) return;
 		this.#refreshing = true;
-		const current = this.#hosts;
-		after(async () => {
+		const current = this.#table;
+		// Started now, while this request's connection is open; after() only
+		// keeps the request alive until it settles.
+		const refresh = (async () => {
 			try {
 				const fresh = await this.#read();
-				if (this.#hosts === current) this.#hosts = Promise.resolve(fresh);
+				if (this.#table === current) this.#table = fresh;
 			} catch (error) {
 				console.error("[emdash:multisite] refreshing site hostnames failed:", error);
 			} finally {
 				this.#refreshing = false;
 			}
-		});
+		})();
+		after(() => refresh);
 	}
 
 	async #read(): Promise<SiteTable> {
-		const rows = await this.db
+		const rows = await this.#db()
 			.selectFrom("_emdash_sites as s")
 			.leftJoin("_emdash_site_hosts as h", "h.site_id", "s.id")
 			.select([

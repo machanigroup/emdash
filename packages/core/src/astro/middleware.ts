@@ -367,7 +367,28 @@ export async function runScheduledTasks(
 	}
 	const router = getSiteRouter({ ...config, multiSite: config.multiSite }, virtualCreateDialect);
 	const published: PublishedRef[] = [];
-	const sites = await router.activeSites();
+	const scoped = createRequestScopedDb({
+		config: router.controlPlaneOptions,
+		isAuthenticated: false,
+		isWrite: true,
+		canUseCachedBinding: false,
+		cookies: NOOP_COOKIE_JAR,
+		url: CRON_EVENT_URL,
+	});
+	const parent = getRequestContext();
+	let sites: RequestSite[];
+	try {
+		sites = scoped
+			? await runWithContext(
+					parent
+						? { ...parent, controlPlaneDb: scoped.db }
+						: { editMode: false, controlPlaneDb: scoped.db },
+					() => router.activeSites(),
+				)
+			: await router.activeSites();
+	} finally {
+		scoped?.close?.();
+	}
 	if (router.adminConfig) {
 		sites.unshift({
 			siteId: CONTROL_PLANE_SITE_ID,
@@ -1335,8 +1356,47 @@ async function routeToSite(
 		throw new Error("multiSite requires a database adapter");
 	}
 
-	const router = getSiteRouter({ ...config, multiSite: config.multiSite }, virtualCreateDialect);
+	const deployment = { ...config, multiSite: config.multiSite };
+	const router = getSiteRouter(deployment, virtualCreateDialect);
 	ensureSiteSweep();
+	return withControlPlaneDb(router, context, () =>
+		routeToSiteWith(context, router, deployment, run),
+	);
+}
+
+/**
+ * Runs `fn` with a control-plane connection opened for this request, closed
+ * once the response finishes. Connection-backed adapters such as Hyperdrive
+ * hang a request that waits on a connection another request opened, so the
+ * site router must not keep one for the whole worker.
+ */
+async function withControlPlaneDb(
+	router: SiteRouter,
+	context: Pick<APIContext, "cookies" | "url"> | null,
+	fn: () => Promise<Response>,
+): Promise<Response> {
+	const scoped = createRequestScopedDb({
+		config: router.controlPlaneOptions,
+		isAuthenticated: true,
+		isWrite: true,
+		canUseCachedBinding: false,
+		cookies: context?.cookies ?? NOOP_COOKIE_JAR,
+		url: context?.url ?? CRON_EVENT_URL,
+	});
+	if (!scoped) return fn();
+	const parent = getRequestContext();
+	const ctx = parent
+		? { ...parent, controlPlaneDb: scoped.db }
+		: { editMode: false, controlPlaneDb: scoped.db };
+	return runWithContext(ctx, () => finishScoped({ commit: () => {}, close: scoped.close }, fn));
+}
+
+async function routeToSiteWith(
+	context: APIContext,
+	router: SiteRouter,
+	config: EmDashConfig & { multiSite: NonNullable<EmDashConfig["multiSite"]> },
+	run: (config: EmDashConfig | null) => Promise<Response>,
+): Promise<Response> {
 	if (router.adminConfig && normalizeHostname(context.url.hostname) === router.adminHostname) {
 		const adminOnly = adminHostPageResponse(context.url.pathname);
 		if (adminOnly) return finalizeResponse(adminOnly);

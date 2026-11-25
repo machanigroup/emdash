@@ -116,6 +116,12 @@ export interface EmDashRequestContext {
 	/** The organization of `siteId`, when the request runs as a multi-site site. */
 	siteOrgId?: string;
 	/**
+	 * The multi-site control-plane database for this request. Connection-backed
+	 * adapters, such as Hyperdrive, must not reuse a connection opened by
+	 * another request, so multi-site code reads the control plane from here.
+	 */
+	controlPlaneDb?: unknown;
+	/**
 	 * Rechecks a signed-in user's role on this site against the multi-site
 	 * control plane, updating the site's copy of the account. Resolves the role
 	 * to use, or null when the user has no access. Set only for site hostnames

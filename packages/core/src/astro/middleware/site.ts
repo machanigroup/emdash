@@ -13,6 +13,7 @@ import { MultiSiteError } from "../../multisite/errors.js";
 import { type ResolvedSiteHost, SiteHostResolver } from "../../multisite/hosts.js";
 import { runControlPlaneMigrations } from "../../multisite/migrations.js";
 import type { ControlPlaneDatabase } from "../../multisite/types.js";
+import { getRequestContext } from "../../request-context.js";
 import type { EmDashConfig, MultiSiteConfig } from "../integration/runtime.js";
 
 /** The ref that names the `database` and `storage` options without overrides. */
@@ -35,6 +36,8 @@ export interface RequestSite {
 export interface SiteRouter {
 	/** The deployment's own config, before any site's options are applied. */
 	readonly deployment: MultiSiteDeploymentConfig;
+	/** Adapter options that open the control-plane database. */
+	readonly controlPlaneOptions: Record<string, unknown>;
 	/** The control-plane database's organizations, sites, and memberships. */
 	readonly controlPlane: Kysely<ControlPlaneDatabase>;
 	/** The same database's accounts, which the admin host signs people in with. */
@@ -54,9 +57,9 @@ export interface SiteRouter {
 	/** Every active site, for work that runs outside a request such as scheduled publishing. */
 	activeSites(): Promise<RequestSite[]>;
 	/**
-	 * Opens an active site's database outside a request to that site, for
-	 * control-plane work such as importing its accounts. Null when the site
-	 * isn't active.
+	 * Opens a new connection to an active site's database, for control-plane
+	 * work such as importing its accounts. The caller destroys it when done.
+	 * Null when the site isn't active.
 	 */
 	siteDatabase(siteId: string): Promise<Kysely<Database> | null>;
 	/** Drops cached hostnames so the next request reloads them. */
@@ -180,13 +183,36 @@ export function createSiteRouter(
 		throw new Error("multiSite requires a database adapter to open the control-plane database");
 	}
 	const controlPlaneOptions = mergeOptions(baseDatabase.config, config.multiSite.controlPlane);
-	const controlDialect = createDialect(controlPlaneOptions);
-	const controlPlane = new Kysely<ControlPlaneDatabase>({
-		dialect: controlDialect,
-		log: kyselyLogOption(),
-	});
-	const controlAccounts = new Kysely<Database>({ dialect: controlDialect, log: kyselyLogOption() });
-	const resolver = new SiteHostResolver(controlPlane, {
+	let worker: {
+		dialect: Dialect;
+		accounts: Kysely<Database>;
+		plane: Kysely<ControlPlaneDatabase>;
+	} | null = null;
+	// Without a connection opened for the request (SQLite, D1, and other
+	// adapters without per-request connections), one connection serves the
+	// whole worker.
+	const workerDb = () => {
+		if (!worker) {
+			const dialect = createDialect(controlPlaneOptions);
+			worker = {
+				dialect,
+				accounts: new Kysely<Database>({ dialect, log: kyselyLogOption() }),
+				plane: new Kysely<ControlPlaneDatabase>({ dialect, log: kyselyLogOption() }),
+			};
+		}
+		return worker;
+	};
+	const accounts = (): Kysely<Database> => {
+		const scoped = getRequestContext()?.controlPlaneDb;
+		// eslint-disable-next-line typescript/no-unsafe-type-assertion -- the middleware stores a Kysely for the control plane
+		return scoped ? (scoped as Kysely<Database>) : workerDb().accounts;
+	};
+	const plane = (): Kysely<ControlPlaneDatabase> => {
+		const scoped = getRequestContext()?.controlPlaneDb;
+		// eslint-disable-next-line typescript/no-unsafe-type-assertion -- the middleware stores a Kysely for the control plane
+		return scoped ? (scoped as Kysely<ControlPlaneDatabase>) : workerDb().plane;
+	};
+	const resolver = new SiteHostResolver(plane, {
 		refreshAfterMs: config.multiSite.hostRefreshMs ?? DEFAULT_HOST_REFRESH_MS,
 	});
 	const adminUrl = config.multiSite.adminUrl;
@@ -198,18 +224,14 @@ export function createSiteRouter(
 			}
 		: null;
 	const siteConfigs = new Map<string, { host: ResolvedSiteHost; config: EmDashConfig }>();
-	const siteDatabases = new Map<string, { options: string; db: Kysely<Database> }>();
-	let migrated: Promise<unknown> | null = null;
+	let migrated = false;
 
-	const ensureMigrated = (): Promise<unknown> => {
-		if (!migrated) {
-			const pending = runControlPlaneMigrations(controlPlane);
-			migrated = pending;
-			pending.catch(() => {
-				if (migrated === pending) migrated = null;
-			});
-		}
-		return migrated;
+	// Concurrent first requests may each run the migrator; it takes its own
+	// lock, and no request waits on a promise another request started.
+	const ensureMigrated = async (): Promise<void> => {
+		if (migrated) return;
+		await runControlPlaneMigrations(plane());
+		migrated = true;
 	};
 
 	const toRequestSite = (host: ResolvedSiteHost): RequestSite => {
@@ -228,8 +250,13 @@ export function createSiteRouter(
 
 	return {
 		deployment: config,
-		controlPlane,
-		controlAccounts,
+		controlPlaneOptions,
+		get controlPlane() {
+			return plane();
+		},
+		get controlAccounts() {
+			return accounts();
+		},
 		adminConfig,
 		adminHostname: adminUrl ? new URL(adminUrl).hostname : null,
 		async resolve(hostname) {
@@ -260,16 +287,7 @@ export function createSiteRouter(
 			const host = await resolver.findSite(siteId);
 			if (!host) return null;
 			const options = toRequestSite(host).config.database?.config;
-			const key = stableJson(options);
-			let cached = siteDatabases.get(siteId);
-			if (!cached || cached.options !== key) {
-				cached = {
-					options: key,
-					db: new Kysely<Database>({ dialect: createDialect(options), log: kyselyLogOption() }),
-				};
-				siteDatabases.set(siteId, cached);
-			}
-			return cached.db;
+			return new Kysely<Database>({ dialect: createDialect(options), log: kyselyLogOption() });
 		},
 		invalidate() {
 			resolver.invalidate();

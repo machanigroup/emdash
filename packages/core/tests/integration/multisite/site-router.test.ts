@@ -1,9 +1,10 @@
 import { Role } from "@emdash-cms/auth";
-import { SqliteDialect } from "kysely";
+import { Kysely, SqliteDialect } from "kysely";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
 import type { EmDashConfig, MultiSiteConfig } from "../../../src/astro/integration/runtime.js";
 import { createSiteRouter, siteConfig, siteOrigin } from "../../../src/astro/middleware/site.js";
+import type { Database } from "../../../src/database/types.js";
 import { openNodeSqliteDatabase } from "../../../src/db/node-sqlite-compat.js";
 import { waitForDeferredTasks } from "../../../src/deferred-tasks.js";
 import {
@@ -12,6 +13,7 @@ import {
 	setOrgMember,
 	setSiteStatus,
 } from "../../../src/multisite/repository.js";
+import { runWithContext } from "../../../src/request-context.js";
 
 type MultiSiteDeployment = EmDashConfig & { multiSite: MultiSiteConfig };
 
@@ -136,6 +138,27 @@ describe("createSiteRouter", () => {
 		const router = createSiteRouter(deployment(), createDialect);
 		expect(await router.resolve("brand-a.com")).toBeNull();
 		expect(dialectOptions).toEqual([{ url: "file:./control.db" }]);
+	});
+
+	it("queries the control plane through the request's own connection", async () => {
+		const router = createSiteRouter(deployment(), createDialect);
+		const requestSqlite = openNodeSqliteDatabase(":memory:");
+		const requestDb = new Kysely<Database>({
+			dialect: new SqliteDialect({ database: requestSqlite }),
+		});
+		try {
+			await runWithContext({ editMode: false, controlPlaneDb: requestDb }, async () => {
+				expect(await router.resolve("brand-a.com")).toBeNull();
+				expect(router.controlAccounts).toBe(requestDb);
+			});
+			expect(dialectOptions).toEqual([]);
+			const tables = requestSqlite
+				.prepare("SELECT name FROM sqlite_master WHERE name = '_emdash_sites'")
+				.all();
+			expect(tables).toHaveLength(1);
+		} finally {
+			await requestDb.destroy();
+		}
 	});
 
 	it("runs the admin host on the control-plane database", () => {
