@@ -14,6 +14,8 @@ import type { APIRoute } from "astro";
 import { apiSuccess } from "#api/error.js";
 import { getAuthMode } from "#auth/mode.js";
 
+import { adminHostSignInDomains } from "../../../../multisite/sign-in.js";
+
 export const prerender = false;
 
 export const GET: APIRoute = async ({ locals }) => {
@@ -41,9 +43,14 @@ export const GET: APIRoute = async ({ locals }) => {
 		label: p.label,
 	}));
 
+	// On the shared admin host with sign-in domains, people sign in only
+	// through the configured providers.
+	const providersOnly = adminHostSignInDomains(emdash?.config) !== null;
+
 	return apiSuccess({
 		authMode: authMode.type === "external" ? authMode.providerType : "passkey",
-		signupEnabled,
+		signupEnabled: signupEnabled && !providersOnly,
 		providers,
+		...(providersOnly ? { providersOnly: true } : {}),
 	});
 };

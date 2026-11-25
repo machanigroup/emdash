@@ -236,7 +236,11 @@ function SitesSection({ org }: { org: OrganizationDetail }) {
 									{site.status === "disabled" && <Badge variant="neutral">{t`Disabled`}</Badge>}
 								</div>
 								<div className="truncate text-sm text-kumo-subtle">
-									<bdi dir="ltr">{site.hostnames.join(", ")}</bdi>
+									{site.hostnames.length > 0 ? (
+										<bdi dir="ltr">{site.hostnames.join(", ")}</bdi>
+									) : (
+										t`No domain yet`
+									)}
 								</div>
 							</div>
 							<div className="flex shrink-0 items-center gap-1 self-end sm:self-center">
@@ -245,14 +249,16 @@ function SitesSection({ org }: { org: OrganizationDetail }) {
 										<Button variant="secondary" size="sm" onClick={() => switchToSite(site.id)}>
 											{t`Manage`}
 										</Button>
-										<Button
-											variant="ghost"
-											shape="square"
-											aria-label={t`View ${site.name}`}
-											onClick={() => void openSite(site)}
-										>
-											<ArrowSquareOut className="size-4 rtl:-scale-x-100" />
-										</Button>
+										{site.url && (
+											<Button
+												variant="ghost"
+												shape="square"
+												aria-label={t`View ${site.name}`}
+												onClick={() => void openSite(site)}
+											>
+												<ArrowSquareOut className="size-4 rtl:-scale-x-100" />
+											</Button>
+										)}
 									</>
 								)}
 								{org.canManageSites && (
@@ -337,7 +343,7 @@ function AddSiteDialog({
 		// oxlint-disable-next-line react-hooks/exhaustive-deps -- reset when the dialog opens
 	}, [open]);
 
-	const ready = name.trim() && slug && databaseRef && parseHostnames(hostnames).length > 0;
+	const ready = name.trim() && slug && databaseRef;
 	const databaseItems = Object.fromEntries((refs?.databases ?? []).map((ref) => [ref, ref]));
 	const storageItems = Object.fromEntries((refs?.storages ?? []).map((ref) => [ref, ref]));
 
@@ -349,7 +355,7 @@ function AddSiteDialog({
 			<LayerDialog.Content>
 				<LayerDialog.Title>{t`Add site`}</LayerDialog.Title>
 				<LayerDialog.Description>
-					{t`The site gets its own content and media, kept in the database and storage you choose. Point its hostnames at this deployment before you add it.`}
+					{t`The site gets its own content and media, kept in the database and storage you choose. You can add its domain now or later.`}
 				</LayerDialog.Description>
 				<LayerDialog.Body>
 					<form
@@ -383,7 +389,7 @@ function AddSiteDialog({
 						<InputArea
 							dir="ltr"
 							label={t`Hostnames`}
-							description={t`One per line. The first is the site's main address.`}
+							description={t`Optional. One per line; the first is the site's main address. Point each domain at this deployment.`}
 							placeholder="www.example.com"
 							value={hostnames}
 							rows={3}
@@ -496,7 +502,7 @@ function EditSiteDialog({
 						className="grid gap-4"
 						onSubmit={(event) => {
 							event.preventDefault();
-							if (name.trim() && parseHostnames(hostnames).length > 0) mutation.mutate();
+							if (name.trim()) mutation.mutate();
 						}}
 					>
 						<Input

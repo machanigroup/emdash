@@ -22,11 +22,21 @@ import { getPasskeyConfig } from "#auth/passkey-config.js";
 import { SETUP_NONCE_COOKIE, SETUP_NONCE_MAX_AGE_SECONDS } from "#auth/setup-nonce.js";
 import { OptionsRepository } from "#db/repositories/options.js";
 
+import { adminHostSignInDomains } from "../../../../multisite/sign-in.js";
+
 export const POST: APIRoute = async ({ cookies, request, locals }) => {
 	const { emdash } = locals;
 
 	if (!emdash?.db) {
 		return apiError("NOT_CONFIGURED", "EmDash is not initialized", 500);
+	}
+
+	if (adminHostSignInDomains(emdash.config)) {
+		return apiError(
+			"SIGN_IN_WITH_PROVIDER",
+			"Create the first administrator by signing in with your organization's sign-in provider",
+			403,
+		);
 	}
 
 	try {

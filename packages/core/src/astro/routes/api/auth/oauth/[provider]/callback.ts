@@ -26,6 +26,7 @@ import { startUserSession } from "#auth/start-user-session.js";
 import type { AuthProviderDescriptor } from "#auth/types.js";
 import { OptionsRepository } from "#db/repositories/options.js";
 
+import { adminHostSignup } from "../../../../../../multisite/sign-in.js";
 import { SESSION_UNAVAILABLE_MESSAGE } from "../../../../../session-user.js";
 
 type ProviderName = "github" | "google" | "microsoft";
@@ -199,7 +200,12 @@ export const GET: APIRoute = async ({ params, request, locals, session, redirect
 				// a TOCTOU race where concurrent callbacks both see 0 users.
 				const options = new OptionsRepository(emdash.db);
 				const setupComplete = await options.get("emdash:setup_complete");
-				if (setupComplete !== true && setupComplete !== "true") {
+				const isSetUp = setupComplete === true || setupComplete === "true";
+
+				const adminHost = adminHostSignup(emdash.config, email, isSetUp);
+				if (adminHost !== undefined) return adminHost;
+
+				if (!isSetUp) {
 					return { allowed: true, role: Role.ADMIN };
 				}
 

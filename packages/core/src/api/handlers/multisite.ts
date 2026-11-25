@@ -127,8 +127,8 @@ function requireDeploymentPermission(
 	return hasPermission(actor, permission) ? null : fail("FORBIDDEN", "Insufficient permissions");
 }
 
-function siteUrl(ctx: MultiSiteHandlerContext, hostname: string): string {
-	return siteOrigin(hostname, ctx.config.adminUrl);
+function siteUrl(ctx: MultiSiteHandlerContext, hostname: string | null): string | null {
+	return hostname ? siteOrigin(hostname, ctx.config.adminUrl) : null;
 }
 
 /**
@@ -153,7 +153,8 @@ export interface SiteSwitcherItem {
 	orgId: string;
 	orgName: string;
 	role: RoleLevel;
-	url: string;
+	/** The site's public address, or null while it has no hostname. */
+	url: string | null;
 }
 
 /** The sites the user can manage, for the admin's site switcher. */
@@ -192,7 +193,7 @@ export async function handleListMySites(
 				orgId: site.orgId,
 				orgName: site.orgName,
 				role: site.role,
-				url: siteUrl(ctx, detail?.primaryHostname ?? ""),
+				url: siteUrl(ctx, detail?.primaryHostname ?? null),
 			});
 		}
 		return { success: true, data: { items } };
@@ -244,7 +245,7 @@ export interface OrgDetail {
 	viewerRole: RoleLevel | null;
 	canManageMembers: boolean;
 	canManageSites: boolean;
-	sites: Array<SiteDetail & { url: string }>;
+	sites: Array<SiteDetail & { url: string | null }>;
 	members: Array<{
 		userId: string;
 		email: string | null;

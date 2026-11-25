@@ -17,14 +17,14 @@ export const siteCreateBody = z.object({
 	name,
 	databaseRef: z.string().min(1),
 	storageRef: z.string().min(1).nullable().optional(),
-	hostnames: z.array(hostname).min(1).max(20),
+	hostnames: z.array(hostname).max(20).default([]),
 });
 
 export const siteUpdateBody = z
 	.object({
 		name: name.optional(),
 		status: z.enum(["active", "disabled"]).optional(),
-		hostnames: z.array(hostname).min(1).max(20).optional(),
+		hostnames: z.array(hostname).max(20).optional(),
 	})
 	.refine((body) => Object.keys(body).length > 0, "Nothing to update");
 

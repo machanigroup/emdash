@@ -23,6 +23,7 @@ import { useAuthProviderList, type AuthProviderModule } from "../lib/auth-provid
 import { navigateTo } from "../lib/navigation.js";
 import { PasskeyRegistration } from "./auth/PasskeyRegistration";
 import { BrandLogo } from "./Logo.js";
+import { ProviderSignIn } from "./multisite/ProviderSignIn.js";
 
 // ============================================================================
 // Types
@@ -41,6 +42,11 @@ interface SetupStatusResponse {
 	};
 	/** Auth mode - "cloudflare-access" or "passkey" */
 	authMode?: "cloudflare-access" | "passkey";
+	/**
+	 * Present on the shared admin of a multi-site deployment: its first run only
+	 * creates the first administrator, through a sign-in provider.
+	 */
+	multiSite?: { signInDomains: string[] };
 }
 
 interface SetupSiteRequest {
@@ -606,6 +612,17 @@ export function SetupWizard() {
 					</p>
 				</div>
 			</div>
+		);
+	}
+
+	if (status?.multiSite) {
+		const domains = status.multiSite.signInDomains.join(", ");
+		return (
+			<ProviderSignIn
+				title={t`Set up your organizations`}
+				description={t`Sign in to become the first administrator. Only accounts from ${domains} can sign in. Next you'll create organizations and their sites.`}
+				error={urlError}
+			/>
 		);
 	}
 

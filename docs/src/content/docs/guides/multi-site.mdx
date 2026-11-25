@@ -44,6 +44,7 @@ export default defineConfig({
 | `databases` | Site databases by name. A site can only use a name listed here, or `default` for the top-level `database`. |
 | `storages` | Site media storage by name. A site can use a name listed here, or `default` to share the top-level `storage`. |
 | `adminUrl` | Origin of the shared admin host. People sign in there, and passkeys belong to it. |
+| `signInDomains` | Email domains, such as `example.com`, that can sign in on the admin host without an invitation. When set, accounts there are created only through a sign-in provider such as Google, and the first administrator must use one of these domains. |
 | `idleSiteTtlMs` | Release a site's runtime after this many milliseconds without requests. Defaults to 10 minutes on Cloudflare Workers and `0` (keep every site loaded) on Node.js. |
 | `hostRefreshMs` | How long a worker uses its cached hostname table before refreshing it in the background. Defaults to 30 seconds. |
 
@@ -57,11 +58,11 @@ Point the admin hostname and every site hostname at the deployment.
 
 <Steps>
 
-1. Open `/_emdash/admin` on the admin host. The setup wizard creates the first account, which is a **deployment Admin**: Admin on every site, and the only kind of account that can create organizations and sites.
+1. Open `/_emdash/admin` on the admin host. With `signInDomains` set, the first run only asks you to sign in with a configured provider, such as Google, using an account from one of those domains. That first account is a **deployment Admin**: Admin on every site, and the only kind of account that can create organizations and sites. Without `signInDomains`, the setup wizard creates the first account instead.
 
 2. Open **Organizations** and create an organization. You become its Admin.
 
-3. On the organization's page, select **Add site**. Enter its name, hostnames (the first is its main address), and the database and media storage it uses. The site's admin opens without a setup wizard, titled with the site's name.
+3. On the organization's page, select **Add site**. Enter its name, the database and media storage it uses, and optionally its hostnames (the first is its main address). A site without a hostname can be managed in the admin and gets its hostnames later. The site's admin opens without a setup wizard, titled with the site's name.
 
 4. Select **Add member** and enter an email and role. Someone with an account joins right away. Anyone else receives an invitation to create an account on the admin host, and joins once they do. Without an email provider, the dialog shows the invitation link to send yourself.
 

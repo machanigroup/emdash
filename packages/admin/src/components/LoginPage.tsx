@@ -27,6 +27,7 @@ import { SUPPORTED_LOCALES } from "../locales/index.js";
 import { useLocale } from "../locales/useLocale.js";
 import { PasskeyLogin } from "./auth/PasskeyLogin";
 import { BrandLogo } from "./Logo.js";
+import { ProviderSignIn } from "./multisite/ProviderSignIn.js";
 
 // ============================================================================
 // Types
@@ -236,6 +237,16 @@ export function LoginPage({ redirectUrl = "/_emdash/admin" }: LoginPageProps) {
 					<Loader />
 				</div>
 			</div>
+		);
+	}
+
+	if (authInfo?.providersOnly) {
+		return (
+			<ProviderSignIn
+				title={t`Sign in`}
+				description={t`Use your organization account to continue.`}
+				error={urlError}
+			/>
 		);
 	}
 

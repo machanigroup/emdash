@@ -48,9 +48,6 @@ export async function createSite(
 	},
 ): Promise<Site> {
 	const hostnames = [...new Set(input.hostnames.map(requireHostname))];
-	if (hostnames.length === 0) {
-		throw new MultiSiteError("INVALID_HOSTNAME", "A site needs at least one hostname");
-	}
 	const site: Site = {
 		id: ulid(),
 		orgId: input.orgId,
@@ -73,6 +70,7 @@ export async function createSite(
 				status: site.status,
 			})
 			.execute();
+		if (hostnames.length === 0) return;
 		await trx
 			.insertInto("_emdash_site_hosts")
 			.values(
@@ -390,7 +388,8 @@ export async function orgRoleFor(
 
 export interface SiteDetail extends Site {
 	hostnames: string[];
-	primaryHostname: string;
+	/** The site's main hostname, or null while it has none. */
+	primaryHostname: string | null;
 }
 
 export async function getSite(
@@ -445,7 +444,7 @@ async function listSitesWhere(
 				storageRef: row.storage_ref,
 				status: row.status,
 				hostnames: [],
-				primaryHostname: row.hostname ?? "",
+				primaryHostname: row.hostname ?? null,
 			};
 			sites.set(row.id, site);
 		}
@@ -461,9 +460,6 @@ export async function updateSite(
 	input: { name?: string; status?: Site["status"]; hostnames?: string[] },
 ): Promise<void> {
 	const hostnames = input.hostnames && [...new Set(input.hostnames.map(requireHostname))];
-	if (hostnames && hostnames.length === 0) {
-		throw new MultiSiteError("INVALID_HOSTNAME", "A site needs at least one hostname");
-	}
 	await db.transaction().execute(async (trx) => {
 		const result = await trx
 			.updateTable("_emdash_sites")
@@ -479,6 +475,7 @@ export async function updateSite(
 		}
 		if (hostnames) {
 			await trx.deleteFrom("_emdash_site_hosts").where("site_id", "=", siteId).execute();
+			if (hostnames.length === 0) return;
 			await trx
 				.insertInto("_emdash_site_hosts")
 				.values(

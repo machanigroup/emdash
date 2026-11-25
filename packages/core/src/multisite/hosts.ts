@@ -39,10 +39,16 @@ export interface ResolvedSiteHost {
 	siteId: string;
 	orgId: string;
 	name: string;
-	/** The hostname links to the site use. */
-	primaryHostname: string;
+	/** The hostname links to the site use, or null while the site has none. */
+	primaryHostname: string | null;
 	databaseRef: string;
 	storageRef: string | null;
+}
+
+/** Active sites by id, and by each hostname they answer on. */
+interface SiteTable {
+	hosts: Map<string, ResolvedSiteHost>;
+	sites: Map<string, ResolvedSiteHost>;
 }
 
 /**
@@ -54,7 +60,7 @@ export interface ResolvedSiteHost {
  * resolve to null.
  */
 export class SiteHostResolver {
-	#hosts: Promise<Map<string, ResolvedSiteHost>> | null = null;
+	#hosts: Promise<SiteTable> | null = null;
 	#loadedAt = 0;
 	#refreshing = false;
 	readonly #refreshAfterMs: number;
@@ -69,25 +75,20 @@ export class SiteHostResolver {
 	async resolve(host: string | null | undefined): Promise<ResolvedSiteHost | null> {
 		const hostname = normalizeHostname(host);
 		if (!hostname) return null;
-		const hosts = await this.#load();
+		const { hosts } = await this.#load();
 		if (Date.now() - this.#loadedAt > this.#refreshAfterMs) this.#refreshInBackground();
 		return hosts.get(hostname) ?? null;
 	}
 
 	/** An active site by id, from the same cached table. */
 	async findSite(siteId: string): Promise<ResolvedSiteHost | null> {
-		const hosts = await this.#load();
-		for (const host of hosts.values()) {
-			if (host.siteId === siteId) return host;
-		}
-		return null;
+		const { sites } = await this.#load();
+		return sites.get(siteId) ?? null;
 	}
 
 	/** Every active site, one entry each, from the same cached table. */
 	async allSites(): Promise<ResolvedSiteHost[]> {
-		const hosts = await this.#load();
-		const sites = new Map<string, ResolvedSiteHost>();
-		for (const host of hosts.values()) sites.set(host.siteId, host);
+		const { sites } = await this.#load();
 		return [...sites.values()];
 	}
 
@@ -96,7 +97,7 @@ export class SiteHostResolver {
 		this.#hosts = null;
 	}
 
-	#load(): Promise<Map<string, ResolvedSiteHost>> {
+	#load(): Promise<SiteTable> {
 		if (!this.#hosts) {
 			const pending = this.#read();
 			this.#hosts = pending;
@@ -123,10 +124,10 @@ export class SiteHostResolver {
 		});
 	}
 
-	async #read(): Promise<Map<string, ResolvedSiteHost>> {
+	async #read(): Promise<SiteTable> {
 		const rows = await this.db
-			.selectFrom("_emdash_site_hosts as h")
-			.innerJoin("_emdash_sites as s", "s.id", "h.site_id")
+			.selectFrom("_emdash_sites as s")
+			.leftJoin("_emdash_site_hosts as h", "h.site_id", "s.id")
 			.select([
 				"h.hostname",
 				"h.is_primary",
@@ -139,22 +140,26 @@ export class SiteHostResolver {
 			.where("s.status", "=", "active")
 			.execute();
 		this.#loadedAt = Date.now();
-		const primary = new Map<string, string>();
+		const sites = new Map<string, ResolvedSiteHost>();
 		for (const row of rows) {
-			if (row.is_primary === 1 || !primary.has(row.id)) primary.set(row.id, row.hostname);
+			const site = sites.get(row.id) ?? {
+				siteId: row.id,
+				orgId: row.org_id,
+				name: row.name,
+				primaryHostname: null,
+				databaseRef: row.database_ref,
+				storageRef: row.storage_ref,
+			};
+			if (row.hostname && (row.is_primary === 1 || site.primaryHostname === null)) {
+				site.primaryHostname = row.hostname;
+			}
+			sites.set(row.id, site);
 		}
-		return new Map(
-			rows.map((row) => [
-				row.hostname,
-				{
-					siteId: row.id,
-					orgId: row.org_id,
-					name: row.name,
-					primaryHostname: primary.get(row.id) ?? row.hostname,
-					databaseRef: row.database_ref,
-					storageRef: row.storage_ref,
-				},
-			]),
-		);
+		const hosts = new Map<string, ResolvedSiteHost>();
+		for (const row of rows) {
+			const site = sites.get(row.id);
+			if (row.hostname && site) hosts.set(row.hostname, site);
+		}
+		return { hosts, sites };
 	}
 }

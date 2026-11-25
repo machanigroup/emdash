@@ -18,11 +18,7 @@ import type { EmDashConfig, MultiSiteConfig } from "../integration/runtime.js";
 /** The ref that names the `database` and `storage` options without overrides. */
 export const DEFAULT_SITE_REF = "default";
 
-/**
- * Request-context site id of the control plane when it serves the admin host.
- * Site ids are ULIDs, so this can't collide with one.
- */
-export const CONTROL_PLANE_SITE_ID = "control-plane";
+export { CONTROL_PLANE_SITE_ID } from "../../multisite/ids.js";
 
 const DEFAULT_HOST_REFRESH_MS = 30_000;
 
@@ -169,7 +165,9 @@ export function siteConfig(config: EmDashConfig, site: ResolvedSiteHost): EmDash
 		...config,
 		database,
 		storage,
-		siteUrl: siteOrigin(site.primaryHostname, multiSite.adminUrl),
+		siteUrl: site.primaryHostname
+			? siteOrigin(site.primaryHostname, multiSite.adminUrl)
+			: undefined,
 	};
 }
 

@@ -770,6 +770,7 @@ emdash({
 | `databases` | `Record<string, object>` | required | Site databases by name, as options merged over `database`'s options. `default` names `database` unchanged. |
 | `storages` | `Record<string, object>` | — | Site media storage by name, as options merged over `storage`'s options. `default` names `storage` unchanged. |
 | `adminUrl` | `string` | — | Origin of the shared admin host. When set, people sign in there and manage every site they can reach; site hostnames redirect `/_emdash/admin` to it. |
+| `signInDomains` | `string[]` | — | Email domains that can sign in on the admin host without an invitation, through a sign-in provider only. The first administrator must use one of them. |
 | `idleSiteTtlMs` | `number` | 10 minutes on serverless hosts, `0` on Node.js | Release a site's runtime and caches after this long without requests. `0` keeps every site loaded. |
 | `hostRefreshMs` | `number` | `30000` | How long a worker uses its cached hostname table before refreshing it in the background. |
 
