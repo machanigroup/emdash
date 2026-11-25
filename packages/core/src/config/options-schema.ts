@@ -85,6 +85,7 @@ const configShape = {
 		storages: z.record(z.string(), z.record(z.string(), z.unknown())).optional(),
 		hostRefreshMs: z.number({ error: "Expected a number of milliseconds" }).positive().optional(),
 		adminUrl: z.url({ protocol: /^https?$/, error: "Expected an http or https URL" }).optional(),
+		signInDomains: z.array(z.string().min(1)).optional(),
 		idleSiteTtlMs: z
 			.number({ error: "Expected a number of milliseconds" })
 			.nonnegative()

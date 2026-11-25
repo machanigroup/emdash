@@ -797,6 +797,14 @@ export interface MultiSiteConfig {
 	 */
 	adminUrl?: string;
 	/**
+	 * Email domains, such as `example.com`, whose people can sign in on the
+	 * admin host without an invitation. When set, accounts on the admin host are
+	 * created only through a configured sign-in provider such as Google, the
+	 * first administrator must use one of these domains, and the login page
+	 * offers only the providers. People from other domains need an invitation.
+	 */
+	signInDomains?: string[];
+	/**
 	 * Release a site's runtime, database connection, and caches after it has
 	 * served no request for this many milliseconds; the next request opens
 	 * them again. `0` keeps every site loaded.

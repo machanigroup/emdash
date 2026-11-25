@@ -12,6 +12,8 @@ import { apiError, apiSuccess, handleError } from "#api/error.js";
 import { getAuthMode } from "#auth/mode.js";
 import { loadUserSeed } from "#seed/load.js";
 
+import { adminHostSignInDomains } from "../../../../multisite/sign-in.js";
+
 export const GET: APIRoute = async ({ locals }) => {
 	const { emdash } = locals;
 
@@ -96,6 +98,13 @@ export const GET: APIRoute = async ({ locals }) => {
 			return apiSuccess({
 				needsSetup: false,
 			});
+		}
+
+		// The shared admin host of a multi-site deployment has no site to set
+		// up: its first run only creates the first administrator.
+		const signInDomains = adminHostSignInDomains(emdash.config);
+		if (signInDomains) {
+			return apiSuccess({ needsSetup: true, multiSite: { signInDomains } });
 		}
 
 		// Setup needed - try to load seed file info

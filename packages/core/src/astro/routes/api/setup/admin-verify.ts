@@ -25,6 +25,7 @@ import { SETUP_NONCE_COOKIE } from "#auth/setup-nonce.js";
 import { startUserSession } from "#auth/start-user-session.js";
 import { OptionsRepository } from "#db/repositories/options.js";
 
+import { adminHostSignInDomains } from "../../../../multisite/sign-in.js";
 import { sessionUnavailableError } from "../../../session-user.js";
 
 export const POST: APIRoute = async ({ cookies, request, locals, session }) => {
@@ -32,6 +33,14 @@ export const POST: APIRoute = async ({ cookies, request, locals, session }) => {
 
 	if (!emdash?.db) {
 		return apiError("NOT_CONFIGURED", "EmDash is not initialized", 500);
+	}
+
+	if (adminHostSignInDomains(emdash.config)) {
+		return apiError(
+			"SIGN_IN_WITH_PROVIDER",
+			"Create the first administrator by signing in with your organization's sign-in provider",
+			403,
+		);
 	}
 	if (!session) return sessionUnavailableError();
 

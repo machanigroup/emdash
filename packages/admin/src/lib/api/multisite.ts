@@ -15,7 +15,7 @@ export interface SwitcherSite {
 	orgId: string;
 	orgName: string;
 	role: number;
-	url: string;
+	url: string | null;
 }
 
 export interface OrganizationSummary {
@@ -36,8 +36,8 @@ export interface OrganizationSite {
 	storageRef: string | null;
 	status: "active" | "disabled";
 	hostnames: string[];
-	primaryHostname: string;
-	url: string;
+	primaryHostname: string | null;
+	url: string | null;
 }
 
 export interface OrganizationMember {

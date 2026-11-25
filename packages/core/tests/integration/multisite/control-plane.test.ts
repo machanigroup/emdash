@@ -2,7 +2,6 @@ import { Role } from "@emdash-cms/auth";
 import type { Kysely } from "kysely";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
-import { MultiSiteError } from "../../../src/multisite/errors.js";
 import { normalizeHostname, SiteHostResolver } from "../../../src/multisite/hosts.js";
 import { runControlPlaneMigrations } from "../../../src/multisite/migrations.js";
 import {
@@ -211,6 +210,27 @@ describeEachDialect("multi-site control plane", (dialect) => {
 		});
 	});
 
+	describe("sites without a hostname", () => {
+		it("can be created, found by id, and reached at no hostname", async () => {
+			const site = await createSite(db, {
+				orgId: acme.id,
+				slug: "no-domain",
+				name: "No domain yet",
+				databaseRef: "DB_X",
+				hostnames: [],
+			});
+			const resolver = new SiteHostResolver(db);
+
+			expect(await resolver.findSite(site.id)).toMatchObject({
+				siteId: site.id,
+				name: "No domain yet",
+				primaryHostname: null,
+			});
+			expect((await resolver.allSites()).map((s) => s.siteId)).toContain(site.id);
+			expect(await resolver.resolve("no-domain.example")).toBeNull();
+		});
+	});
+
 	describe("validation", () => {
 		it("rejects invalid slugs, hostnames, and roles", async () => {
 			await expect(createOrganization(db, { slug: "Bad Slug", name: "x" })).rejects.toMatchObject({
@@ -225,9 +245,6 @@ describeEachDialect("multi-site control plane", (dialect) => {
 					hostnames: ["not a host"],
 				}),
 			).rejects.toMatchObject({ code: "INVALID_HOSTNAME" });
-			await expect(
-				createSite(db, { orgId: acme.id, slug: "ok", name: "x", databaseRef: "DB", hostnames: [] }),
-			).rejects.toBeInstanceOf(MultiSiteError);
 			await expect(setOrgMember(db, acme.id, "user-ravi", 99)).rejects.toMatchObject({
 				code: "INVALID_ROLE",
 			});

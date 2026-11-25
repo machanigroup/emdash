@@ -282,6 +282,7 @@ import { validateEncryptionKeyAtStartup } from "./config/secrets.js";
 import { OptionsRepository } from "./database/repositories/options.js";
 import type { Database } from "./database/types.js";
 import { getDb } from "./loader.js";
+import { CONTROL_PLANE_SITE_ID } from "./multisite/ids.js";
 import { isRecord } from "./plugin-utils.js";
 import { CronExecutor, setCronTasksEnabled, type InvokeCronHookFn } from "./plugins/cron.js";
 import { definePlugin } from "./plugins/define-plugin.js";
@@ -2756,7 +2757,14 @@ export class EmDashRuntime {
 		// wizard (the wizard and dev-bypass apply seeds explicitly). Run under a
 		// per-isolate lock keyed by the configured db so a reclaimed-and-rerun
 		// create() can't apply the seed a second time concurrently.
-		if (seedCollectionsReadable && !seedComplete && !setupDone) {
+		// The control plane of a multi-site deployment holds accounts and
+		// organizations, never content, so it gets no seed.
+		if (
+			seedCollectionsReadable &&
+			!seedComplete &&
+			!setupDone &&
+			deps.siteId !== CONTROL_PLANE_SITE_ID
+		) {
 			try {
 				const activation = await activateMediaUsageCapture(db, { writersDrained: true });
 				if (activation.outcome !== "active") {

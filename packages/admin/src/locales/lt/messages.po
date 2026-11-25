@@ -208,7 +208,7 @@ msgid "{0, plural, one {# byline} other {# bylines}}"
 msgstr "{0, plural, one {# autoriaus profilis} few {# autorių profiliai} many {# autoriaus profilio} other {# autorių profilių}}"
 
 #. placeholder {0}: seedInfo.collections
-#: packages/admin/src/components/SetupWizard.tsx:220
+#: packages/admin/src/components/SetupWizard.tsx:226
 msgid "{0, plural, one {# collection} other {# collections}}"
 msgstr "{0, plural, one {# kolekcija} few {# kolekcijos} many {# kolekcijos} other {# kolekcijų}}"
 
@@ -218,7 +218,7 @@ msgid "{0, plural, one {# comment imported} other {# comments imported}}"
 msgstr "{0, plural, one {Importuotas # komentaras} few {Importuoti # komentarai} many {Importuota # komentaro} other {Importuota # komentarų}}"
 
 #. placeholder {0}: result.affected
-#: packages/admin/src/router.tsx:3148
+#: packages/admin/src/router.tsx:3157
 msgid "{0, plural, one {# comment updated} other {# comments updated}}"
 msgstr "{0, plural, one {Atnaujintas # komentaras} few {Atnaujinti # komentarai} many {Atnaujinta # komentaro} other {Atnaujinta # komentarų}}"
 
@@ -308,6 +308,11 @@ msgstr "{0, plural, one {# medijos failų klaida} few {# medijos failų klaidos}
 msgid "{0, plural, one {# media file imported} other {# media files imported}}"
 msgstr "{0, plural, one {Importuotas # medijos failas} few {Importuoti # medijos failai} many {Importuota # medijos failo} other {Importuota # medijos failų}}"
 
+#. placeholder {0}: org.memberCount
+#: packages/admin/src/components/multisite/OrganizationsPage.tsx:123
+msgid "{0, plural, one {# member} other {# members}}"
+msgstr ""
+
 #. placeholder {0}: result.menus.created
 #: packages/admin/src/components/WordPressImport.tsx:2306
 msgid "{0, plural, one {# menu imported} other {# menus imported}}"
@@ -374,6 +379,11 @@ msgstr "{0, plural, one {# ryšys su šiuo turinio tipu} few {# ryšiai su šiuo
 msgid "{0, plural, one {# row} other {# rows}} × {1, plural, one {# column} other {# columns}} selected"
 msgstr "Pasirinkta: {0, plural, one {# eilutė} few {# eilutės} many {# eilutės} other {# eilučių}} × {1, plural, one {# stulpelis} few {# stulpeliai} many {# stulpelio} other {# stulpelių}}"
 
+#. placeholder {0}: org.siteCount
+#: packages/admin/src/components/multisite/OrganizationsPage.tsx:122
+msgid "{0, plural, one {# site} other {# sites}}"
+msgstr ""
+
 #. placeholder {0}: result.skipped
 #: packages/admin/src/components/WordPressImport.tsx:2273
 msgid "{0, plural, one {# skipped (already exists)} other {# skipped (already exist)}}"
@@ -428,6 +438,11 @@ msgstr "{0, plural, one {Bent # ženklas} few {Bent # ženklai} many {Bent # že
 #: packages/admin/src/components/editor/TableControls.tsx:230
 msgid "{0, plural, one {Column deleted} other {# columns deleted}}"
 msgstr "{0, plural, one {Ištrintas # stulpelis} few {Ištrinti # stulpeliai} many {Ištrinta # stulpelio} other {Ištrinta # stulpelių}}"
+
+#. placeholder {0}: member.siteRoles.length
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:648
+msgid "{0, plural, one {Different role on # site} other {Different role on # sites}}"
+msgstr ""
 
 #. placeholder {0}: fields.length
 #: packages/admin/src/components/ContentTypeEditor.tsx:802
@@ -537,6 +552,12 @@ msgstr "Elementai: {0} → {1}"
 msgid "{0} items will be imported"
 msgstr "Bus importuota elementų: {0}"
 
+#. placeholder {0}: removing?.name || removing?.email || ""
+#. placeholder {1}: org.name
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:704
+msgid "{0} loses access to every site in {1}, including any API tokens they created there."
+msgstr ""
+
 #. placeholder {0}: i18n.number(progress.filesDone)
 #. placeholder {1}: i18n.number(progress.filesTotal)
 #. placeholder {2}: formatFileSize(progress.bytesDone)
@@ -548,7 +569,7 @@ msgstr "Failai: {0} iš {1} · {2} iš {3}"
 
 #. placeholder {0}: i18n.number(seedProgress.done)
 #. placeholder {1}: i18n.number(seedProgress.total)
-#: packages/admin/src/components/SetupWizard.tsx:211
+#: packages/admin/src/components/SetupWizard.tsx:217
 msgid "{0} of {1} items"
 msgstr "Elementai: {0} iš {1}"
 
@@ -574,17 +595,17 @@ msgid "{0} of {1} steps · {2} of {3}"
 msgstr "Žingsniai: {0} iš {1} · {2} iš {3}"
 
 #. placeholder {0}: failedIds.length
-#: packages/admin/src/router.tsx:845
+#: packages/admin/src/router.tsx:854
 msgid "{0} of {total} could not be deleted"
 msgstr "Nepavyko ištrinti: {0} iš {total}"
 
 #. placeholder {0}: failedIds.length
-#: packages/admin/src/router.tsx:801
+#: packages/admin/src/router.tsx:810
 msgid "{0} of {total} could not be published"
 msgstr "Nepavyko paskelbti: {0} iš {total}"
 
 #. placeholder {0}: failedIds.length
-#: packages/admin/src/router.tsx:824
+#: packages/admin/src/router.tsx:833
 msgid "{0} of {total} could not be updated"
 msgstr "Nepavyko atnaujinti: {0} iš {total}"
 
@@ -876,7 +897,7 @@ msgstr "{name} · redaguoja lauką „{field}“"
 msgid "{name} · Viewing"
 msgstr "{name} · peržiūri"
 
-#: packages/admin/src/router.tsx:1279
+#: packages/admin/src/router.tsx:1288
 msgid "{name} changed this entry"
 msgstr "{name} pakeitė šį įrašą"
 
@@ -1165,8 +1186,8 @@ msgstr "• Įkeliami į „EmDash“ medijos failų saugyklą"
 msgid "• URLs in your content are updated automatically"
 msgstr "• Turinyje esantys URL atnaujinami automatiškai"
 
-#: packages/admin/src/components/SetupWizard.tsx:290
-#: packages/admin/src/components/SetupWizard.tsx:341
+#: packages/admin/src/components/SetupWizard.tsx:296
+#: packages/admin/src/components/SetupWizard.tsx:347
 #: packages/admin/src/components/WordPressImport.tsx:1658
 msgid "← Back"
 msgstr "← Atgal"
@@ -1343,6 +1364,10 @@ msgstr "Medijos failas viršija šioje svetainėje leidžiamą dydį"
 msgid "A media file is missing from the package"
 msgstr "Pakete trūksta medijos failo"
 
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:125
+msgid "A member's role here applies to every site in the organization, unless a site gives them a different role."
+msgstr ""
+
 #: packages/admin/src/components/TaxonomyManager.tsx:126
 #: packages/admin/src/components/TaxonomyManager.tsx:918
 msgid "A name cannot be generated from this label. Type one manually using lowercase letters, numbers, and underscores."
@@ -1385,6 +1410,10 @@ msgstr "Ryšys apibrėžia, kaip siejami du turinio tipai. Abiejų tipų nuorod�
 #: packages/admin/src/components/settings/GeneralSettings.tsx:367
 msgid "A short description of your site"
 msgstr "Trumpas svetainės aprašymas"
+
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:525
+msgid "A site that isn't online answers every request with \"Site not found\", and nobody can manage it until it is back online."
+msgstr ""
 
 #: packages/admin/src/components/RelationForm.tsx:81
 msgid "A slug cannot be generated from these role names. Type one manually using lowercase letters, numbers, and underscores."
@@ -1449,7 +1478,7 @@ msgstr "Sutikti ir įdiegti"
 msgid "Accept & Update"
 msgstr "Sutikti ir atnaujinti"
 
-#: packages/admin/src/router.tsx:527
+#: packages/admin/src/router.tsx:530
 msgid "Accept invitation"
 msgstr "Priimti kvietimą"
 
@@ -1465,7 +1494,7 @@ msgstr "Priimti kvietimą"
 msgid "Access denied"
 msgstr "Prieiga uždrausta"
 
-#: packages/admin/src/router.tsx:3170
+#: packages/admin/src/router.tsx:3179
 msgid "Access Denied"
 msgstr "Prieiga uždrausta"
 
@@ -1474,7 +1503,7 @@ msgstr "Prieiga uždrausta"
 msgid "Access your media library"
 msgstr "Pasiekti medijos failų biblioteką"
 
-#: packages/admin/src/components/SetupWizard.tsx:410
+#: packages/admin/src/components/SetupWizard.tsx:416
 msgid "Account"
 msgstr "Paskyra"
 
@@ -1538,7 +1567,7 @@ msgid "Activation cannot be confirmed. Keep editing paused and refresh the statu
 msgstr "Nepavyko patvirtinti aktyvavimo. Kol kas netęskite redagavimo ir atnaujinkite būseną."
 
 #: packages/admin/src/components/users/UserDetail.tsx:210
-#: packages/admin/src/components/users/UserList.tsx:211
+#: packages/admin/src/components/users/UserList.tsx:235
 msgid "Active"
 msgstr "Aktyvus"
 
@@ -1739,6 +1768,12 @@ msgstr "Pridėti nuorodą"
 msgid "Add links to build your navigation menu"
 msgstr "Pridėkite nuorodų naršymo meniu sudaryti"
 
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:629
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:769
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:830
+msgid "Add member"
+msgstr ""
+
 #: packages/admin/src/components/AllowedTypesEditor.tsx:196
 msgid "Add MIME type or extension"
 msgstr "Pridėti MIME tipą arba plėtinį"
@@ -1795,6 +1830,12 @@ msgstr "Pridėti pasirinktus"
 #: packages/admin/src/components/ContentTypeEditor.tsx:691
 msgid "Add SEO metadata fields (title, description, image) and include in sitemap"
 msgstr "Pridėti SEO metaduomenų laukus (pavadinimą, aprašymą, paveikslėlį) ir įtraukti į svetainės žemėlapį"
+
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:224
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:356
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:427
+msgid "Add site"
+msgstr ""
 
 #: packages/admin/src/components/FieldEditor.tsx:1610
 msgid "Add Sub-Field"
@@ -1892,6 +1933,8 @@ msgid "Added:"
 msgstr "Pridėta:"
 
 #: packages/admin/src/components/MenuEditor.tsx:670
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:427
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:830
 #: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:384
 msgid "Adding..."
 msgstr "Pridedama..."
@@ -1921,12 +1964,12 @@ msgstr "administratorius"
 msgid "Admin"
 msgstr "Administravimas"
 
-#: packages/admin/src/components/Sidebar.tsx:461
+#: packages/admin/src/components/Sidebar.tsx:462
 msgctxt "navigation group"
 msgid "Admin"
 msgstr ""
 
-#: packages/admin/src/components/Sidebar.tsx:742
+#: packages/admin/src/components/Sidebar.tsx:746
 msgid "Admin navigation"
 msgstr "Administravimo meniu"
 
@@ -2034,8 +2077,8 @@ msgstr "Importuotas turinys bus be priskirtų autorių. Juos galėsite priskirti
 msgid "All locales"
 msgstr "Visos kalbos"
 
-#: packages/admin/src/components/users/UserList.tsx:52
-#: packages/admin/src/components/users/UserList.tsx:56
+#: packages/admin/src/components/users/UserList.tsx:57
+#: packages/admin/src/components/users/UserList.tsx:61
 msgid "All roles"
 msgstr "Visos rolės"
 
@@ -2081,7 +2124,7 @@ msgid "Allowed block types"
 msgstr "Leidžiami blokų tipai"
 
 #: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:265
-#: packages/admin/src/router.tsx:3258
+#: packages/admin/src/router.tsx:3267
 msgid "Allowed Domains"
 msgstr "Leidžiami domenai"
 
@@ -2195,21 +2238,21 @@ msgstr "Šifruotas skaitmeninis raktas, kurį atrakinate piršto atspaudu, veido
 #: packages/admin/src/components/TaxonomySidebar.tsx:712
 #: packages/admin/src/components/TaxonomySidebar.tsx:875
 #: packages/admin/src/components/ThemeMarketplaceBrowse.tsx:114
-#: packages/admin/src/router.tsx:755
-#: packages/admin/src/router.tsx:776
-#: packages/admin/src/router.tsx:1001
-#: packages/admin/src/router.tsx:1224
-#: packages/admin/src/router.tsx:1390
-#: packages/admin/src/router.tsx:1458
-#: packages/admin/src/router.tsx:1817
-#: packages/admin/src/router.tsx:1995
-#: packages/admin/src/router.tsx:2020
-#: packages/admin/src/router.tsx:2107
-#: packages/admin/src/router.tsx:2139
-#: packages/admin/src/router.tsx:3120
-#: packages/admin/src/router.tsx:3156
-#: packages/admin/src/router.tsx:3691
-#: packages/admin/src/router.tsx:3885
+#: packages/admin/src/router.tsx:764
+#: packages/admin/src/router.tsx:785
+#: packages/admin/src/router.tsx:1010
+#: packages/admin/src/router.tsx:1233
+#: packages/admin/src/router.tsx:1399
+#: packages/admin/src/router.tsx:1467
+#: packages/admin/src/router.tsx:1826
+#: packages/admin/src/router.tsx:2004
+#: packages/admin/src/router.tsx:2029
+#: packages/admin/src/router.tsx:2116
+#: packages/admin/src/router.tsx:2148
+#: packages/admin/src/router.tsx:3129
+#: packages/admin/src/router.tsx:3165
+#: packages/admin/src/router.tsx:3720
+#: packages/admin/src/router.tsx:3914
 #: packages/admin/src/routes/byline-schema.tsx:143
 msgid "An error occurred"
 msgstr "Įvyko klaida"
@@ -2312,7 +2355,7 @@ msgstr "Tekstas, kurį atkūrimo metu įrašysite į atkuriamus laukus, bus prar
 #: packages/admin/src/components/Settings.tsx:109
 #: packages/admin/src/components/settings/ApiTokenSettings.tsx:210
 #: packages/admin/src/components/settings/ApiTokenSettings.tsx:351
-#: packages/admin/src/router.tsx:3272
+#: packages/admin/src/router.tsx:3281
 msgid "API Tokens"
 msgstr "API raktai"
 
@@ -2476,7 +2519,7 @@ msgstr "Garsas"
 msgid "Authentication error: {0}"
 msgstr "Tapatybės patvirtinimo klaida: {0}"
 
-#: packages/admin/src/components/LoginPage.tsx:200
+#: packages/admin/src/components/LoginPage.tsx:201
 msgid "Authentication error: {error}"
 msgstr "Tapatybės patvirtinimo klaida: {error}"
 
@@ -2517,7 +2560,7 @@ msgstr "Nepavyko suteikti leidimo"
 msgid "Authorize"
 msgstr "Suteikti leidimą"
 
-#: packages/admin/src/router.tsx:538
+#: packages/admin/src/router.tsx:541
 msgid "Authorize device"
 msgstr "Suteikti leidimą įrenginiui"
 
@@ -2581,7 +2624,7 @@ msgstr "Automatinės atsarginės kopijos"
 msgid "Automatic backups need a storage backend (R2, S3, or local storage). Configure storage in your EmDash config to enable them."
 msgstr "Automatinėms atsarginėms kopijoms reikia saugyklos (R2, S3 arba vietinės). Norėdami jas įjungti, nurodykite saugyklą „EmDash“ konfigūracijoje."
 
-#: packages/admin/src/router.tsx:1962
+#: packages/admin/src/router.tsx:1971
 msgid "Autosave failed"
 msgstr "Nepavyko automatiškai išsaugoti"
 
@@ -2645,9 +2688,9 @@ msgid "Back to editing."
 msgstr "Grįžti į redagavimą."
 
 #: packages/admin/src/components/InviteAcceptPage.tsx:177
-#: packages/admin/src/components/LoginPage.tsx:120
-#: packages/admin/src/components/LoginPage.tsx:157
-#: packages/admin/src/components/LoginPage.tsx:332
+#: packages/admin/src/components/LoginPage.tsx:121
+#: packages/admin/src/components/LoginPage.tsx:158
+#: packages/admin/src/components/LoginPage.tsx:343
 #: packages/admin/src/components/MagicLinkConfirmPage.tsx:92
 #: packages/admin/src/components/SignupPage.tsx:307
 msgid "Back to login"
@@ -2686,7 +2729,7 @@ msgstr "Atsarginių kopijų nustatymai išsaugoti"
 
 #: packages/admin/src/components/Settings.tsx:126
 #: packages/admin/src/components/settings/BackupSettings.tsx:144
-#: packages/admin/src/router.tsx:3299
+#: packages/admin/src/router.tsx:3308
 msgid "Backups"
 msgstr "Atsarginės kopijos"
 
@@ -2887,8 +2930,8 @@ msgstr "Autoriaus profilio laukai"
 msgid "Byline schema"
 msgstr "Autoriaus profilio schema"
 
-#: packages/admin/src/components/Sidebar.tsx:584
-#: packages/admin/src/router.tsx:3628
+#: packages/admin/src/components/Sidebar.tsx:585
+#: packages/admin/src/router.tsx:3657
 msgid "Byline Schema"
 msgstr "Autoriaus profilio schema"
 
@@ -2901,9 +2944,9 @@ msgstr "Autoriaus profilis atnaujintas"
 #: packages/admin/src/components/ContentSettingsPanel.tsx:1219
 #: packages/admin/src/components/settings/transfer/labels.ts:19
 #: packages/admin/src/components/settings/transfer/labels.ts:79
-#: packages/admin/src/components/Sidebar.tsx:550
+#: packages/admin/src/components/Sidebar.tsx:551
 #: packages/admin/src/lib/editor-sections.ts:34
-#: packages/admin/src/router.tsx:3617
+#: packages/admin/src/router.tsx:3646
 #: packages/admin/src/routes/bylines.tsx:302
 msgid "Bylines"
 msgstr "Autorių profiliai"
@@ -2922,8 +2965,8 @@ msgstr "C++"
 
 #: packages/admin/src/components/AdminCommandPalette.tsx:142
 #: packages/admin/src/components/ContentTypeEditor.tsx:586
-#: packages/admin/src/components/Sidebar.tsx:479
-#: packages/admin/src/router.tsx:610
+#: packages/admin/src/components/Sidebar.tsx:480
+#: packages/admin/src/router.tsx:619
 #: packages/admin/src/routes/calendar.tsx:286
 msgid "Calendar"
 msgstr "Kalendorius"
@@ -2967,6 +3010,11 @@ msgstr "Nepavyko prisijungti prie „EmDash“"
 #: packages/admin/src/components/MenuEditor.tsx:664
 #: packages/admin/src/components/MenuEditor.tsx:894
 #: packages/admin/src/components/MenuList.tsx:238
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:198
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:425
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:546
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:824
+#: packages/admin/src/components/multisite/OrganizationsPage.tsx:173
 #: packages/admin/src/components/PortableTextEditor.tsx:1431
 #: packages/admin/src/components/PortableTextEditor.tsx:4636
 #: packages/admin/src/components/PortableTextEditor.tsx:4662
@@ -3004,6 +3052,10 @@ msgstr "Atšaukti „{0}“"
 #: packages/admin/src/components/settings/transfer/ImportSection.tsx:355
 msgid "Cancel import"
 msgstr "Atšaukti importavimą"
+
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:931
+msgid "Cancel invitation"
+msgstr ""
 
 #: packages/admin/src/components/MediaUploadDialog.tsx:334
 msgid "Cancel remaining"
@@ -3095,7 +3147,7 @@ msgstr "Pakeisti"
 #. placeholder {0}: selectedUser?.name || selectedUser?.email
 #. placeholder {1}: getRoleLabel(selectedUser?.role ?? 0)
 #. placeholder {2}: getRoleLabel(pendingSaveData?.role ?? 0)
-#: packages/admin/src/routes/users.tsx:307
+#: packages/admin/src/routes/users.tsx:351
 msgid "Change <0>{0}</0> from <1>{1}</1> to <2>{2}</2>? They will lose access to higher-level features."
 msgstr "Pakeisti naudotojo <0>{0}</0> rolę iš <1>{1}</1> į <2>{2}</2>? Naudotojas neteks prieigos prie aukštesnio lygio funkcijų."
 
@@ -3216,7 +3268,7 @@ msgstr "Pakeitimų žurnalas"
 msgid "Changes apply everywhere this byline appears."
 msgstr "Pakeitimai taikomi visur, kur rodomas šis autoriaus profilis."
 
-#: packages/admin/src/router.tsx:2038
+#: packages/admin/src/router.tsx:2047
 msgid "Changes discarded"
 msgstr "Pakeitimai atmesti"
 
@@ -3272,7 +3324,7 @@ msgstr "Patikrinkite serverio žurnalus ir nepavykusias operacijas atkurkite nau
 msgid "Check your connection and try again."
 msgstr "Patikrinkite ryšį ir bandykite dar kartą."
 
-#: packages/admin/src/components/LoginPage.tsx:102
+#: packages/admin/src/components/LoginPage.tsx:103
 #: packages/admin/src/components/SignupPage.tsx:151
 #: packages/admin/src/components/SignupPage.tsx:427
 msgid "Check your email"
@@ -3371,6 +3423,10 @@ msgstr "Kad datos būtų rodomos teisingai, pasirinkite atpažįstamą laiko juo
 #: packages/admin/src/components/FieldEditor.tsx:426
 msgid "Choose a relationship."
 msgstr "Pasirinkite ryšį."
+
+#: packages/admin/src/components/multisite/SiteSwitcher.tsx:23
+msgid "Choose a site"
+msgstr ""
 
 #: packages/admin/src/components/BulkTagDialog.tsx:184
 msgid "Choose a term and enter between 1 and 50 posts."
@@ -3493,7 +3549,7 @@ msgstr "Pašalinti užbaigtus"
 #: packages/admin/src/components/ContentList.tsx:1177
 #: packages/admin/src/components/MediaLibrary.tsx:1021
 #: packages/admin/src/components/Sections.tsx:369
-#: packages/admin/src/components/users/UserList.tsx:126
+#: packages/admin/src/components/users/UserList.tsx:134
 #: packages/admin/src/routes/bylines.tsx:472
 msgid "Clear filters"
 msgstr "Išvalyti filtrus"
@@ -3532,7 +3588,7 @@ msgstr "Norėdami prisijungti, spustelėkite toliau esantį mygtuką:"
 msgid "Click the link in the email to continue setting up your account."
 msgstr "Spustelėkite el. laiške esančią nuorodą ir tęskite paskyros sąranką."
 
-#: packages/admin/src/components/LoginPage.tsx:115
+#: packages/admin/src/components/LoginPage.tsx:116
 msgid "Click the link in the email to sign in."
 msgstr "Norėdami prisijungti, spustelėkite el. laiške esančią nuorodą."
 
@@ -3643,9 +3699,9 @@ msgstr "Kolekcijoje „{0}“ yra įrašų"
 msgid "Collection “{0}” was created on this site"
 msgstr "Kolekcija „{0}“ sukurta šioje svetainėje"
 
-#: packages/admin/src/router.tsx:865
-#: packages/admin/src/router.tsx:1068
-#: packages/admin/src/router.tsx:2560
+#: packages/admin/src/router.tsx:874
+#: packages/admin/src/router.tsx:1077
+#: packages/admin/src/router.tsx:2569
 msgid "Collection \"{collection}\" not found"
 msgstr "Kolekcija „{collection}“ nerasta"
 
@@ -3727,8 +3783,8 @@ msgstr "Reakcijos į komentarus"
 #: packages/admin/src/components/ContentTypeEditor.tsx:702
 #: packages/admin/src/components/settings/transfer/labels.ts:34
 #: packages/admin/src/components/settings/transfer/labels.ts:88
-#: packages/admin/src/components/Sidebar.tsx:514
-#: packages/admin/src/router.tsx:3045
+#: packages/admin/src/components/Sidebar.tsx:515
+#: packages/admin/src/router.tsx:3054
 msgid "Comments"
 msgstr "Komentarai"
 
@@ -3764,7 +3820,7 @@ msgstr "Konfigūruokite el. pašto teikėją, peržiūrėkite siuntimo būseną 
 msgid "Confirm"
 msgstr "Patvirtinti"
 
-#: packages/admin/src/router.tsx:501
+#: packages/admin/src/router.tsx:504
 msgid "Confirm magic link"
 msgstr "Patvirtinti prisijungimo nuorodą"
 
@@ -3835,9 +3891,9 @@ msgstr "turinys"
 #: packages/admin/src/components/comments/CommentInbox.tsx:359
 #: packages/admin/src/components/Dashboard.tsx:499
 #: packages/admin/src/components/SectionEditor.tsx:197
-#: packages/admin/src/components/Sidebar.tsx:459
+#: packages/admin/src/components/Sidebar.tsx:460
 #: packages/admin/src/components/Widgets.tsx:986
-#: packages/admin/src/router.tsx:622
+#: packages/admin/src/router.tsx:631
 msgid "Content"
 msgstr "Turinys"
 
@@ -3858,7 +3914,7 @@ msgstr "Turinio klaidos ({0})"
 msgid "Content found:"
 msgstr "Rasta turinio:"
 
-#: packages/admin/src/router.tsx:2088
+#: packages/admin/src/router.tsx:2097
 msgid "Content has been scheduled for publishing"
 msgstr "Turinio paskelbimas suplanuotas"
 
@@ -3866,7 +3922,7 @@ msgstr "Turinio paskelbimas suplanuotas"
 msgid "Content ID:"
 msgstr "Turinio ID:"
 
-#: packages/admin/src/router.tsx:1989
+#: packages/admin/src/router.tsx:1998
 msgid "Content is now live"
 msgstr "Turinys paskelbtas"
 
@@ -3891,11 +3947,11 @@ msgstr "Turinyje yra netinkama nuoroda į medijos failą"
 msgid "Content refers to media that is not in the package"
 msgstr "Turinys nurodo medijos failą, kurio pakete nėra"
 
-#: packages/admin/src/router.tsx:2014
+#: packages/admin/src/router.tsx:2023
 msgid "Content removed from public view"
 msgstr "Turinys neberodomas viešai"
 
-#: packages/admin/src/router.tsx:2100
+#: packages/admin/src/router.tsx:2109
 msgid "Content reverted to draft"
 msgstr "Turinys grąžintas į juodraštį"
 
@@ -3921,8 +3977,8 @@ msgstr "Turinio tipai"
 
 #: packages/admin/src/components/AdminCommandPalette.tsx:197
 #: packages/admin/src/components/ContentTypeList.tsx:148
-#: packages/admin/src/components/Sidebar.tsx:580
-#: packages/admin/src/router.tsx:3636
+#: packages/admin/src/components/Sidebar.tsx:581
+#: packages/admin/src/router.tsx:3665
 msgid "Content Types"
 msgstr "Turinio tipai"
 
@@ -3948,8 +4004,8 @@ msgstr "Turinio rašymas"
 msgid "Continue"
 msgstr "Tęsti"
 
-#: packages/admin/src/components/SetupWizard.tsx:202
-#: packages/admin/src/components/SetupWizard.tsx:298
+#: packages/admin/src/components/SetupWizard.tsx:208
+#: packages/admin/src/components/SetupWizard.tsx:304
 msgid "Continue →"
 msgstr "Tęsti →"
 
@@ -3970,12 +4026,12 @@ msgstr "Tęsti adresu {handoverHost}"
 msgid "Continue to finish signing in. The link works only once."
 msgstr "Tęskite, kad užbaigtumėte prisijungimą. Nuoroda galioja tik vieną kartą."
 
-#: packages/admin/src/components/SetupWizard.tsx:357
+#: packages/admin/src/components/SetupWizard.tsx:363
 msgid "Continue to import"
 msgstr "Pereiti prie importavimo"
 
 #. placeholder {0}: activeProviderEntry.label
-#: packages/admin/src/components/LoginPage.tsx:225
+#: packages/admin/src/components/LoginPage.tsx:226
 msgid "Continue with {0}."
 msgstr "Tęskite naudodami {0}."
 
@@ -3995,6 +4051,7 @@ msgstr "Bendradarbis"
 #: packages/admin/src/components/co-editing/SyncStatus.tsx:240
 #: packages/admin/src/components/editor/CodeBlockNode.tsx:254
 #: packages/admin/src/components/editor/CodeBlockNode.tsx:278
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:820
 #: packages/admin/src/components/settings/transfer/CopyableDigest.tsx:43
 #: packages/admin/src/components/settings/transfer/ImportSection.tsx:576
 msgid "Copied"
@@ -4022,6 +4079,7 @@ msgstr "Kopijuoti kodą"
 msgid "Copy failed"
 msgstr "Nepavyko nukopijuoti"
 
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:820
 #: packages/admin/src/components/users/InviteUserModal.tsx:228
 msgid "Copy invite link"
 msgstr "Kopijuoti kvietimo nuorodą"
@@ -4353,6 +4411,10 @@ msgstr "Sukurkite slaptažodį „WordPress“ svetainėje: Naudotojai → Profi
 msgid "Create one to let entries here link to entries in another content type."
 msgstr "Sukurkite ryšį, kad šio tipo įrašai galėtų nurodyti kito turinio tipo įrašus."
 
+#: packages/admin/src/components/multisite/OrganizationsPage.tsx:179
+msgid "Create organization"
+msgstr ""
+
 #: packages/admin/src/components/auth/PasskeyRegistration.tsx:741
 msgid "Create passkey"
 msgstr "Sukurti prieigos raktą"
@@ -4417,7 +4479,7 @@ msgstr "Sukurti API raktą"
 msgid "Create Widget Area"
 msgstr "Sukurti valdiklių sritį"
 
-#: packages/admin/src/components/SetupWizard.tsx:620
+#: packages/admin/src/components/SetupWizard.tsx:637
 msgid "Create your account"
 msgstr "Sukurkite savo paskyrą"
 
@@ -4473,7 +4535,7 @@ msgid "Created {0}"
 msgstr "Sukurta „{0}“"
 
 #. placeholder {0}: result.locale?.toUpperCase() ?? t`new`
-#: packages/admin/src/router.tsx:2131
+#: packages/admin/src/router.tsx:2140
 msgid "Created {0} translation"
 msgstr "Sukurtas vertimas: {0}"
 
@@ -4498,6 +4560,7 @@ msgid "Creating cropped copy..."
 msgstr "Kuriama apkirpta kopija..."
 
 #: packages/admin/src/components/MenuList.tsx:244
+#: packages/admin/src/components/multisite/OrganizationsPage.tsx:179
 #: packages/admin/src/components/Redirects.tsx:311
 #: packages/admin/src/components/RelationFormPanel.tsx:148
 #: packages/admin/src/components/Sections.tsx:306
@@ -4588,7 +4651,7 @@ msgid "Custom Taxonomies"
 msgstr "Pasirinktinės taksonomijos"
 
 #: packages/admin/src/components/ContentEditor.tsx:3235
-#: packages/admin/src/components/Sidebar.tsx:797
+#: packages/admin/src/components/Sidebar.tsx:801
 msgid "Customize sidebar"
 msgstr "Pritaikyti šoninę juostą"
 
@@ -4606,10 +4669,14 @@ msgstr "Tamsiosios veiksenos variantas"
 #: packages/admin/src/components/ContentTypeList.tsx:408
 #: packages/admin/src/components/Dashboard.tsx:75
 #: packages/admin/src/components/Shell.tsx:90
-#: packages/admin/src/components/Sidebar.tsx:476
-#: packages/admin/src/router.tsx:592
+#: packages/admin/src/components/Sidebar.tsx:477
+#: packages/admin/src/router.tsx:595
 msgid "Dashboard"
 msgstr "Valdymo skydas"
+
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:399
+msgid "Database"
+msgstr ""
 
 #: packages/admin/src/components/BlockTypeList.tsx:31
 msgid "Database-owned definitions available to blocks fields."
@@ -4988,15 +5055,15 @@ msgstr "Siųsti visus svetainės siunčiamus el. laiškus"
 msgid "Demo"
 msgstr "Demonstracija"
 
-#: packages/admin/src/routes/users.tsx:314
+#: packages/admin/src/routes/users.tsx:358
 msgid "Demote User"
 msgstr "Sumažinti naudotojo teises"
 
-#: packages/admin/src/routes/users.tsx:305
+#: packages/admin/src/routes/users.tsx:349
 msgid "Demote User?"
 msgstr "Sumažinti naudotojo teises?"
 
-#: packages/admin/src/routes/users.tsx:315
+#: packages/admin/src/routes/users.tsx:359
 msgid "Demoting..."
 msgstr "Mažinamos teisės..."
 
@@ -5082,6 +5149,10 @@ msgstr "Susietas su įrenginiu"
 msgid "Device-bound passkey"
 msgstr "Su įrenginiu susietas prieigos raktas"
 
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:531
+msgid "Did this site have its own accounts before it joined? Import them so those people can sign in here, with the roles they had on the site."
+msgstr ""
+
 #: packages/admin/src/components/SignupPage.tsx:163
 msgid "Didn't receive the email?"
 msgstr "Negavote laiško?"
@@ -5115,18 +5186,19 @@ msgstr "Išjungti įskiepio MCP įrankius"
 msgid "Disable redirect {0}"
 msgstr "Išjungti peradresavimą „{0}“"
 
-#: packages/admin/src/routes/users.tsx:289
+#: packages/admin/src/routes/users.tsx:333
 msgid "Disable User"
 msgstr "Išjungti naudotojo paskyrą"
 
-#: packages/admin/src/routes/users.tsx:282
+#: packages/admin/src/routes/users.tsx:326
 msgid "Disable User?"
 msgstr "Išjungti naudotojo paskyrą?"
 
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:236
 #: packages/admin/src/components/PluginManager.tsx:461
 #: packages/admin/src/components/Redirects.tsx:706
 #: packages/admin/src/components/users/UserDetail.tsx:205
-#: packages/admin/src/components/users/UserList.tsx:179
+#: packages/admin/src/components/users/UserList.tsx:197
 msgid "Disabled"
 msgstr "Išjungta"
 
@@ -5135,11 +5207,11 @@ msgid "Disabled:"
 msgstr "Išjungta:"
 
 #. placeholder {0}: selectedUser?.name || selectedUser?.email
-#: packages/admin/src/routes/users.tsx:284
+#: packages/admin/src/routes/users.tsx:328
 msgid "Disabling <0>{0}</0> will prevent them from logging in until re-enabled. Their content will be preserved."
 msgstr "Išjungus paskyrą <0>{0}</0>, naudotojas negalės prisijungti, kol paskyra vėl nebus įjungta. Jo turinys bus išsaugotas."
 
-#: packages/admin/src/routes/users.tsx:290
+#: packages/admin/src/routes/users.tsx:334
 msgid "Disabling..."
 msgstr "Išjungiama..."
 
@@ -5274,7 +5346,7 @@ msgstr "Domenas pašalintas"
 msgid "Domain updated"
 msgstr "Domenas atnaujintas"
 
-#: packages/admin/src/components/LoginPage.tsx:347
+#: packages/admin/src/components/LoginPage.tsx:358
 msgid "Don't have an account? <0>Sign up</0>"
 msgstr "Neturite paskyros? <0>Registruokitės</0>"
 
@@ -5286,6 +5358,8 @@ msgstr "Nesusieti"
 #: packages/admin/src/components/BylineCreditsEditor.tsx:777
 #: packages/admin/src/components/ContentList.tsx:1280
 #: packages/admin/src/components/MediaUploadDialog.tsx:338
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:812
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:896
 #: packages/admin/src/components/users/InviteUserModal.tsx:225
 #: packages/admin/src/components/WordPressImport.tsx:2178
 msgid "Done"
@@ -5529,6 +5603,8 @@ msgstr "Redaguoti"
 #. placeholder {0}: collection.label
 #. placeholder {0}: domain.domain
 #: packages/admin/src/components/ContentTypeList.tsx:379
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:268
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:496
 #: packages/admin/src/components/PortableTextEditor.tsx:1372
 #: packages/admin/src/components/RelationFormPanel.tsx:128
 #: packages/admin/src/components/RelationList.tsx:183
@@ -5587,12 +5663,12 @@ msgstr "Redaguoti autoriaus profilio lauką"
 msgid "Edit caption"
 msgstr "Redaguoti užrašą"
 
-#: packages/admin/src/router.tsx:1112
+#: packages/admin/src/router.tsx:1121
 msgid "Edit content"
 msgstr "Redaguoti turinį"
 
-#: packages/admin/src/router.tsx:3831
-#: packages/admin/src/router.tsx:3850
+#: packages/admin/src/router.tsx:3860
+#: packages/admin/src/router.tsx:3879
 msgid "Edit content type"
 msgstr "Redaguoti turinio tipą"
 
@@ -5644,7 +5720,7 @@ msgid "Edit media alt text, captions, and focal points"
 msgstr "Redaguoti medijos alternatyvųjį tekstą, užrašus ir fokusavimo taškus"
 
 #: packages/admin/src/components/MenuEditor.tsx:186
-#: packages/admin/src/router.tsx:3531
+#: packages/admin/src/router.tsx:3540
 msgid "Edit menu"
 msgstr "Redaguoti meniu"
 
@@ -5675,7 +5751,7 @@ msgid "Edit role"
 msgstr "Redaguoti rolę"
 
 #: packages/admin/src/components/SectionEditor.tsx:50
-#: packages/admin/src/router.tsx:3581
+#: packages/admin/src/router.tsx:3610
 msgid "Edit section"
 msgstr "Redaguoti skiltį"
 
@@ -5789,14 +5865,15 @@ msgid "em1.…"
 msgstr "em1.…"
 
 #: packages/admin/src/components/InviteAcceptPage.tsx:65
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:798
 #: packages/admin/src/components/Settings.tsx:120
 #: packages/admin/src/components/SignupPage.tsx:220
 #: packages/admin/src/components/users/UserDetail.tsx:158
-#: packages/admin/src/router.tsx:3286
+#: packages/admin/src/router.tsx:3295
 msgid "Email"
 msgstr "El. paštas"
 
-#: packages/admin/src/components/LoginPage.tsx:130
+#: packages/admin/src/components/LoginPage.tsx:131
 #: packages/admin/src/components/SignupPage.tsx:87
 #: packages/admin/src/components/users/InviteUserModal.tsx:183
 msgid "Email address"
@@ -5810,7 +5887,7 @@ msgstr "Siųsti laišką visiems naudotojams?"
 msgid "Email every other user a link to the sign-in page at {siteHost}."
 msgstr "Visiems kitiems naudotojams el. paštu nusiųsti nuorodą į prisijungimo puslapį adresu {siteHost}."
 
-#: packages/admin/src/components/SetupWizard.tsx:243
+#: packages/admin/src/components/SetupWizard.tsx:249
 #: packages/admin/src/components/SignupPage.tsx:69
 msgid "Email is required"
 msgstr "Įveskite el. pašto adresą"
@@ -5833,7 +5910,7 @@ msgstr "El. pašto paslaugos teikėjas aktyvus"
 
 #: packages/admin/src/components/Settings.tsx:116
 #: packages/admin/src/components/settings/EmailSettings.tsx:181
-#: packages/admin/src/router.tsx:3285
+#: packages/admin/src/router.tsx:3294
 msgid "Email Settings"
 msgstr "El. pašto nustatymai"
 
@@ -5921,7 +5998,7 @@ msgstr "„EmDash“ peržiūri esamą turinį."
 msgid "EmDash never receives your PIN, password, or biometric information."
 msgstr "„EmDash“ niekada negauna jūsų PIN kodo, slaptažodžio ar biometrinių duomenų."
 
-#: packages/admin/src/router.tsx:2602
+#: packages/admin/src/router.tsx:2611
 msgid "EmDash or this entry’s fields changed since you opened it."
 msgstr "Nuo tada, kai atvėrėte šį įrašą, pasikeitė „EmDash“ arba įrašo laukai."
 
@@ -5947,7 +6024,7 @@ msgstr "Tuščia"
 msgid "Empty gallery — open settings to add images"
 msgstr "Galerija tuščia. Norėdami pridėti paveikslėlių, atverkite nustatymus."
 
-#: packages/admin/src/components/SetupWizard.tsx:174
+#: packages/admin/src/components/SetupWizard.tsx:180
 msgid "Empty site"
 msgstr "Tuščia svetainė"
 
@@ -6227,9 +6304,9 @@ msgstr "įrašas, kuriame pateikta nuoroda"
 
 #: packages/admin/src/components/MenuEditor.tsx:223
 #: packages/admin/src/components/MenuEditor.tsx:358
-#: packages/admin/src/components/SetupWizard.tsx:603
+#: packages/admin/src/components/SetupWizard.tsx:609
 #: packages/admin/src/components/TaxonomyManager.tsx:1127
-#: packages/admin/src/router.tsx:4171
+#: packages/admin/src/router.tsx:4202
 msgid "Error"
 msgstr "Klaida"
 
@@ -6280,6 +6357,10 @@ msgstr "Visos paskelbtos šio įskiepio versijos atšauktos arba jų nepavyko pa
 #: packages/admin/src/components/ContentTypeList.tsx:281
 msgid "Every relationship this content type takes part in goes too:"
 msgstr "Taip pat bus pašalinti visi šio turinio tipo ryšiai:"
+
+#: packages/admin/src/routes/users.tsx:56
+msgid "Everyone in this site's organization can work on it with their organization role. Add or remove people, and change roles, on the organization's page."
+msgstr ""
 
 #: packages/admin/src/components/settings/SidebarsSettings.tsx:65
 msgid "Everything is shown again, in the default order."
@@ -6407,9 +6488,17 @@ msgstr "Nepavyko aktyvinti bloko tipo versijos"
 msgid "Failed to add domain"
 msgstr "Nepavyko pridėti domeno"
 
+#: packages/admin/src/lib/api/multisite.ts:158
+msgid "Failed to add member"
+msgstr ""
+
 #: packages/admin/src/components/settings/SecuritySettings.tsx:186
 msgid "Failed to add passkey"
 msgstr "Nepavyko pridėti prieigos rakto"
+
+#: packages/admin/src/lib/api/multisite.ts:139
+msgid "Failed to add site"
+msgstr ""
 
 #: packages/admin/src/lib/api/taxonomies.ts:120
 msgid "Failed to add term to entries"
@@ -6435,6 +6524,19 @@ msgstr "Nepavyko patvirtinti užklausos"
 #: packages/admin/src/lib/api/transfer.ts:489
 msgid "Failed to cancel import"
 msgstr "Nepavyko atšaukti importavimo"
+
+#: packages/admin/src/lib/api/multisite.ts:182
+msgid "Failed to cancel invitation"
+msgstr ""
+
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:609
+#: packages/admin/src/lib/api/multisite.ts:166
+msgid "Failed to change role"
+msgstr ""
+
+#: packages/admin/src/lib/api/multisite.ts:193
+msgid "Failed to change site role"
+msgstr ""
 
 #: packages/admin/src/lib/api/settings.ts:127
 msgid "Failed to change the domain"
@@ -6474,7 +6576,7 @@ msgstr "Nepavyko sukurti „{0}“"
 msgid "Failed to create a sign-in link"
 msgstr "Nepavyko sukurti prisijungimo nuorodos"
 
-#: packages/admin/src/components/SetupWizard.tsx:557
+#: packages/admin/src/components/SetupWizard.tsx:563
 msgid "Failed to create admin"
 msgstr "Nepavyko sukurti administratoriaus paskyros"
 
@@ -6535,6 +6637,10 @@ msgstr "Nepavyko sukurti meniu punkto"
 msgid "Failed to create menu translation"
 msgstr "Nepavyko sukurti meniu vertimo"
 
+#: packages/admin/src/lib/api/multisite.ts:113
+msgid "Failed to create organization"
+msgstr ""
+
 #: packages/admin/src/lib/api/redirects.ts:89
 msgid "Failed to create redirect"
 msgstr "Nepavyko sukurti peradresavimo"
@@ -6565,7 +6671,7 @@ msgid "Failed to create term translation"
 msgstr "Nepavyko sukurti termino vertimo"
 
 #: packages/admin/src/components/TaxonomySidebar.tsx:874
-#: packages/admin/src/router.tsx:2136
+#: packages/admin/src/router.tsx:2145
 msgid "Failed to create translation"
 msgstr "Nepavyko sukurti vertimo"
 
@@ -6577,7 +6683,7 @@ msgstr "Nepavyko sukurti valdiklio"
 msgid "Failed to create widget area"
 msgstr "Nepavyko sukurti valdiklių srities"
 
-#: packages/admin/src/router.tsx:844
+#: packages/admin/src/router.tsx:853
 msgid "Failed to delete"
 msgstr "Nepavyko ištrinti"
 
@@ -6699,7 +6805,7 @@ msgstr "Nepavyko užverti pasveikinimo"
 msgid "Failed to download a package file"
 msgstr "Nepavyko atsisiųsti paketo failo"
 
-#: packages/admin/src/router.tsx:775
+#: packages/admin/src/router.tsx:784
 msgid "Failed to duplicate"
 msgstr "Nepavyko sukurti kopijos"
 
@@ -6740,7 +6846,7 @@ msgstr "Nepavyko gauti leidžiamų domenų sąrašo"
 msgid "Failed to fetch API tokens"
 msgstr "Nepavyko gauti API raktų"
 
-#: packages/admin/src/lib/api/client.ts:408
+#: packages/admin/src/lib/api/client.ts:413
 msgid "Failed to fetch auth mode"
 msgstr "Nepavyko gauti tapatybės patvirtinimo veiksenos"
 
@@ -6814,7 +6920,7 @@ msgstr "Nepavyko gauti įrašo terminų"
 msgid "Failed to fetch fields"
 msgstr "Nepavyko gauti laukų"
 
-#: packages/admin/src/lib/api/client.ts:391
+#: packages/admin/src/lib/api/client.ts:396
 msgid "Failed to fetch manifest"
 msgstr "Nepavyko gauti manifesto"
 
@@ -6925,7 +7031,7 @@ msgstr "Nepavyko gauti skilčių"
 msgid "Failed to fetch settings"
 msgstr "Nepavyko gauti nustatymų"
 
-#: packages/admin/src/components/SetupWizard.tsx:504
+#: packages/admin/src/components/SetupWizard.tsx:510
 msgid "Failed to fetch setup status"
 msgstr "Nepavyko gauti sąrankos būsenos"
 
@@ -6965,7 +7071,7 @@ msgstr "Nepavyko gauti naujinimo būsenos"
 #: packages/admin/src/lib/api/current-user.ts:30
 #: packages/admin/src/lib/api/users.ts:91
 #: packages/admin/src/lib/api/users.ts:96
-#: packages/admin/src/router.tsx:3066
+#: packages/admin/src/router.tsx:3075
 msgid "Failed to fetch user"
 msgstr "Nepavyko gauti naudotojo duomenų"
 
@@ -7010,6 +7116,10 @@ msgstr "Nepavyko gauti įkėlimo URL adreso"
 msgid "Failed to import"
 msgstr "Nepavyko importuoti"
 
+#: packages/admin/src/lib/api/multisite.ts:208
+msgid "Failed to import accounts"
+msgstr ""
+
 #: packages/admin/src/components/WordPressImport.tsx:464
 #: packages/admin/src/lib/api/import.ts:262
 msgid "Failed to import from WordPress"
@@ -7038,7 +7148,7 @@ msgstr "Nepavyko gauti autoriaus profilio laukų sąrašo"
 msgid "Failed to list files to upload"
 msgstr "Nepavyko gauti įkeltinų failų sąrašo"
 
-#: packages/admin/src/router.tsx:576
+#: packages/admin/src/router.tsx:579
 msgid "Failed to load admin"
 msgstr "Nepavyko įkelti administravimo sąsajos"
 
@@ -7099,6 +7209,16 @@ msgstr "Nepavyko įkelti importavimo sąrašo"
 msgid "visualEditing.mediaLoadFailed"
 msgstr "Nepavyko įkelti medijos failų"
 
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:115
+#: packages/admin/src/lib/api/multisite.ts:118
+msgid "Failed to load organization"
+msgstr ""
+
+#: packages/admin/src/components/multisite/OrganizationsPage.tsx:74
+#: packages/admin/src/lib/api/multisite.ts:105
+msgid "Failed to load organizations"
+msgstr ""
+
 #: packages/admin/src/components/settings/SecuritySettings.tsx:128
 msgid "Failed to load passkeys"
 msgstr "Nepavyko įkelti prieigos raktų"
@@ -7120,9 +7240,17 @@ msgstr "Nepavyko įkelti įskiepių: {0}"
 msgid "Failed to load plugins. The registry aggregator may be unreachable."
 msgstr "Nepavyko įkelti įskiepių. Gali būti, kad registrų agregavimo paslauga nepasiekiama."
 
-#: packages/admin/src/components/SetupWizard.tsx:605
+#: packages/admin/src/components/SetupWizard.tsx:611
 msgid "Failed to load setup"
 msgstr "Nepavyko įkelti sąrankos"
+
+#: packages/admin/src/lib/api/multisite.ts:131
+msgid "Failed to load site storage options"
+msgstr ""
+
+#: packages/admin/src/lib/api/multisite.ts:95
+msgid "Failed to load sites"
+msgstr ""
 
 #: packages/admin/src/lib/api/calendar.ts:49
 msgid "Failed to load the calendar"
@@ -7141,7 +7269,7 @@ msgid "Failed to load transfer settings"
 msgstr "Nepavyko įkelti perkėlimo nustatymų"
 
 #. placeholder {0}: usersQuery.error.message
-#: packages/admin/src/routes/users.tsx:210
+#: packages/admin/src/routes/users.tsx:235
 msgid "Failed to load users: {0}"
 msgstr "Nepavyko įkelti naudotojų sąrašo: {0}"
 
@@ -7153,8 +7281,13 @@ msgstr "Nepavyko įkelti valdiklio"
 msgid "Failed to lock the entry"
 msgstr "Nepavyko užrakinti įrašo"
 
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:80
+#: packages/admin/src/lib/api/multisite.ts:217
+msgid "Failed to open the site"
+msgstr ""
+
 #: packages/admin/src/lib/api/comments.ts:131
-#: packages/admin/src/router.tsx:3155
+#: packages/admin/src/router.tsx:3164
 msgid "Failed to perform bulk action"
 msgstr "Nepavyko atlikti masinio veiksmo"
 
@@ -7171,9 +7304,9 @@ msgstr "Nepavyko paruošti importavimo"
 msgid "Failed to probe URL"
 msgstr "Nepavyko patikrinti URL adreso"
 
-#: packages/admin/src/router.tsx:800
-#: packages/admin/src/router.tsx:1994
-#: packages/admin/src/router.tsx:2346
+#: packages/admin/src/router.tsx:809
+#: packages/admin/src/router.tsx:2003
+#: packages/admin/src/router.tsx:2355
 msgid "Failed to publish"
 msgstr "Nepavyko paskelbti"
 
@@ -7185,7 +7318,7 @@ msgstr "Nepavyko paskelbti turinio"
 msgid "Failed to read byline field usage"
 msgstr "Nepavyko nuskaityti autoriaus profilio lauko naudojimo duomenų"
 
-#: packages/admin/src/router.tsx:3690
+#: packages/admin/src/router.tsx:3719
 msgid "Failed to register {slug}"
 msgstr "Nepavyko užregistruoti „{slug}“"
 
@@ -7197,6 +7330,10 @@ msgstr "Nepavyko užregistruoti nesusietos lentelės"
 msgid "Failed to release the entry lock"
 msgstr "Nepavyko atrakinti įrašo"
 
+#: packages/admin/src/lib/api/multisite.ts:174
+msgid "Failed to remove member"
+msgstr ""
+
 #: packages/admin/src/components/settings/PasskeyItem.tsx:73
 #: packages/admin/src/components/settings/SecuritySettings.tsx:71
 msgid "Failed to remove passkey"
@@ -7205,6 +7342,10 @@ msgstr "Nepavyko pašalinti prieigos rakto"
 #: packages/admin/src/lib/api/media.ts:271
 msgid "Failed to rename media folder"
 msgstr "Nepavyko pervadinti medijos aplanko"
+
+#: packages/admin/src/lib/api/multisite.ts:126
+msgid "Failed to rename organization"
+msgstr ""
 
 #: packages/admin/src/components/settings/SecuritySettings.tsx:55
 #: packages/admin/src/lib/api/users.ts:250
@@ -7240,7 +7381,7 @@ msgstr "Nepavyko pakeisti valdiklių eilės tvarkos"
 msgid "Failed to replace media image"
 msgstr "Nepavyko pakeisti medijos paveikslėlio"
 
-#: packages/admin/src/router.tsx:754
+#: packages/admin/src/router.tsx:763
 msgid "Failed to restore"
 msgstr "Nepavyko atkurti"
 
@@ -7264,9 +7405,9 @@ msgstr "Nepavyko perrašyti URL adresų"
 
 #: packages/admin/src/components/ContentEditor.tsx:3275
 #: packages/admin/src/components/ContentEditor.tsx:3527
-#: packages/admin/src/router.tsx:996
-#: packages/admin/src/router.tsx:1812
-#: packages/admin/src/router.tsx:3884
+#: packages/admin/src/router.tsx:1005
+#: packages/admin/src/router.tsx:1821
+#: packages/admin/src/router.tsx:3913
 msgid "Failed to save"
 msgstr "Nepavyko išsaugoti"
 
@@ -7299,8 +7440,8 @@ msgstr "Nepavyko išsaugoti šoninės juostos išdėstymo"
 msgid "Failed to schedule content"
 msgstr "Nepavyko suplanuoti turinio paskelbimo"
 
-#: packages/admin/src/components/LoginPage.tsx:71
-#: packages/admin/src/components/LoginPage.tsx:76
+#: packages/admin/src/components/LoginPage.tsx:72
+#: packages/admin/src/components/LoginPage.tsx:77
 msgid "Failed to send magic link"
 msgstr "Nepavyko išsiųsti prisijungimo nuorodos"
 
@@ -7342,8 +7483,8 @@ msgstr "Nepavyko pradėti importavimo"
 msgid "Failed to uninstall plugin"
 msgstr "Nepavyko pašalinti įskiepio"
 
-#: packages/admin/src/router.tsx:2019
-#: packages/admin/src/router.tsx:2393
+#: packages/admin/src/router.tsx:2028
+#: packages/admin/src/router.tsx:2402
 msgid "Failed to unpublish"
 msgstr "Nepavyko atšaukti paskelbimo"
 
@@ -7351,8 +7492,8 @@ msgstr "Nepavyko atšaukti paskelbimo"
 msgid "Failed to unpublish content"
 msgstr "Nepavyko atšaukti turinio paskelbimo"
 
-#: packages/admin/src/router.tsx:2106
-#: packages/admin/src/router.tsx:2487
+#: packages/admin/src/router.tsx:2115
+#: packages/admin/src/router.tsx:2496
 msgid "Failed to unschedule"
 msgstr "Nepavyko atšaukti tvarkaraščio"
 
@@ -7360,7 +7501,7 @@ msgstr "Nepavyko atšaukti tvarkaraščio"
 msgid "Failed to unschedule content"
 msgstr "Nepavyko atšaukti suplanuoto turinio paskelbimo"
 
-#: packages/admin/src/router.tsx:823
+#: packages/admin/src/router.tsx:832
 msgid "Failed to update"
 msgstr "Nepavyko atnaujinti"
 
@@ -7451,7 +7592,11 @@ msgstr "Nepavyko atnaujinti skilties"
 msgid "Failed to update settings"
 msgstr "Nepavyko atnaujinti nustatymų"
 
-#: packages/admin/src/router.tsx:3119
+#: packages/admin/src/lib/api/multisite.ts:147
+msgid "Failed to update site"
+msgstr ""
+
+#: packages/admin/src/router.tsx:3128
 msgid "Failed to update status"
 msgstr "Nepavyko atnaujinti būsenos"
 
@@ -7636,7 +7781,7 @@ msgstr "Filtruoti pagal laikotarpį: {rangeLabel}"
 msgid "Filter by group"
 msgstr "Filtruoti pagal grupę"
 
-#: packages/admin/src/components/users/UserList.tsx:84
+#: packages/admin/src/components/users/UserList.tsx:92
 msgid "Filter by role"
 msgstr "Filtruoti pagal rolę"
 
@@ -7663,7 +7808,7 @@ msgstr "Filtruoti pagal autoriaus profilio tipą"
 msgid "Filter: {activeCount} selected"
 msgstr "Filtras: pasirinkta {activeCount}"
 
-#: packages/admin/src/router.tsx:1235
+#: packages/admin/src/router.tsx:1244
 msgid "Find it in this entry’s revisions."
 msgstr "Rasite šio įrašo versijų istorijoje."
 
@@ -7718,7 +7863,7 @@ msgid "Focal point. Use arrow keys to move it."
 msgstr "Fokusavimo taškas. Perkelkite jį rodyklių klavišais."
 
 #: packages/admin/src/components/MediaPickerModal.tsx:1247
-#: packages/admin/src/router.tsx:2976
+#: packages/admin/src/router.tsx:2985
 msgid "Folder"
 msgstr "Aplankas"
 
@@ -7726,7 +7871,7 @@ msgstr "Aplankas"
 msgid "Folder deleted"
 msgstr "Aplankas ištrintas"
 
-#: packages/admin/src/router.tsx:2769
+#: packages/admin/src/router.tsx:2778
 msgid "Folder no longer exists"
 msgstr "Aplanko nebėra"
 
@@ -7829,12 +7974,12 @@ msgid "Gallery settings"
 msgstr "Galerijos nustatymai"
 
 #: packages/admin/src/components/Settings.tsx:56
-#: packages/admin/src/router.tsx:3341
+#: packages/admin/src/router.tsx:3350
 msgid "General"
 msgstr "Bendrieji"
 
 #: packages/admin/src/components/settings/GeneralSettings.tsx:307
-#: packages/admin/src/router.tsx:3340
+#: packages/admin/src/router.tsx:3349
 msgid "General Settings"
 msgstr "Bendrieji nustatymai"
 
@@ -7849,6 +7994,10 @@ msgstr "Pradėti"
 #: packages/admin/src/components/settings/SocialSettings.tsx:149
 msgid "GitHub"
 msgstr "GitHub"
+
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:868
+msgid "Give {label} a different role on a site, or keep their organization role."
+msgstr ""
 
 #: packages/admin/src/components/MenuEditor.tsx:537
 msgid "Give this menu a new label."
@@ -7879,7 +8028,7 @@ msgid "Go live {countdown}"
 msgstr "Paskelbti {countdown}"
 
 #: packages/admin/src/components/WordPressImport.tsx:2510
-#: packages/admin/src/router.tsx:4191
+#: packages/admin/src/router.tsx:4222
 msgid "Go to Dashboard"
 msgstr "Atverti valdymo skydą"
 
@@ -8032,8 +8181,8 @@ msgstr "titulinė sritis, skydelis, raginimas veikti"
 msgid "Hidden from search engines"
 msgstr "Paslėpta nuo paieškos sistemų"
 
-#: packages/admin/src/components/Header.tsx:70
-#: packages/admin/src/components/Header.tsx:74
+#: packages/admin/src/components/Header.tsx:113
+#: packages/admin/src/components/Header.tsx:117
 msgid "Hidden from search engines until you go live"
 msgstr "Paslėpta nuo paieškos sistemų, kol paskelbsite svetainę"
 
@@ -8115,11 +8264,16 @@ msgstr "Serveris"
 msgid "Host and user are required."
 msgstr "Būtina nurodyti serverį ir naudotoją."
 
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:391
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:516
+msgid "Hostnames"
+msgstr ""
+
 #: packages/admin/src/components/PublishingDateTimeEditor.tsx:226
 msgid "Hour"
 msgstr "Valanda"
 
-#: packages/admin/src/components/SetupWizard.tsx:159
+#: packages/admin/src/components/SetupWizard.tsx:165
 msgid "How do you want to start?"
 msgstr "Kaip norite pradėti?"
 
@@ -8205,9 +8359,14 @@ msgstr "Dėl paveikslėlio patikros piktograma sulieta"
 msgid "ID"
 msgstr "ID"
 
-#: packages/admin/src/components/LoginPage.tsx:104
+#: packages/admin/src/components/LoginPage.tsx:105
 msgid "If an account exists for <0>{email}</0>, we've sent a sign-in link."
 msgstr "Jei paskyra adresu <0>{email}</0> yra, išsiuntėme prisijungimo nuorodą."
+
+#. placeholder {0}: org.name
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:773
+msgid "If nobody has an account with this email yet, they're invited to create one and join {0}."
+msgstr ""
 
 #: packages/admin/src/components/settings/ChangeDomainDialog.tsx:188
 msgid "If the site can't be reached from the internet yet, for example on localhost or behind a login, you can use the address without the check."
@@ -8325,7 +8484,7 @@ msgstr "Tiesioginis TLS (465 prievadas)"
 
 #: packages/admin/src/components/AdminCommandPalette.tsx:239
 #: packages/admin/src/components/settings/transfer/ImportSection.tsx:210
-#: packages/admin/src/components/Sidebar.tsx:606
+#: packages/admin/src/components/Sidebar.tsx:610
 #: packages/admin/src/components/WordPressImport.tsx:785
 msgid "Import"
 msgstr "Importuoti"
@@ -8343,11 +8502,15 @@ msgstr "Importuoti svetainės paketą"
 msgid "Import a site package into this site while it is empty, overwriting its initial setup. Admin includes this; choose it instead of Admin to give an agent narrower access."
 msgstr "Importuokite svetainės paketą į šią dar tuščią svetainę ir perrašykite pradinę jos sąranką. Administratoriaus teisės apima ir šią galimybę. Pasirinkite šią teisę, jei norite agentui suteikti siauresnę prieigą."
 
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:539
+msgid "Import accounts"
+msgstr ""
+
 #: packages/admin/src/components/WordPressImport.tsx:1422
 msgid "Import all content directly including drafts, custom post types, ACF fields, and SEO data. No file download needed."
 msgstr "Tiesiogiai importuokite visą turinį, įskaitant juodraščius, pasirinktinius įrašų tipus, ACF laukus ir SEO duomenis. Failo atsisiųsti nereikia."
 
-#: packages/admin/src/components/SetupWizard.tsx:179
+#: packages/admin/src/components/SetupWizard.tsx:185
 msgid "Import an existing EmDash site"
 msgstr "Importuoti esamą „EmDash“ svetainę"
 
@@ -8377,7 +8540,7 @@ msgid "Import failed"
 msgstr "Importuoti nepavyko"
 
 #: packages/admin/src/components/WordPressImport.tsx:738
-#: packages/admin/src/router.tsx:3516
+#: packages/admin/src/router.tsx:3525
 msgid "Import from WordPress"
 msgstr "Importuoti iš „WordPress“"
 
@@ -8412,6 +8575,10 @@ msgstr "Importuoti naudojant „EmDash Exporter“"
 #: packages/admin/src/components/Sections.tsx:68
 msgid "Imported"
 msgstr "Importuota"
+
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:456
+msgid "Imported {imported} accounts, {linked} already here"
+msgstr ""
 
 #: packages/admin/src/components/WordPressImport.tsx:2404
 msgid "Imported by Collection"
@@ -8463,6 +8630,10 @@ msgstr "Importuojami daugkartinio naudojimo blokai..."
 #: packages/admin/src/components/settings/transfer/labels.ts:60
 msgid "Importing terms and bylines"
 msgstr "Importuojami terminai ir autorių profiliai"
+
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:539
+msgid "Importing..."
+msgstr ""
 
 #: packages/admin/src/components/MediaUsedIn.tsx:355
 msgid "In trash"
@@ -8682,7 +8853,15 @@ msgstr "Negaliojanti nuoroda"
 msgid "Invalid port"
 msgstr "Netinkamas prievadas"
 
-#: packages/admin/src/routes/users.tsx:132
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:769
+msgid "Invitation created"
+msgstr ""
+
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:746
+msgid "Invitation saved. They join when they sign in with this email."
+msgstr ""
+
+#: packages/admin/src/routes/users.tsx:157
 msgid "Invitation sent to {email}"
 msgstr "Kvietimas išsiųstas adresu {email}"
 
@@ -8699,7 +8878,7 @@ msgid "Invite Link Created"
 msgstr "Kvietimo nuoroda sukurta"
 
 #: packages/admin/src/components/users/InviteUserModal.tsx:144
-#: packages/admin/src/components/users/UserList.tsx:66
+#: packages/admin/src/components/users/UserList.tsx:72
 msgid "Invite User"
 msgstr "Pakviesti naudotoją"
 
@@ -8707,7 +8886,7 @@ msgstr "Pakviesti naudotoją"
 msgid "Invite validation failed"
 msgstr "Nepavyko patikrinti kvietimo"
 
-#: packages/admin/src/components/users/UserList.tsx:133
+#: packages/admin/src/components/users/UserList.tsx:146
 msgid "Invite your first team member"
 msgstr "Pakvieskite pirmąjį komandos narį"
 
@@ -8739,7 +8918,7 @@ msgstr "Jį saugo tapatybės patvirtinimo priemonė arba prisijungimo duomenų t
 msgid "It was started somewhere else, so its plan can no longer be changed. Its progress will appear here."
 msgstr "Procesas pradėtas kitur, todėl jo plano keisti nebegalima. Jo eigą matysite čia."
 
-#: packages/admin/src/router.tsx:2623
+#: packages/admin/src/router.tsx:2632
 msgid "It’s shown read-only. An entry in Trash can be restored from there."
 msgstr "Įrašą galima tik peržiūrėti. Jei jis yra šiukšlinėje, galite jį iš ten atkurti."
 
@@ -8773,7 +8952,7 @@ msgid "Its listing has not been approved for display. Check back later."
 msgstr "Šio įskiepio aprašas dar nepatvirtintas rodyti. Patikrinkite vėliau."
 
 #: packages/admin/src/components/InviteAcceptPage.tsx:76
-#: packages/admin/src/components/SetupWizard.tsx:278
+#: packages/admin/src/components/SetupWizard.tsx:284
 #: packages/admin/src/components/SignupPage.tsx:231
 msgid "Jane Doe"
 msgstr "Ona Jonaitė"
@@ -8923,7 +9102,7 @@ msgid "Landscape"
 msgstr "Gulsčias"
 
 #: packages/admin/src/components/editor/CodeBlockNode.tsx:286
-#: packages/admin/src/components/LoginPage.tsx:360
+#: packages/admin/src/components/LoginPage.tsx:371
 #: packages/admin/src/components/Settings.tsx:155
 #: packages/admin/src/components/Settings.tsx:169
 msgid "Language"
@@ -8945,7 +9124,7 @@ msgstr "Paskutinį kartą įjungta:"
 msgid "Last login"
 msgstr "Paskutinis prisijungimas"
 
-#: packages/admin/src/components/users/UserList.tsx:105
+#: packages/admin/src/components/users/UserList.tsx:113
 msgid "Last Login"
 msgstr "Paskutinis prisijungimas"
 
@@ -9173,7 +9352,7 @@ msgstr "Įkelti daugiau"
 #: packages/admin/src/components/ContentList.tsx:950
 #: packages/admin/src/components/ContentList.tsx:1013
 #: packages/admin/src/components/MediaLibrary.tsx:1254
-#: packages/admin/src/components/users/UserList.tsx:158
+#: packages/admin/src/components/users/UserList.tsx:176
 msgid "Load More"
 msgstr "Įkelti daugiau"
 
@@ -9190,7 +9369,7 @@ msgstr "Įkelti peržiūrą"
 
 #: packages/admin/src/components/calendar/CalendarToolbar.tsx:113
 #: packages/admin/src/components/ContentEditor.tsx:3011
-#: packages/admin/src/router.tsx:4146
+#: packages/admin/src/router.tsx:4177
 msgid "Loading"
 msgstr "Įkeliama"
 
@@ -9219,8 +9398,8 @@ msgstr "Įkeliamos kolekcijos..."
 msgid "Loading comments..."
 msgstr "Įkeliami komentarai..."
 
-#: packages/admin/src/router.tsx:4148
-#: packages/admin/src/router.tsx:4160
+#: packages/admin/src/router.tsx:4179
+#: packages/admin/src/router.tsx:4191
 msgid "Loading configuration..."
 msgstr "Įkeliama konfigūracija..."
 
@@ -9299,7 +9478,7 @@ msgstr "Įkeliamos skiltys..."
 msgid "Loading settings..."
 msgstr "Įkeliami nustatymai..."
 
-#: packages/admin/src/components/SetupWizard.tsx:592
+#: packages/admin/src/components/SetupWizard.tsx:598
 msgid "Loading setup..."
 msgstr "Įkeliami sąrankos duomenys..."
 
@@ -9331,6 +9510,8 @@ msgstr "Įkeliami valdikliai..."
 #: packages/admin/src/components/MediaDetailPanel.tsx:1731
 #: packages/admin/src/components/MediaLibrary.tsx:1254
 #: packages/admin/src/components/MediaUsedIn.tsx:245
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:107
+#: packages/admin/src/components/multisite/OrganizationsPage.tsx:63
 #: packages/admin/src/components/PortableTextEditor.tsx:1925
 #: packages/admin/src/components/Redirects.tsx:851
 #: packages/admin/src/components/RegistryBrowse.tsx:179
@@ -9345,7 +9526,7 @@ msgstr "Įkeliami valdikliai..."
 #: packages/admin/src/components/ThemeMarketplaceBrowse.tsx:170
 #: packages/admin/src/components/ThemeMarketplaceBrowse.tsx:244
 #: packages/admin/src/components/ThemeMarketplaceDetail.tsx:143
-#: packages/admin/src/components/users/UserList.tsx:147
+#: packages/admin/src/components/users/UserList.tsx:165
 #: packages/admin/src/routes/bylines.tsx:491
 msgid "Loading..."
 msgstr "Įkeliama..."
@@ -9399,11 +9580,11 @@ msgstr "Išlaikyti kraštinių santykį"
 msgid "Locked because this field has stored values. Delete the values (or the field) to change this."
 msgstr "Užrakinta, nes šiame lauke yra išsaugotų reikšmių. Norėdami tai pakeisti, pašalinkite reikšmes arba patį lauką."
 
-#: packages/admin/src/router.tsx:487
+#: packages/admin/src/router.tsx:490
 msgid "Log in"
 msgstr "Prisijungti"
 
-#: packages/admin/src/components/Header.tsx:130
+#: packages/admin/src/components/Header.tsx:177
 msgid "Log out"
 msgstr "Atsijungti"
 
@@ -9430,6 +9611,10 @@ msgstr "Ilgas tekstas"
 msgid "Lowercase letters, numbers and underscores. Reference fields store this."
 msgstr "Mažosios raidės, skaitmenys ir pabraukimo brūkšniai. Ši reikšmė saugoma nuorodų laukuose."
 
+#: packages/admin/src/components/multisite/OrganizationsPage.tsx:162
+msgid "Lowercase letters, numbers, and hyphens."
+msgstr ""
+
 #: packages/admin/src/components/editor/codeBlockLanguages.ts:44
 msgid "Lua"
 msgstr "Lua"
@@ -9443,7 +9628,8 @@ msgstr "Pagrindinė biblioteka"
 msgid "Main Sidebar"
 msgstr "Pagrindinė šoninė juosta"
 
-#: packages/admin/src/components/Sidebar.tsx:460
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:250
+#: packages/admin/src/components/Sidebar.tsx:461
 msgid "Manage"
 msgstr "Tvarkyti"
 
@@ -9464,6 +9650,10 @@ msgstr "Tvarkykite turinio valdiklius svetainės valdiklių srityse."
 #: packages/admin/src/components/PluginManager.tsx:202
 msgid "Manage installed plugins. Enable or disable plugins to control their functionality."
 msgstr "Tvarkykite įdiegtus įskiepius. Įjunkite arba išjunkite įskiepius, kad valdytumėte jų funkcijas."
+
+#: packages/admin/src/routes/users.tsx:65
+msgid "Manage members"
+msgstr ""
 
 #: packages/admin/src/components/MenuList.tsx:161
 msgid "Manage navigation menus for your site"
@@ -9529,11 +9719,11 @@ msgstr "Markdown"
 msgid "Marketplace"
 msgstr "Prekyvietė"
 
-#: packages/admin/src/router.tsx:3504
+#: packages/admin/src/router.tsx:3513
 msgid "Marketplace browsing is no longer available."
 msgstr "Prekyvietės naršyti nebegalima."
 
-#: packages/admin/src/router.tsx:3477
+#: packages/admin/src/router.tsx:3486
 msgid "Marketplace browsing is no longer available. Manage installed plugins from Plugins."
 msgstr "Prekyvietės naršyti nebegalima. Įdiegtus įskiepius galite tvarkyti skiltyje „Įskiepiai“."
 
@@ -9581,11 +9771,11 @@ msgstr "MDX"
 #: packages/admin/src/components/Settings.tsx:75
 #: packages/admin/src/components/settings/transfer/labels.ts:17
 #: packages/admin/src/components/settings/transfer/labels.ts:84
-#: packages/admin/src/components/Sidebar.tsx:501
+#: packages/admin/src/components/Sidebar.tsx:502
 #: packages/admin/src/components/WordPressImport.tsx:799
 #: packages/admin/src/components/WordPressImport.tsx:1197
 #: packages/admin/src/components/WordPressImport.tsx:1390
-#: packages/admin/src/router.tsx:2728
+#: packages/admin/src/router.tsx:2737
 msgid "Media"
 msgstr "Medija"
 
@@ -9647,13 +9837,17 @@ msgstr "Medijos skaitymas"
 msgid "Media results"
 msgstr "Medijos paieškos rezultatai"
 
-#: packages/admin/src/router.tsx:3223
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:411
+msgid "Media storage"
+msgstr ""
+
+#: packages/admin/src/router.tsx:3232
 msgid "Media Usage"
 msgstr "Medijos naudojimas"
 
 #: packages/admin/src/components/Settings.tsx:79
 #: packages/admin/src/components/settings/MediaUsageSettings.tsx:299
-#: packages/admin/src/router.tsx:3224
+#: packages/admin/src/router.tsx:3233
 msgid "Media usage tracking"
 msgstr "Medijos naudojimo stebėjimas"
 
@@ -9684,6 +9878,14 @@ msgstr "Medijos įrašymas"
 #: packages/admin/src/components/PortableTextEditor.tsx:538
 msgid "Medium section heading"
 msgstr "Vidutinio lygio skilties antraštė"
+
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:745
+msgid "Member added"
+msgstr ""
+
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:625
+msgid "Members"
+msgstr ""
 
 #: packages/admin/src/components/Widgets.tsx:119
 #: packages/admin/src/components/Widgets.tsx:1001
@@ -9742,9 +9944,9 @@ msgstr "Meniu pervadintas"
 #: packages/admin/src/components/AdminCommandPalette.tsx:173
 #: packages/admin/src/components/MenuList.tsx:159
 #: packages/admin/src/components/settings/transfer/labels.ts:28
-#: packages/admin/src/components/Sidebar.tsx:522
+#: packages/admin/src/components/Sidebar.tsx:523
 #: packages/admin/src/components/WordPressImport.tsx:1201
-#: packages/admin/src/router.tsx:3524
+#: packages/admin/src/router.tsx:3533
 msgid "Menus"
 msgstr "Meniu"
 
@@ -9991,11 +10193,11 @@ msgstr "„{moved}“ perkelta į {position} poziciją iš {total}"
 msgid "Moved {name} to position {position} of {total}"
 msgstr "„{name}“ perkelta į {position} poziciją iš {total}"
 
-#: packages/admin/src/router.tsx:820
+#: packages/admin/src/router.tsx:829
 msgid "Moved {total} items to draft"
 msgstr "Į juodraščius perkelta elementų: {total}"
 
-#: packages/admin/src/router.tsx:841
+#: packages/admin/src/router.tsx:850
 msgid "Moved {total} items to trash"
 msgstr "Į šiukšlinę perkelta elementų: {total}"
 
@@ -10092,7 +10294,7 @@ msgstr "Kelių eilučių grynasis tekstas"
 msgid "Multiple choices from options"
 msgstr "Galima rinktis kelias parinktis"
 
-#: packages/admin/src/components/SetupWizard.tsx:142
+#: packages/admin/src/components/SetupWizard.tsx:148
 msgid "My Awesome Blog"
 msgstr "Mano puikus tinklaraštis"
 
@@ -10102,6 +10304,10 @@ msgstr "Mano puikus tinklaraštis"
 #: packages/admin/src/components/MediaFolderDialog.tsx:169
 #: packages/admin/src/components/MenuList.tsx:220
 #: packages/admin/src/components/MenuList.tsx:223
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:190
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:371
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:509
+#: packages/admin/src/components/multisite/OrganizationsPage.tsx:151
 #: packages/admin/src/components/TaxonomyManager.tsx:726
 #: packages/admin/src/components/TaxonomyManager.tsx:977
 #: packages/admin/src/components/TaxonomyManager.tsx:980
@@ -10147,11 +10353,11 @@ msgid "Needs attention"
 msgstr "Reikia patikrinti"
 
 #: packages/admin/src/components/users/UserDetail.tsx:240
-#: packages/admin/src/components/users/UserList.tsx:174
+#: packages/admin/src/components/users/UserList.tsx:192
 msgid "Never"
 msgstr "Niekada"
 
-#: packages/admin/src/router.tsx:2131
+#: packages/admin/src/router.tsx:2140
 msgid "new"
 msgstr "nauja"
 
@@ -10182,11 +10388,11 @@ msgstr "Naujas autoriaus profilio laukas"
 msgid "New collection"
 msgstr "Nauja kolekcija"
 
-#: packages/admin/src/router.tsx:948
+#: packages/admin/src/router.tsx:957
 msgid "New content"
 msgstr "Naujas turinys"
 
-#: packages/admin/src/router.tsx:3733
+#: packages/admin/src/router.tsx:3762
 msgid "New content type"
 msgstr "Naujas turinio tipas"
 
@@ -10206,6 +10412,11 @@ msgstr "Naujas laukas"
 #: packages/admin/src/components/MediaLibrary.tsx:793
 msgid "New folder"
 msgstr "Naujas aplankas"
+
+#: packages/admin/src/components/multisite/OrganizationsPage.tsx:103
+#: packages/admin/src/components/multisite/OrganizationsPage.tsx:144
+msgid "New organization"
+msgstr ""
 
 #: packages/admin/src/components/MarketplaceMigrationBanner.tsx:15
 msgid "New plugin discovery uses the registry. Existing marketplace plugins can still be updated or uninstalled while you switch over."
@@ -10420,6 +10631,10 @@ msgstr "Aprašymo dar nėra"
 msgid "No detailed description available."
 msgstr "Išsamaus aprašymo nėra."
 
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:242
+msgid "No domain yet"
+msgstr ""
+
 #: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:353
 msgid "No domains configured. Users must be invited individually."
 msgstr "Nesukonfigūruotas nė vienas domenas. Kiekvieną naudotoją reikia pakviesti atskirai."
@@ -10439,6 +10654,12 @@ msgstr "Nesukonfigūruotas el. pašto paslaugų teikėjas"
 #: packages/admin/src/components/users/InviteUserModal.tsx:147
 msgid "No email provider configured. Share this link manually."
 msgstr "Nesukonfigūruotas el. pašto paslaugų teikėjas. Pasidalykite šia nuoroda patys."
+
+#. placeholder {0}: email.trim()
+#. placeholder {1}: org.name
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:772
+msgid "No email provider is configured. Send this link to {0} so they can create an account and join {1}."
+msgstr ""
 
 #: packages/admin/src/components/WordPressImport.tsx:2608
 msgid "No EmDash users found"
@@ -10600,6 +10821,10 @@ msgstr "Apatinės ribos nėra"
 msgid "No moderation (auto-approve all)"
 msgstr "Nemoderuoti (viską patvirtinti automatiškai)"
 
+#: packages/admin/src/components/multisite/OrganizationsPage.tsx:133
+msgid "No organizations yet. Create one to add sites and members."
+msgstr ""
+
 #: packages/admin/src/components/MenuEditor.tsx:482
 msgid "No parent (top level)"
 msgstr "Be pirminio elemento (aukščiausias lygis)"
@@ -10693,6 +10918,18 @@ msgstr "Skilčių nerasta"
 msgid "No sections yet"
 msgstr "Skilčių dar nėra"
 
+#: packages/admin/src/components/multisite/ProviderSignIn.tsx:52
+msgid "No sign-in provider is configured. Add one to authProviders in the EmDash config."
+msgstr ""
+
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:282
+msgid "No sites yet. A deployment Admin can add them."
+msgstr ""
+
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:281
+msgid "No sites yet. Add one to start publishing."
+msgstr ""
+
 #: packages/admin/src/components/comments/CommentInbox.tsx:629
 msgid "No spam comments."
 msgstr "Šlamštu pažymėtų komentarų nėra."
@@ -10709,11 +10946,11 @@ msgstr "Stebimų nuorodų nerasta"
 msgid "No usage to show yet"
 msgstr "Naudojimo duomenų dar nėra"
 
-#: packages/admin/src/components/users/UserList.tsx:117
+#: packages/admin/src/components/users/UserList.tsx:125
 msgid "No users found matching your filters."
 msgstr "Pagal nurodytus filtrus naudotojų nerasta."
 
-#: packages/admin/src/components/users/UserList.tsx:131
+#: packages/admin/src/components/users/UserList.tsx:139
 msgid "No users yet."
 msgstr "Naudotojų dar nėra."
 
@@ -10862,7 +11099,7 @@ msgstr "Naudojant „Cloudflare Workers“, patikra gali nepavykti, nes „Worke
 msgid "On the site"
 msgstr "Svetainėje"
 
-#: packages/admin/src/components/SetupWizard.tsx:180
+#: packages/admin/src/components/SetupWizard.tsx:186
 msgid "Once setup is done, upload a .emdash package exported from another EmDash site."
 msgstr "Baigę sąranką, įkelkite iš kitos „EmDash“ svetainės eksportuotą .emdash paketą."
 
@@ -10870,6 +11107,10 @@ msgstr "Baigę sąranką, įkelkite iš kitos „EmDash“ svetainės eksportuot
 #: packages/admin/src/components/RelationForm.tsx:419
 msgid "One"
 msgstr "Vienas"
+
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:517
+msgid "One per line. The first is the site's main address."
+msgstr ""
 
 #: packages/admin/src/components/DeviceAuthorizePage.tsx:310
 msgid "Only authorize codes you recognize."
@@ -10950,7 +11191,7 @@ msgid "Open setup"
 msgstr "Atverti sąranką"
 
 #: packages/admin/src/components/InviteAcceptPage.tsx:89
-#: packages/admin/src/components/SetupWizard.tsx:357
+#: packages/admin/src/components/SetupWizard.tsx:363
 #: packages/admin/src/components/SignupPage.tsx:246
 msgid "Open the dashboard"
 msgstr "Atverti valdymo skydą"
@@ -11003,6 +11244,10 @@ msgstr "Neprivalomas tekstas, rodomas užvedus žymeklį"
 msgid "Optional tooltip on hover"
 msgstr "Neprivaloma užuomina užvedus žymeklį"
 
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:392
+msgid "Optional. One per line; the first is the site's main address. Point each domain at this deployment."
+msgstr ""
+
 #: packages/admin/src/components/BylineFieldEditor.tsx:432
 #: packages/admin/src/components/FieldEditor.tsx:1292
 #: packages/admin/src/components/FieldEditor.tsx:1714
@@ -11022,8 +11267,8 @@ msgid "or connect by URL"
 msgstr "arba prisijunkite naudodami URL"
 
 #: packages/admin/src/components/InviteAcceptPage.tsx:102
-#: packages/admin/src/components/LoginPage.tsx:282
-#: packages/admin/src/components/SetupWizard.tsx:370
+#: packages/admin/src/components/LoginPage.tsx:293
+#: packages/admin/src/components/SetupWizard.tsx:376
 msgid "Or continue with"
 msgstr "Arba tęskite naudodami"
 
@@ -11046,6 +11291,31 @@ msgstr "Eiliškumas išsaugotas"
 #: packages/admin/src/components/FieldEditor.tsx:754
 msgid "Ordered page-building blocks"
 msgstr "Iš eilės išdėstyti puslapio blokai"
+
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:101
+#: packages/admin/src/router.tsx:3593
+msgid "Organization"
+msgstr ""
+
+#: packages/admin/src/components/multisite/OrganizationsPage.tsx:50
+msgid "Organization created"
+msgstr ""
+
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:572
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:584
+msgid "Organization role"
+msgstr ""
+
+#: packages/admin/src/components/multisite/OrganizationsPage.tsx:55
+#: packages/admin/src/components/multisite/SiteSwitcher.tsx:73
+#: packages/admin/src/components/Sidebar.tsx:588
+#: packages/admin/src/router.tsx:3582
+msgid "Organizations"
+msgstr ""
+
+#: packages/admin/src/components/multisite/OrganizationsPage.tsx:56
+msgid "Organizations group sites and the people who work on them. A member's role in an organization applies to all of its sites."
+msgstr ""
 
 #: packages/admin/src/components/MediaDetailPanel.tsx:539
 msgid "Original"
@@ -11118,11 +11388,11 @@ msgstr "Paketo maišos reikšmė"
 msgid "Package downloaded"
 msgstr "Paketas atsisiųstas"
 
-#: packages/admin/src/router.tsx:4058
+#: packages/admin/src/router.tsx:4087
 msgid "Page not found"
 msgstr "Puslapis nerastas"
 
-#: packages/admin/src/router.tsx:4186
+#: packages/admin/src/router.tsx:4217
 msgid "Page Not Found"
 msgstr "Puslapis nerastas"
 
@@ -11158,6 +11428,11 @@ msgstr "Prieš lentelę įterpta pastraipa"
 #: packages/admin/src/components/TaxonomyManager.tsx:763
 msgid "Parent"
 msgstr "Pirminis elementas"
+
+#. placeholder {0}: org.name
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:497
+msgid "Part of {0}."
+msgstr ""
 
 #: packages/admin/src/components/Redirects.tsx:457
 #: packages/admin/src/components/Redirects.tsx:463
@@ -11202,7 +11477,7 @@ msgid "Passkey renamed"
 msgstr "Prieigos raktas pervadintas"
 
 #: packages/admin/src/components/settings/SecuritySettings.tsx:140
-#: packages/admin/src/components/users/UserList.tsx:108
+#: packages/admin/src/components/users/UserList.tsx:116
 msgid "Passkeys"
 msgstr "Prieigos raktai"
 
@@ -11316,10 +11591,18 @@ msgstr "Laukiama"
 msgid "Pending changes"
 msgstr "Laukiantys pakeitimai"
 
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:913
+msgid "Pending invitations"
+msgstr ""
+
 #: packages/admin/src/components/EntryLockNotice.tsx:162
 #: packages/admin/src/components/EntryLockNotice.tsx:189
 msgid "People are editing this entry together"
 msgstr "Šį įrašą kartu redaguoja keli žmonės"
+
+#: packages/admin/src/routes/users.tsx:55
+msgid "People are managed by the organization"
+msgstr ""
 
 #: packages/admin/src/components/presence/PresenceAvatars.tsx:288
 msgid "People in this entry"
@@ -11397,7 +11680,7 @@ msgstr "Plano maišos reikšmė"
 msgid "Please ask your administrator to send a new invite."
 msgstr "Paprašykite administratoriaus atsiųsti naują kvietimą."
 
-#: packages/admin/src/components/SetupWizard.tsx:245
+#: packages/admin/src/components/SetupWizard.tsx:251
 msgid "Please enter a valid email"
 msgstr "Įveskite galiojantį el. pašto adresą"
 
@@ -11410,7 +11693,7 @@ msgid "Please enter a valid URL"
 msgstr "Įveskite galiojantį URL"
 
 #: packages/admin/src/components/WordPressImport.tsx:1234
-#: packages/admin/src/router.tsx:4034
+#: packages/admin/src/router.tsx:4063
 msgid "Plugin"
 msgstr "Įskiepis"
 
@@ -11448,8 +11731,8 @@ msgid "Plugin details"
 msgstr "Įskiepio informacija"
 
 #: packages/admin/src/components/RegistryPluginDetail.tsx:461
-#: packages/admin/src/router.tsx:3446
-#: packages/admin/src/router.tsx:3454
+#: packages/admin/src/router.tsx:3455
+#: packages/admin/src/router.tsx:3463
 msgid "Plugin Details"
 msgstr "Įskiepio informacija"
 
@@ -11474,7 +11757,7 @@ msgstr "Įskiepio klaida ({0})"
 msgid "Plugin installation requires explicit consent"
 msgstr "Norint įdiegti įskiepį, reikia aiškaus sutikimo"
 
-#: packages/admin/src/router.tsx:3438
+#: packages/admin/src/router.tsx:3447
 msgid "Plugin Marketplace"
 msgstr "Įskiepių prekyvietė"
 
@@ -11514,7 +11797,7 @@ msgid "Plugin Permissions"
 msgstr "Įskiepio leidimai"
 
 #: packages/admin/src/components/RegistryBrowse.tsx:104
-#: packages/admin/src/router.tsx:3395
+#: packages/admin/src/router.tsx:3404
 msgid "Plugin Registry"
 msgstr "Įskiepių registras"
 
@@ -11523,8 +11806,8 @@ msgstr "Įskiepių registras"
 msgid "Plugin registry configuration error"
 msgstr "Įskiepių registro konfigūracijos klaida"
 
-#: packages/admin/src/router.tsx:3431
-#: packages/admin/src/router.tsx:3468
+#: packages/admin/src/router.tsx:3440
+#: packages/admin/src/router.tsx:3477
 msgid "Plugin registry is not configured."
 msgstr "Įskiepių registras nesukonfigūruotas."
 
@@ -11534,7 +11817,7 @@ msgid "Plugin responded with {0}: {text}"
 msgstr "Įskiepis grąžino atsakymą {0}: {text}"
 
 #: packages/admin/src/components/PluginSettings.tsx:38
-#: packages/admin/src/router.tsx:4019
+#: packages/admin/src/router.tsx:4048
 msgid "Plugin Settings"
 msgstr "Įskiepio nustatymai"
 
@@ -11565,9 +11848,9 @@ msgstr "Įskiepio valdiklio klaida"
 #: packages/admin/src/components/PluginManager.tsx:181
 #: packages/admin/src/components/PluginManager.tsx:190
 #: packages/admin/src/components/PluginManager.tsx:200
-#: packages/admin/src/components/Sidebar.tsx:462
-#: packages/admin/src/components/Sidebar.tsx:588
-#: packages/admin/src/router.tsx:3380
+#: packages/admin/src/components/Sidebar.tsx:463
+#: packages/admin/src/components/Sidebar.tsx:592
+#: packages/admin/src/router.tsx:3389
 msgid "Plugins"
 msgstr "Įskiepiai"
 
@@ -11644,7 +11927,7 @@ msgid "Preparing to download files from WordPress..."
 msgstr "Ruošiamasi atsisiųsti failus iš „WordPress“..."
 
 #: packages/admin/src/components/auth/PasskeyLogin.tsx:163
-#: packages/admin/src/components/SetupWizard.tsx:298
+#: packages/admin/src/components/SetupWizard.tsx:304
 msgid "Preparing..."
 msgstr "Ruošiama..."
 
@@ -11683,7 +11966,7 @@ msgstr "Peržiūrėti juodraštį"
 msgid "Preview of {0}"
 msgstr "Peržiūra: {0}"
 
-#: packages/admin/src/router.tsx:1467
+#: packages/admin/src/router.tsx:1476
 msgid "Preview opens once your edits are saved"
 msgstr "Peržiūra atsivers išsaugojus pakeitimus"
 
@@ -11806,11 +12089,6 @@ msgstr "Skelbti dabar?"
 msgid "Publish, unpublish, schedule, and unschedule content"
 msgstr "Skelbti turinį, atšaukti paskelbimą, suplanuoti skelbimą ir atšaukti suplanuotą skelbimą"
 
-#. js-lingui-explicit-id
-#: packages/admin/src/locales/server.ts:54
-msgid "visualEditing.published"
-msgstr "Paskelbta"
-
 #: packages/admin/src/components/calendar/CalendarEntry.tsx:43
 #: packages/admin/src/components/calendar/CalendarEntryPanel.tsx:226
 #: packages/admin/src/components/ContentList.tsx:1072
@@ -11820,8 +12098,13 @@ msgstr "Paskelbta"
 #: packages/admin/src/components/Dashboard.tsx:527
 #: packages/admin/src/components/revisions/RevisionList.tsx:268
 #: packages/admin/src/components/revisions/RevisionViewBar.tsx:164
-#: packages/admin/src/router.tsx:1989
+#: packages/admin/src/router.tsx:1998
 msgid "Published"
+msgstr "Paskelbta"
+
+#. js-lingui-explicit-id
+#: packages/admin/src/locales/server.ts:54
+msgid "visualEditing.published"
 msgstr "Paskelbta"
 
 #. placeholder {0}: isolate(formatDate(latest.publishedAt, i18n.locale))
@@ -11833,7 +12116,7 @@ msgstr "Paskelbta {0}"
 msgid "Published {liveSince}"
 msgstr "Paskelbta {liveSince}"
 
-#: packages/admin/src/router.tsx:797
+#: packages/admin/src/router.tsx:806
 msgid "Published {total} items"
 msgstr "Paskelbta elementų: {total}"
 
@@ -11973,7 +12256,7 @@ msgid "Read your taxonomies and terms"
 msgstr "Skaityti jūsų taksonomijas ir terminus"
 
 #: packages/admin/src/components/EntryLockNotice.tsx:96
-#: packages/admin/src/router.tsx:2585
+#: packages/admin/src/router.tsx:2594
 msgid "Read-only"
 msgstr "Tik skaityti"
 
@@ -12063,8 +12346,8 @@ msgstr "Peradresuojama į prisijungimo puslapį..."
 #: packages/admin/src/components/Redirects.tsx:731
 #: packages/admin/src/components/settings/transfer/labels.ts:33
 #: packages/admin/src/components/settings/transfer/labels.ts:90
-#: packages/admin/src/components/Sidebar.tsx:529
-#: packages/admin/src/router.tsx:3566
+#: packages/admin/src/components/Sidebar.tsx:530
+#: packages/admin/src/router.tsx:3575
 msgid "Redirects"
 msgstr "Peradresavimai"
 
@@ -12134,8 +12417,8 @@ msgstr "Registracija atšaukta arba baigėsi jai skirtas laikas. Bandykite dar k
 
 #: packages/admin/src/components/PluginManager.tsx:218
 #: packages/admin/src/components/PluginManager.tsx:463
-#: packages/admin/src/components/Sidebar.tsx:597
-#: packages/admin/src/router.tsx:3395
+#: packages/admin/src/components/Sidebar.tsx:601
+#: packages/admin/src/router.tsx:3404
 msgid "Registry"
 msgstr "Registras"
 
@@ -12144,7 +12427,7 @@ msgstr "Registras"
 #: packages/admin/src/components/RelationsPanel.tsx:65
 #: packages/admin/src/components/settings/transfer/labels.ts:14
 #: packages/admin/src/components/settings/transfer/labels.ts:77
-#: packages/admin/src/router.tsx:3769
+#: packages/admin/src/router.tsx:3798
 msgid "Relations"
 msgstr "Ryšiai"
 
@@ -12168,7 +12451,7 @@ msgid "Release notes"
 msgstr "Versijos pastabos"
 
 #: packages/admin/src/components/co-editing/SyncStatus.tsx:109
-#: packages/admin/src/router.tsx:2610
+#: packages/admin/src/router.tsx:2619
 msgid "Reload"
 msgstr "Įkelti iš naujo"
 
@@ -12180,7 +12463,7 @@ msgstr "Atnaujinę „EmDash“, iš naujo įkelkite puslapį ir bandykite dar k
 msgid "Reload page"
 msgstr "Įkelti puslapį iš naujo"
 
-#: packages/admin/src/router.tsx:2601
+#: packages/admin/src/router.tsx:2610
 msgid "Reloading the admin"
 msgstr "Administravimo sąsaja įkeliama iš naujo"
 
@@ -12204,6 +12487,7 @@ msgstr "Pašalinti"
 #: packages/admin/src/components/ImageFieldRenderer.tsx:605
 #: packages/admin/src/components/ImageFieldRenderer.tsx:846
 #: packages/admin/src/components/media/MediaBrowserItems.tsx:224
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:705
 #: packages/admin/src/components/PortableTextEditor.tsx:5422
 #: packages/admin/src/components/settings/GeneralSettings.tsx:478
 #: packages/admin/src/components/settings/GeneralSettings.tsx:538
@@ -12237,6 +12521,7 @@ msgstr "Pašalinti „{entry}“"
 #: packages/admin/src/components/ContentEditor.tsx:5189
 #: packages/admin/src/components/ContentEditor.tsx:5255
 #: packages/admin/src/components/ImageFieldRenderer.tsx:833
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:679
 #: packages/admin/src/components/SeoImageField.tsx:206
 #: packages/admin/src/components/SeoImageField.tsx:207
 msgid "Remove {label}"
@@ -12289,6 +12574,10 @@ msgstr "Pašalinti elementą „{0}“"
 #: packages/admin/src/components/PortableTextEditor.tsx:4658
 msgid "Remove link"
 msgstr "Pašalinti nuorodą"
+
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:703
+msgid "Remove member?"
+msgstr ""
 
 #: packages/admin/src/components/settings/PasskeyItem.tsx:161
 msgid "Remove passkey"
@@ -12399,11 +12688,13 @@ msgid "Removing starter content"
 msgstr "Šalinamas pradinis turinys"
 
 #: packages/admin/src/components/editor/ImageDetailPanel.tsx:360
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:706
 #: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:441
 #: packages/admin/src/components/settings/PasskeyItem.tsx:183
 msgid "Removing..."
 msgstr "Šalinama..."
 
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:129
 #: packages/admin/src/components/settings/PasskeyItem.tsx:149
 msgid "Rename"
 msgstr "Pervadinti"
@@ -12417,6 +12708,10 @@ msgstr "Pervadinti „{0}“"
 #: packages/admin/src/components/MenuEditor.tsx:536
 msgid "Rename menu"
 msgstr "Pervadinti meniu"
+
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:178
+msgid "Rename organization"
+msgstr ""
 
 #: packages/admin/src/components/settings/PasskeyItem.tsx:150
 msgid "Rename passkey"
@@ -12573,7 +12868,7 @@ msgstr "Saugykla"
 msgid "Request a new link"
 msgstr "Gauti naują nuorodą"
 
-#: packages/admin/src/lib/api/client.ts:379
+#: packages/admin/src/lib/api/client.ts:384
 msgid "Request failed"
 msgstr "Užklausa nepavyko"
 
@@ -12753,7 +13048,7 @@ msgstr "Nebenaudojama"
 #: packages/admin/src/components/settings/SidebarsSettings.tsx:92
 #: packages/admin/src/components/ThemeMarketplaceBrowse.tsx:122
 #: packages/admin/src/lib/content-editor-panels.tsx:319
-#: packages/admin/src/router.tsx:4174
+#: packages/admin/src/router.tsx:4205
 #: packages/admin/src/routes/byline-schema.tsx:264
 #: packages/admin/src/routes/calendar.tsx:319
 msgid "Retry"
@@ -12804,7 +13099,7 @@ msgstr "Bandoma dar kartą…"
 msgid "Reusable content blocks you can insert into any content"
 msgstr "Daugkartinio naudojimo blokai, kuriuos galite įterpti į bet kokį turinį"
 
-#: packages/admin/src/router.tsx:2039
+#: packages/admin/src/router.tsx:2048
 msgid "Reverted to published version"
 msgstr "Grąžinta paskelbta versija"
 
@@ -12915,17 +13210,28 @@ msgstr "Rizikos įvertis: {0}/100"
 msgid "robots.txt"
 msgstr "robots.txt"
 
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:804
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:805
 #: packages/admin/src/components/users/InviteUserModal.tsx:200
 #: packages/admin/src/components/users/InviteUserModal.tsx:203
 #: packages/admin/src/components/users/UserDetail.tsx:173
 #: packages/admin/src/components/users/UserDetail.tsx:185
-#: packages/admin/src/components/users/UserList.tsx:99
+#: packages/admin/src/components/users/UserList.tsx:107
 msgid "Role"
 msgstr "Rolė"
 
 #: packages/admin/src/components/users/roleDefinitions.ts:61
 msgid "Role {role}"
 msgstr "Rolė: {role}"
+
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:659
+msgid "Role of {label}"
+msgstr ""
+
+#. placeholder {0}: site.name
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:878
+msgid "Role on {0}"
+msgstr ""
 
 #: packages/admin/src/components/BylineCreditsEditor.tsx:763
 msgid "Role on this post (optional)"
@@ -12992,8 +13298,8 @@ msgstr "Sutampa su dabartine versija"
 msgid "Same window"
 msgstr "Tas pats langas"
 
-#: packages/admin/src/components/SetupWizard.tsx:168
-#: packages/admin/src/components/SetupWizard.tsx:208
+#: packages/admin/src/components/SetupWizard.tsx:174
+#: packages/admin/src/components/SetupWizard.tsx:214
 msgid "Sample content"
 msgstr "Pavyzdinis turinys"
 
@@ -13004,6 +13310,8 @@ msgstr "Pavyzdinis turinys"
 #: packages/admin/src/components/MediaFolderDialog.tsx:207
 #: packages/admin/src/components/MenuEditor.tsx:571
 #: packages/admin/src/components/MenuEditor.tsx:896
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:204
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:548
 #: packages/admin/src/components/PortableTextEditor.tsx:1433
 #: packages/admin/src/components/Redirects.tsx:313
 #: packages/admin/src/components/SaveButton.tsx:51
@@ -13117,6 +13425,8 @@ msgstr "Išsaugojus sukuriamas juodraštis, kurio svetainės lankytojai nemato. 
 #: packages/admin/src/components/MediaFolderDialog.tsx:207
 #: packages/admin/src/components/MenuEditor.tsx:571
 #: packages/admin/src/components/MenuEditor.tsx:896
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:204
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:548
 #: packages/admin/src/components/PluginSettings.tsx:150
 #: packages/admin/src/components/PluginSettings.tsx:193
 #: packages/admin/src/components/Redirects.tsx:310
@@ -13178,7 +13488,7 @@ msgstr "Suplanuotas skelbimas atšauktas"
 #: packages/admin/src/components/calendar/CalendarEntryPanel.tsx:420
 #: packages/admin/src/components/ContentList.tsx:1074
 #: packages/admin/src/components/ContentStatusBadge.tsx:63
-#: packages/admin/src/router.tsx:2087
+#: packages/admin/src/router.tsx:2096
 msgid "Scheduled"
 msgstr "Suplanuota"
 
@@ -13304,7 +13614,7 @@ msgstr "Ieškoti blokų"
 msgid "Search by filename..."
 msgstr "Ieškoti pagal failo pavadinimą..."
 
-#: packages/admin/src/components/users/UserList.tsx:72
+#: packages/admin/src/components/users/UserList.tsx:80
 msgid "Search by name or email..."
 msgstr "Ieškoti pagal vardą arba el. pašto adresą..."
 
@@ -13446,7 +13756,7 @@ msgstr "Ieškoti laiko juostų…"
 msgid "Search to narrow the list"
 msgstr "Ieškokite sąrašui susiaurinti"
 
-#: packages/admin/src/components/users/UserList.tsx:75
+#: packages/admin/src/components/users/UserList.tsx:83
 msgid "Search users"
 msgstr "Ieškoti naudotojų"
 
@@ -13501,8 +13811,8 @@ msgstr "Skilties pavadinimas"
 #: packages/admin/src/components/Sections.tsx:218
 #: packages/admin/src/components/settings/transfer/labels.ts:32
 #: packages/admin/src/components/settings/transfer/labels.ts:93
-#: packages/admin/src/components/Sidebar.tsx:543
-#: packages/admin/src/router.tsx:3573
+#: packages/admin/src/components/Sidebar.tsx:544
+#: packages/admin/src/router.tsx:3602
 msgid "Sections"
 msgstr "Skiltys"
 
@@ -13510,7 +13820,7 @@ msgstr "Skiltys"
 msgid "Sections could not be loaded."
 msgstr "Nepavyko įkelti skilčių."
 
-#: packages/admin/src/components/SetupWizard.tsx:621
+#: packages/admin/src/components/SetupWizard.tsx:638
 msgid "Secure your account"
 msgstr "Apsaugokite savo paskyrą"
 
@@ -13518,7 +13828,7 @@ msgstr "Apsaugokite savo paskyrą"
 #: packages/admin/src/components/Settings.tsx:90
 #: packages/admin/src/components/settings/EmailSettings.tsx:261
 #: packages/admin/src/components/settings/EmailSettings.tsx:350
-#: packages/admin/src/router.tsx:3235
+#: packages/admin/src/router.tsx:3244
 msgid "Security"
 msgstr "Saugumas"
 
@@ -13556,11 +13866,11 @@ msgid "Security error. Make sure you're on a secure connection."
 msgstr "Saugumo klaida. Įsitikinkite, kad naudojate saugų ryšį."
 
 #: packages/admin/src/components/AdminCommandPalette.tsx:263
-#: packages/admin/src/components/Header.tsx:114
+#: packages/admin/src/components/Header.tsx:161
 #: packages/admin/src/components/Settings.tsx:86
 #: packages/admin/src/components/settings/SecuritySettings.tsx:93
 #: packages/admin/src/components/settings/SecuritySettings.tsx:115
-#: packages/admin/src/router.tsx:3234
+#: packages/admin/src/router.tsx:3243
 msgid "Security Settings"
 msgstr "Saugumo nustatymai"
 
@@ -13756,7 +14066,7 @@ msgstr "Pasirinkimas"
 #: packages/admin/src/components/Settings.tsx:97
 #: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:219
 #: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:241
-#: packages/admin/src/router.tsx:3259
+#: packages/admin/src/router.tsx:3268
 msgid "Self-Signup Domains"
 msgstr "Domenai su savarankiška registracija"
 
@@ -13780,7 +14090,7 @@ msgstr "Siųsti el. laiškus"
 msgid "Send Invite"
 msgstr "Siųsti kvietimą"
 
-#: packages/admin/src/components/LoginPage.tsx:153
+#: packages/admin/src/components/LoginPage.tsx:154
 msgid "Send magic link"
 msgstr "Siųsti prisijungimo nuorodą"
 
@@ -13808,7 +14118,7 @@ msgstr "Siuntėjo el. pašto adresas (nebūtina)"
 msgid "Sender name (optional)"
 msgstr "Siuntėjo vardas (nebūtina)"
 
-#: packages/admin/src/components/LoginPage.tsx:153
+#: packages/admin/src/components/LoginPage.tsx:154
 #: packages/admin/src/components/settings/EmailSettings.tsx:410
 #: packages/admin/src/components/settings/GeneralSettings.tsx:662
 #: packages/admin/src/components/SignupPage.tsx:109
@@ -13822,7 +14132,7 @@ msgstr "Siunčiama..."
 #: packages/admin/src/components/ContentTypeEditor.tsx:689
 #: packages/admin/src/components/Settings.tsx:68
 #: packages/admin/src/lib/editor-sections.ts:37
-#: packages/admin/src/router.tsx:3371
+#: packages/admin/src/router.tsx:3380
 msgid "SEO"
 msgstr "SEO"
 
@@ -13833,7 +14143,7 @@ msgid "SEO settings"
 msgstr "SEO nustatymai"
 
 #: packages/admin/src/components/settings/SeoSettings.tsx:126
-#: packages/admin/src/router.tsx:3370
+#: packages/admin/src/router.tsx:3379
 msgid "SEO Settings"
 msgstr "SEO nustatymai"
 
@@ -13895,7 +14205,11 @@ msgstr "Nustatyti medijos failų naudojimo stebėjimą"
 msgid "Set up Windows Hello"
 msgstr "Nustatyti „Windows Hello“"
 
-#: packages/admin/src/components/SetupWizard.tsx:619
+#: packages/admin/src/components/SetupWizard.tsx:622
+msgid "Set up your organizations"
+msgstr ""
+
+#: packages/admin/src/components/SetupWizard.tsx:636
 msgid "Set up your site"
 msgstr "Paruoškite svetainę"
 
@@ -13904,19 +14218,19 @@ msgstr "Paruoškite svetainę"
 msgid "Setting up"
 msgstr "Ruošiama"
 
-#: packages/admin/src/components/SetupWizard.tsx:202
+#: packages/admin/src/components/SetupWizard.tsx:208
 msgid "Setting up..."
 msgstr "Ruošiama..."
 
 #: packages/admin/src/components/AdminCommandPalette.tsx:247
 #: packages/admin/src/components/ContentEditor.tsx:3132
 #: packages/admin/src/components/ContentTypeEditor.tsx:485
-#: packages/admin/src/components/Header.tsx:122
+#: packages/admin/src/components/Header.tsx:169
 #: packages/admin/src/components/PluginManager.tsx:546
 #: packages/admin/src/components/Settings.tsx:47
-#: packages/admin/src/components/Sidebar.tsx:611
+#: packages/admin/src/components/Sidebar.tsx:615
 #: packages/admin/src/components/WordPressImport.tsx:1861
-#: packages/admin/src/router.tsx:3215
+#: packages/admin/src/router.tsx:3224
 msgid "Settings"
 msgstr "Nustatymai"
 
@@ -13933,7 +14247,7 @@ msgstr "Peržiūrėti nustatymus"
 msgid "Settings saved successfully"
 msgstr "Nustatymai išsaugoti"
 
-#: packages/admin/src/router.tsx:479
+#: packages/admin/src/router.tsx:482
 msgid "Setup"
 msgstr "Pradinė sąranka"
 
@@ -13941,8 +14255,8 @@ msgstr "Pradinė sąranka"
 msgid "Setup couldn’t continue. Try again."
 msgstr "Nepavyko tęsti sąrankos. Bandykite dar kartą."
 
-#: packages/admin/src/components/SetupWizard.tsx:524
-#: packages/admin/src/components/SetupWizard.tsx:527
+#: packages/admin/src/components/SetupWizard.tsx:530
+#: packages/admin/src/components/SetupWizard.tsx:533
 msgid "Setup failed"
 msgstr "Sąranka nepavyko"
 
@@ -14038,10 +14352,11 @@ msgstr "Rodo naujo įrašo kūrimo mygtuką"
 
 #: packages/admin/src/components/Settings.tsx:142
 #: packages/admin/src/components/settings/SidebarsSettings.tsx:80
-#: packages/admin/src/router.tsx:3320
+#: packages/admin/src/router.tsx:3329
 msgid "Sidebars"
 msgstr "Šoninės juostos"
 
+#: packages/admin/src/components/LoginPage.tsx:246
 #: packages/admin/src/components/SignupPage.tsx:466
 #: packages/admin/src/locales/emails.ts:65
 #: packages/auth-atproto/src/admin.tsx:112
@@ -14049,7 +14364,7 @@ msgstr "Šoninės juostos"
 msgid "Sign in"
 msgstr "Prisijungti"
 
-#: packages/admin/src/components/SetupWizard.tsx:411
+#: packages/admin/src/components/SetupWizard.tsx:417
 msgid "Sign In"
 msgstr "Prisijungti"
 
@@ -14062,28 +14377,32 @@ msgstr "Pereiti prie prisijungimo"
 msgid "Sign in to {siteName}"
 msgstr "Prisijungti prie „{siteName}“"
 
-#: packages/admin/src/components/LoginPage.tsx:253
+#: packages/admin/src/components/SetupWizard.tsx:623
+msgid "Sign in to become the first administrator. Only accounts from {domains} can sign in. Next you'll create organizations and their sites."
+msgstr ""
+
+#: packages/admin/src/components/LoginPage.tsx:264
 msgid "Sign in to your site"
 msgstr "Prisijunkite prie savo svetainės"
 
 #. placeholder {0}: activeProviderEntry.label ?? activeProvider
 #. placeholder {0}: provider.label
-#: packages/admin/src/components/LoginPage.tsx:252
-#: packages/admin/src/components/SetupWizard.tsx:328
+#: packages/admin/src/components/LoginPage.tsx:263
+#: packages/admin/src/components/SetupWizard.tsx:334
 msgid "Sign in with {0}"
 msgstr "Prisijungti naudojant {0}"
 
-#: packages/admin/src/components/LoginPage.tsx:250
+#: packages/admin/src/components/LoginPage.tsx:261
 #: packages/admin/src/components/MagicLinkConfirmPage.tsx:63
 msgid "Sign in with email"
 msgstr "Prisijungti el. paštu"
 
-#: packages/admin/src/components/LoginPage.tsx:311
+#: packages/admin/src/components/LoginPage.tsx:322
 msgid "Sign in with email link"
 msgstr "Prisijungti per el. paštu gautą nuorodą"
 
 #: packages/admin/src/components/auth/PasskeyLogin.tsx:134
-#: packages/admin/src/components/LoginPage.tsx:273
+#: packages/admin/src/components/LoginPage.tsx:284
 msgid "Sign in with Passkey"
 msgstr "Prisijungti naudojant prieigos raktą"
 
@@ -14091,7 +14410,7 @@ msgstr "Prisijungti naudojant prieigos raktą"
 msgid "Sign in with your Bluesky/Atmosphere handle"
 msgstr "Prisijunkite naudodami savo „Bluesky“ arba „Atmosphere“ naudotojo vardą"
 
-#: packages/admin/src/router.tsx:519
+#: packages/admin/src/router.tsx:522
 msgid "Sign up"
 msgstr "Registruotis"
 
@@ -14125,9 +14444,13 @@ msgid "Single line text input"
 msgstr "Vienos eilutės teksto laukas"
 
 #: packages/admin/src/components/Settings.tsx:52
-#: packages/admin/src/components/SetupWizard.tsx:409
+#: packages/admin/src/components/SetupWizard.tsx:415
 msgid "Site"
 msgstr "Svetainė"
+
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:330
+msgid "Site added"
+msgstr ""
 
 #: packages/admin/src/components/settings/ApiTokenSettings.tsx:102
 msgid "Site Export"
@@ -14158,16 +14481,25 @@ msgstr "Svetainės importas"
 msgid "Site Import Analysis"
 msgstr "Svetainės importo analizė"
 
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:522
+msgid "Site is online"
+msgstr ""
+
 #: packages/admin/src/components/settings/EmailSettings.tsx:294
 msgid "Site Name"
 msgstr "Svetainės pavadinimas"
+
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:670
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:866
+msgid "Site roles of {label}"
+msgstr ""
 
 #: packages/admin/src/components/settings/transfer/labels.ts:36
 msgid "Site settings"
 msgstr "Svetainės nustatymai"
 
 #: packages/admin/src/components/MediaUsedIn.tsx:298
-#: packages/admin/src/components/SetupWizard.tsx:407
+#: packages/admin/src/components/SetupWizard.tsx:413
 #: packages/admin/src/components/WordPressImport.tsx:1203
 msgid "Site Settings"
 msgstr "Svetainės nustatymai"
@@ -14185,7 +14517,7 @@ msgid "Site title"
 msgstr "Svetainės pavadinimas"
 
 #: packages/admin/src/components/settings/GeneralSettings.tsx:356
-#: packages/admin/src/components/SetupWizard.tsx:138
+#: packages/admin/src/components/SetupWizard.tsx:144
 msgid "Site Title"
 msgstr "Svetainės pavadinimas"
 
@@ -14193,7 +14525,7 @@ msgstr "Svetainės pavadinimas"
 msgid "Site title & tagline"
 msgstr "Svetainės pavadinimas ir poantraštė"
 
-#: packages/admin/src/components/SetupWizard.tsx:122
+#: packages/admin/src/components/SetupWizard.tsx:128
 msgid "Site title is required"
 msgstr "Įveskite svetainės pavadinimą"
 
@@ -14212,6 +14544,10 @@ msgstr "Svetainės URL pakeistas į {url}"
 #: packages/admin/src/components/settings/ChangeDomainDialog.tsx:149
 msgid "Sitemaps and absolute URLs in search and social metadata will use the new domain. Links in emails and plugins keep using {configuredUrl}, set by the deployment configuration."
 msgstr "Svetainės žemėlapiuose ir absoliučiuosiuose paieškos bei socialinių tinklų metaduomenų URL bus naudojamas naujasis domenas. Laiškų ir įskiepių nuorodose ir toliau bus naudojamas diegimo konfigūracijoje nurodytas adresas {configuredUrl}."
+
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:220
+msgid "Sites"
+msgstr ""
 
 #: packages/admin/src/components/settings/BackupSettings.tsx:347
 msgid "Sites on Cloudflare D1 can additionally restore the database to any minute within the last 30 days using D1 Time Travel — always on, no setup required."
@@ -14238,6 +14574,11 @@ msgstr "Praleisti medijos failų importą"
 msgid "Skipped"
 msgstr "Praleista"
 
+#. placeholder {0}: conflicts.join(", ")
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:459
+msgid "Skipped because another account uses the email: {0}"
+msgstr ""
+
 #: packages/admin/src/components/BlockTypeList.tsx:39
 #: packages/admin/src/components/BylineFieldEditor.tsx:354
 #: packages/admin/src/components/BylineFieldEditor.tsx:357
@@ -14256,6 +14597,8 @@ msgstr "Praleista"
 #: packages/admin/src/components/FieldEditor.tsx:1662
 #: packages/admin/src/components/FieldEditor.tsx:1665
 #: packages/admin/src/components/FieldEditor.tsx:1668
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:381
+#: packages/admin/src/components/multisite/OrganizationsPage.tsx:161
 #: packages/admin/src/components/RelationForm.tsx:435
 #: packages/admin/src/components/RelationForm.tsx:440
 #: packages/admin/src/components/RelationForm.tsx:444
@@ -14317,7 +14660,7 @@ msgstr "smtp.example.com"
 
 #: packages/admin/src/components/Settings.tsx:62
 #: packages/admin/src/components/settings/SocialSettings.tsx:89
-#: packages/admin/src/router.tsx:3356
+#: packages/admin/src/router.tsx:3365
 msgid "Social Links"
 msgstr "Socialinių tinklų nuorodos"
 
@@ -14334,7 +14677,7 @@ msgstr "Socialinių tinklų profilių nuorodos"
 msgid "Social Profiles"
 msgstr "Socialinių tinklų profiliai"
 
-#: packages/admin/src/router.tsx:3355
+#: packages/admin/src/router.tsx:3364
 msgid "Social Settings"
 msgstr "Socialinių tinklų nustatymai"
 
@@ -14379,7 +14722,7 @@ msgstr "Kai kurioms medijos nuorodoms nepavyko rasti atitinkamų failų"
 msgid "Some references point to content that is not in the package"
 msgstr "Kai kurios nuorodos veda į turinį, kurio pakete nėra"
 
-#: packages/admin/src/router.tsx:1277
+#: packages/admin/src/router.tsx:1286
 msgid "Someone"
 msgstr "Kažkas"
 
@@ -14469,7 +14812,7 @@ msgstr "Kvadratas (1:1)"
 msgid "Stable identifier for your site, such as primary or footer."
 msgstr "Pastovus svetainės identifikatorius, pvz., primary arba footer."
 
-#: packages/admin/src/components/Header.tsx:52
+#: packages/admin/src/components/Header.tsx:94
 #: packages/admin/src/components/settings/GeneralSettings.tsx:114
 msgid "Staging"
 msgstr "Bandomoji aplinka"
@@ -14487,11 +14830,11 @@ msgstr "Pradėti importą"
 msgid "Start Import"
 msgstr "Pradėti importą"
 
-#: packages/admin/src/components/SetupWizard.tsx:175
+#: packages/admin/src/components/SetupWizard.tsx:181
 msgid "Start with the template’s content types and no content."
 msgstr "Pradėkite nuo šablone apibrėžtų turinio tipų. Turinį kursite patys."
 
-#: packages/admin/src/components/SetupWizard.tsx:169
+#: packages/admin/src/components/SetupWizard.tsx:175
 msgid "Start with the template’s example posts and pages. Recommended for new sites."
 msgstr "Pradėkite nuo šablono pavyzdinių įrašų ir puslapių. Rekomenduojama naujoms svetainėms."
 
@@ -14542,7 +14885,7 @@ msgstr "Būsena"
 #: packages/admin/src/components/settings/MediaUsageSettings.tsx:382
 #: packages/admin/src/components/settings/MediaUsageSettings.tsx:613
 #: packages/admin/src/components/settings/MediaUsageSettings.tsx:639
-#: packages/admin/src/components/users/UserList.tsx:102
+#: packages/admin/src/components/users/UserList.tsx:110
 msgid "Status"
 msgstr "Būsena"
 
@@ -14638,6 +14981,10 @@ msgstr "Swift"
 msgid "Switch back to staging"
 msgstr "Grįžti į bandomąją aplinką"
 
+#: packages/admin/src/components/multisite/SiteSwitcher.tsx:33
+msgid "Switch site, current: {label}"
+msgstr ""
+
 #: packages/admin/src/components/ThemeToggle.tsx:19
 msgid "Switch to dark"
 msgstr "Įjungti tamsiąją veikseną"
@@ -14697,7 +15044,7 @@ msgstr "Lentelių negalima įklijuoti į sąrašus ar citatas. Pabandykite įkli
 
 #: packages/admin/src/components/settings/GeneralSettings.tsx:364
 #: packages/admin/src/components/settings/transfer/ImportReview.tsx:375
-#: packages/admin/src/components/SetupWizard.tsx:149
+#: packages/admin/src/components/SetupWizard.tsx:155
 msgid "Tagline"
 msgstr "Poantraštė"
 
@@ -14733,7 +15080,7 @@ msgstr "Vertimo kalba"
 #: packages/admin/src/components/settings/transfer/labels.ts:13
 #: packages/admin/src/components/TaxonomySidebar.tsx:989
 #: packages/admin/src/lib/editor-sections.ts:36
-#: packages/admin/src/router.tsx:3544
+#: packages/admin/src/router.tsx:3553
 msgid "Taxonomies"
 msgstr "Taksonomijos"
 
@@ -14782,7 +15129,7 @@ msgstr "Techninė patikros informacija"
 msgid "Tell users where to sign in"
 msgstr "Nurodykite naudotojams, kur prisijungti"
 
-#: packages/admin/src/components/SetupWizard.tsx:219
+#: packages/admin/src/components/SetupWizard.tsx:225
 msgid "Template:"
 msgstr "Šablonas:"
 
@@ -14861,7 +15208,7 @@ msgstr "laukas „{0}“ kolekcijoje „{1}“, kuriame rodomi į šį įrašą 
 msgid "the {0} field on {1}, which picks entries it links to"
 msgstr "laukas „{0}“ kolekcijoje „{1}“, kuriame pasirenkami susiję įrašai"
 
-#: packages/admin/src/router.tsx:1210
+#: packages/admin/src/router.tsx:1219
 msgid "The admin was updated"
 msgstr "Administravimo sąsaja atnaujinta"
 
@@ -15026,7 +15373,7 @@ msgstr "Paskutinis eksportas nepavyko"
 msgid "The latest media request failed. Showing the previous page."
 msgstr "Paskutinė medijos užklausa nepavyko. Rodomas ankstesnis puslapis."
 
-#: packages/admin/src/components/LoginPage.tsx:116
+#: packages/admin/src/components/LoginPage.tsx:117
 #: packages/admin/src/components/SignupPage.tsx:159
 msgid "The link will expire in 15 minutes."
 msgstr "Nuoroda nustos galioti po 15 minučių."
@@ -15132,7 +15479,7 @@ msgstr "Paketo turinys bus įrašytas į šią svetainę. Pradėto importo atša
 msgid "The package’s file index is not valid."
 msgstr "Paketo failų rodyklė netinkama."
 
-#: packages/admin/src/router.tsx:4188
+#: packages/admin/src/router.tsx:4219
 msgid "The page you're looking for doesn't exist."
 msgstr "Puslapio, kurio ieškote, nėra."
 
@@ -15195,7 +15542,7 @@ msgstr "Sukūrus lauką, ryšio ir susietos kolekcijos keisti nebegalima. Leidž
 msgid "The relationship decides the referenced collection and how many entries this field accepts."
 msgstr "Ryšys apibrėžia susietą kolekciją ir tai, kiek įrašų galima pasirinkti šiame lauke."
 
-#: packages/admin/src/components/SetupWizard.tsx:189
+#: packages/admin/src/components/SetupWizard.tsx:195
 msgid "The sample content added so far is kept. Continue to add the rest."
 msgstr "Jau pridėtas pavyzdinis turinys išsaugotas. Tęskite, kad pridėtumėte likusį."
 
@@ -15222,6 +15569,10 @@ msgstr "Vykstant operacijai serveris buvo atnaujintas. Iš naujo įkelkite pusla
 #: packages/admin/src/components/CapabilityConsentDialog.tsx:160
 msgid "The signed publisher records and package are valid. Build provenance was not provided."
 msgstr "Leidėjo pasirašyti įrašai ir paketas yra galiojantys. Surinkimo kilmės duomenų nepateikta."
+
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:358
+msgid "The site gets its own content and media, kept in the database and storage you choose. You can add its domain now or later."
+msgstr ""
 
 #: packages/admin/src/components/settings/transfer/labels.ts:186
 msgid "The site kept changing while it was exported. Try again when editing is quieter."
@@ -15287,7 +15638,7 @@ msgstr "Tema"
 msgid "Theme \"{id}\" not found"
 msgstr "Tema „{id}“ nerasta"
 
-#: packages/admin/src/router.tsx:3495
+#: packages/admin/src/router.tsx:3504
 msgid "Theme Details"
 msgstr "Temos informacija"
 
@@ -15296,7 +15647,7 @@ msgstr "Temos informacija"
 msgid "Theme ID: {0}"
 msgstr "Temos ID: {0}"
 
-#: packages/admin/src/router.tsx:3487
+#: packages/admin/src/router.tsx:3496
 msgid "Theme Marketplace"
 msgstr "Temų prekyvietė"
 
@@ -15328,11 +15679,15 @@ msgstr "Peradresavimų per daug, kad prieš importuojant būtų galima patikrint
 msgid "These entries are password-protected in WordPress. EmDash has no per-entry passwords, so they were imported as drafts. Review each one before you publish it."
 msgstr "Šie įrašai „WordPress“ svetainėje apsaugoti slaptažodžiais. „EmDash“ nepalaiko atskirų įrašų slaptažodžių, todėl įrašai importuoti kaip juodraščiai. Prieš skelbdami peržiūrėkite kiekvieną įrašą."
 
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:914
+msgid "These people join when they first sign in with the invited email."
+msgstr ""
+
 #: packages/admin/src/components/CapabilityConsentDialog.tsx:295
 msgid "These tools remain disabled after installation until you explicitly enable agent access."
 msgstr "Įdiegus šie įrankiai bus išjungti, kol patys suteiksite agentams prieigą."
 
-#: packages/admin/src/router.tsx:1280
+#: packages/admin/src/router.tsx:1289
 msgid "They changed its publishing or schedule, or replaced its draft."
 msgstr "Buvo pakeista paskelbimo būsena ar laikas arba juodraštis pakeistas kitu."
 
@@ -15428,15 +15783,15 @@ msgid "This entry changed somewhere else after you opened it."
 msgstr "Jums atidarius šį įrašą, jis buvo pakeistas kitur."
 
 #: packages/admin/src/components/ContentEditor.tsx:2334
-#: packages/admin/src/router.tsx:1583
+#: packages/admin/src/router.tsx:1592
 msgid "This entry changed somewhere else. Save anyway, or reload to get the newer version."
 msgstr "Šis įrašas buvo pakeistas kitur. Galite vis tiek išsaugoti arba įkelti iš naujo ir gauti naujesnę versiją."
 
-#: packages/admin/src/router.tsx:2572
+#: packages/admin/src/router.tsx:2581
 msgid "This entry doesn't exist or isn't published. Your role can only view published content."
 msgstr "Šio įrašo nėra arba jis nepaskelbtas. Jūsų rolė leidžia peržiūrėti tik paskelbtą turinį."
 
-#: packages/admin/src/router.tsx:2573
+#: packages/admin/src/router.tsx:2582
 msgid "This entry doesn't exist or was deleted."
 msgstr "Šio įrašo nėra arba jis buvo ištrintas."
 
@@ -15460,7 +15815,7 @@ msgstr "Įrašas dar įkeliamas."
 msgid "This entry was due {lateness} but hasn't published. Scheduled publishing may not be running."
 msgstr "Šis įrašas jau turėjo būti paskelbtas ({lateness}). Gali būti, kad suplanuotas skelbimas neveikia."
 
-#: packages/admin/src/router.tsx:2622
+#: packages/admin/src/router.tsx:2631
 msgid "This entry was moved to Trash or deleted"
 msgstr "Įrašas perkeltas į šiukšlinę arba ištrintas"
 
@@ -15570,6 +15925,7 @@ msgstr "Ši nuoroda netinka. Įveskite žiniatinklio adresą, pvz., https://exam
 msgid "This link expires in 15 minutes."
 msgstr "Nuoroda galioja 15 minučių."
 
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:782
 #: packages/admin/src/components/users/InviteUserModal.tsx:159
 msgid "This link expires in 7 days and can only be used once."
 msgstr "Nuoroda galioja 7 dienas ir ją galima panaudoti tik vieną kartą."
@@ -15809,7 +16165,7 @@ msgstr "Įskiepis ir jo paketas bus pašalinti iš svetainės."
 msgid "This will revert to the published version. Your draft changes will be lost."
 msgstr "Bus grąžinta paskelbta versija. Juodraščio pakeitimai bus prarasti."
 
-#: packages/admin/src/components/SetupWizard.tsx:153
+#: packages/admin/src/components/SetupWizard.tsx:159
 msgid "Thoughts, tutorials, and more"
 msgstr "Mintys, pamokos ir daugiau"
 
@@ -15931,7 +16287,7 @@ msgstr "Stebėkite, kur turinyje naudojami medijos failai."
 #: packages/admin/src/components/Settings.tsx:132
 #: packages/admin/src/components/settings/TransferSettings.tsx:46
 #: packages/admin/src/components/settings/TransferSettings.tsx:79
-#: packages/admin/src/router.tsx:3306
+#: packages/admin/src/router.tsx:3315
 msgid "Transfer"
 msgstr "Perkėlimas"
 
@@ -15960,7 +16316,7 @@ msgstr "Verčiama..."
 #: packages/admin/src/components/MenuEditor.tsx:211
 #: packages/admin/src/components/TaxonomyManager.tsx:1173
 #: packages/admin/src/components/TaxonomySidebar.tsx:870
-#: packages/admin/src/router.tsx:2130
+#: packages/admin/src/router.tsx:2139
 msgid "Translation created"
 msgstr "Vertimas sukurtas"
 
@@ -16032,7 +16388,7 @@ msgstr "Pakeiskite paieškos tekstą arba filtrus."
 #: packages/admin/src/components/settings/transfer/ExportSection.tsx:333
 #: packages/admin/src/components/settings/transfer/ImportReview.tsx:471
 #: packages/admin/src/components/settings/transfer/ImportSection.tsx:460
-#: packages/admin/src/routes/users.tsx:215
+#: packages/admin/src/routes/users.tsx:240
 msgid "Try again"
 msgstr "Bandyti dar kartą"
 
@@ -16040,7 +16396,7 @@ msgstr "Bandyti dar kartą"
 msgid "Try Again"
 msgstr "Bandyti dar kartą"
 
-#: packages/admin/src/router.tsx:1468
+#: packages/admin/src/router.tsx:1477
 msgid "Try again in a moment."
 msgstr "Po akimirkos bandykite dar kartą."
 
@@ -16261,7 +16617,7 @@ msgstr "Atšaukti paskelbimą: {itemLabel}"
 msgid "Unpublish {itemLabel}?"
 msgstr ""
 
-#: packages/admin/src/router.tsx:2014
+#: packages/admin/src/router.tsx:2023
 msgid "Unpublished"
 msgstr "Nepaskelbta"
 
@@ -16292,7 +16648,7 @@ msgstr "Neišsaugoti pakeitimai"
 msgid "Unsaved content may leave your site"
 msgstr "Neišsaugotas turinys gali būti perduotas už svetainės ribų"
 
-#: packages/admin/src/router.tsx:2099
+#: packages/admin/src/router.tsx:2108
 msgid "Unscheduled"
 msgstr "Paskelbimo laikas atšauktas"
 
@@ -16686,7 +17042,11 @@ msgstr "Naudoti URL"
 msgid "Use your device's biometric authentication, security key, or PIN to sign in."
 msgstr "Prisijunkite naudodami įrenginio biometrinį tapatybės patvirtinimą, saugos raktą arba PIN kodą."
 
-#: packages/admin/src/components/LoginPage.tsx:227
+#: packages/admin/src/components/LoginPage.tsx:247
+msgid "Use your organization account to continue."
+msgstr ""
+
+#: packages/admin/src/components/LoginPage.tsx:228
 msgid "Use your registered passkey to sign in securely."
 msgstr "Saugiai prisijunkite naudodami užregistruotą prieigos raktą."
 
@@ -16721,9 +17081,9 @@ msgid "Used to identify this section. Lowercase letters, numbers, and hyphens on
 msgstr "Skirta skilčiai atpažinti. Galimos tik mažosios raidės, skaitmenys ir brūkšneliai."
 
 #: packages/admin/src/components/DeviceAuthorizePage.tsx:254
-#: packages/admin/src/components/Header.tsx:47
-#: packages/admin/src/components/Header.tsx:102
-#: packages/admin/src/components/users/UserList.tsx:97
+#: packages/admin/src/components/Header.tsx:89
+#: packages/admin/src/components/Header.tsx:149
+#: packages/admin/src/components/users/UserList.tsx:105
 msgid "User"
 msgstr "Naudotojas"
 
@@ -16758,9 +17118,9 @@ msgid "Username"
 msgstr "Naudotojo vardas"
 
 #: packages/admin/src/components/AdminCommandPalette.tsx:223
-#: packages/admin/src/components/Sidebar.tsx:585
-#: packages/admin/src/components/users/UserList.tsx:64
-#: packages/admin/src/router.tsx:3595
+#: packages/admin/src/components/Sidebar.tsx:586
+#: packages/admin/src/components/users/UserList.tsx:69
+#: packages/admin/src/router.tsx:3624
 msgid "Users"
 msgstr "Naudotojai"
 
@@ -16880,6 +17240,11 @@ msgstr "Vaizdo leistuvė: {0}"
 msgid "Video upload failed. Try again."
 msgstr "Nepavyko įkelti vaizdo įrašo. Bandykite dar kartą."
 
+#. placeholder {0}: site.name
+#: packages/admin/src/components/multisite/OrganizationPage.tsx:256
+msgid "View {0}"
+msgstr ""
+
 #: packages/admin/src/components/Settings.tsx:121
 msgid "View email provider status and send test emails"
 msgstr "Peržiūrėti el. pašto paslaugos būseną ir siųsti bandomuosius laiškus"
@@ -16901,8 +17266,10 @@ msgstr "Peržiūrėti paskelbtą versiją"
 msgid "View setup"
 msgstr "Peržiūrėti sąranką"
 
-#: packages/admin/src/components/Header.tsx:78
-#: packages/admin/src/components/Header.tsx:80
+#: packages/admin/src/components/Header.tsx:69
+#: packages/admin/src/components/Header.tsx:73
+#: packages/admin/src/components/Header.tsx:124
+#: packages/admin/src/components/Header.tsx:126
 msgid "View Site"
 msgstr "Peržiūrėti svetainę"
 
@@ -16998,7 +17365,7 @@ msgstr "Nepavyko prisijungti prie „WordPress“ svetainės adresu {0}. Galbūt
 msgid "We'll check what import options are available for your site."
 msgstr "Patikrinsime, kokiais būdais galite importuoti duomenis į savo svetainę."
 
-#: packages/admin/src/components/LoginPage.tsx:220
+#: packages/admin/src/components/LoginPage.tsx:221
 msgid "We'll send you a link to sign in without a password."
 msgstr "Atsiųsime nuorodą, kurią naudodami galėsite prisijungti be slaptažodžio."
 
@@ -17191,10 +17558,10 @@ msgstr "Valdiklis atnaujintas"
 #: packages/admin/src/components/PluginManager.tsx:494
 #: packages/admin/src/components/settings/transfer/labels.ts:31
 #: packages/admin/src/components/settings/transfer/labels.ts:91
-#: packages/admin/src/components/Sidebar.tsx:536
+#: packages/admin/src/components/Sidebar.tsx:537
 #: packages/admin/src/components/Widgets.tsx:456
 #: packages/admin/src/components/WordPressImport.tsx:1209
-#: packages/admin/src/router.tsx:3558
+#: packages/admin/src/router.tsx:3567
 msgid "Widgets"
 msgstr "Valdikliai"
 
@@ -17306,6 +17673,14 @@ msgstr "Vakar"
 msgid "Yoast/RankMath"
 msgstr "Yoast/RankMath"
 
+#: packages/admin/src/components/multisite/OrganizationsPage.tsx:134
+msgid "You aren't a member of any organization yet. Ask an organization Admin to add you."
+msgstr ""
+
+#: packages/admin/src/components/multisite/OrganizationsPage.tsx:146
+msgid "You become the organization's Admin. Deployment Admins can then add its sites."
+msgstr ""
+
 #: packages/admin/src/components/DeviceAuthorizePage.tsx:221
 msgid "You can close this page and return to your terminal."
 msgstr "Galite užverti šį puslapį ir grįžti į terminalą."
@@ -17339,6 +17714,10 @@ msgstr "Savo rolės pakeisti negalite"
 msgid "You do not have permission to edit this asset."
 msgstr "Neturite leidimo redaguoti šio ištekliaus."
 
+#: packages/admin/src/components/multisite/SiteSwitcher.tsx:66
+msgid "You don't have access to any sites yet"
+msgstr ""
+
 #: packages/admin/src/components/MediaLibrary.tsx:627
 msgid "You don’t have permission to move this file."
 msgstr "Neturite leidimo perkelti šio failo."
@@ -17367,7 +17746,7 @@ msgstr "Norint perkelti svetainę, reikia administratoriaus teisių."
 msgid "You need admin permissions to view this page."
 msgstr "Šiam puslapiui peržiūrėti reikia administratoriaus teisių."
 
-#: packages/admin/src/router.tsx:3171
+#: packages/admin/src/router.tsx:3180
 msgid "You need Editor permissions to moderate comments."
 msgstr "Norint moderuoti komentarus, reikia redaktoriaus teisių."
 
@@ -17414,7 +17793,7 @@ msgstr "Nėra interneto ryšio"
 msgid "You're signed in at {0}"
 msgstr "Esate prisijungę prie {0}"
 
-#: packages/admin/src/components/SetupWizard.tsx:624
+#: packages/admin/src/components/SetupWizard.tsx:641
 msgid "You're signed in via Cloudflare Access"
 msgstr "Prisijungėte per „Cloudflare Access“"
 
@@ -17435,7 +17814,7 @@ msgid "you@company.com"
 msgstr "you@company.com"
 
 #: packages/admin/src/components/settings/EmailSettings.tsx:276
-#: packages/admin/src/components/SetupWizard.tsx:266
+#: packages/admin/src/components/SetupWizard.tsx:272
 msgid "you@example.com"
 msgstr "you@example.com"
 
@@ -17495,15 +17874,15 @@ msgstr "Versija ({when}) pakeis jūsų juodraštį. Dabartinis juodraštis liks 
 msgid "Your earlier edits weren’t kept"
 msgstr "Ankstesnių pakeitimų nepavyko išsaugoti"
 
-#: packages/admin/src/router.tsx:1211
+#: packages/admin/src/router.tsx:1220
 msgid "Your edits are still on this page. Reload it to edit with others."
 msgstr "Pakeitimai liko šiame puslapyje. Iš naujo įkelkite puslapį, kad galėtumėte redaguoti kartu su kitais."
 
-#: packages/admin/src/router.tsx:1432
+#: packages/admin/src/router.tsx:1441
 msgid "Your edits couldn’t be saved, so this didn’t run. Try again."
 msgstr "Nepavyko išsaugoti pakeitimų, todėl veiksmas neatliktas. Bandykite dar kartą."
 
-#: packages/admin/src/components/SetupWizard.tsx:262
+#: packages/admin/src/components/SetupWizard.tsx:268
 msgid "Your Email"
 msgstr "Jūsų el. pašto adresas"
 
@@ -17523,7 +17902,7 @@ msgstr "Jūsų „Instagram“ naudotojo vardas"
 msgid "Your last edits weren’t saved"
 msgstr "Paskutiniai pakeitimai neišsaugoti"
 
-#: packages/admin/src/router.tsx:1244
+#: packages/admin/src/router.tsx:1253
 msgid "Your latest edits couldn’t be saved"
 msgstr "Nepavyko išsaugoti naujausių pakeitimų"
 
@@ -17536,7 +17915,7 @@ msgstr "Jūsų „LinkedIn“ profilio naudotojo vardas"
 msgid "Your media library is empty"
 msgstr "Medijos biblioteka tuščia"
 
-#: packages/admin/src/components/SetupWizard.tsx:274
+#: packages/admin/src/components/SetupWizard.tsx:280
 msgid "Your Name"
 msgstr "Jūsų vardas"
 
@@ -17545,15 +17924,19 @@ msgstr "Jūsų vardas"
 msgid "Your name (optional)"
 msgstr "Jūsų vardas (nebūtina)"
 
+#: packages/admin/src/components/multisite/OrganizationsPage.tsx:108
+msgid "Your organizations"
+msgstr ""
+
 #: packages/admin/src/components/WelcomeModal.tsx:47
 msgid "Your Role"
 msgstr "Jūsų rolė"
 
-#: packages/admin/src/router.tsx:2588
+#: packages/admin/src/router.tsx:2597
 msgid "Your role can edit your own entries only while they are drafts."
 msgstr "Turėdami šią rolę galite redaguoti savo įrašus tik tol, kol jie yra juodraščiai."
 
-#: packages/admin/src/router.tsx:2589
+#: packages/admin/src/router.tsx:2598
 msgid "Your role can't edit this entry."
 msgstr "Jūsų rolė nesuteikia teisės redaguoti šio įrašo."
 
@@ -17588,15 +17971,15 @@ msgstr "Jūsų „Twitter“ / X naudotojo vardas (pvz., @username)"
 msgid "Your unsaved changes will be lost."
 msgstr "Neišsaugoti pakeitimai bus prarasti."
 
-#: packages/admin/src/router.tsx:1234
+#: packages/admin/src/router.tsx:1243
 msgid "Your unsaved edits are in a recovery revision"
 msgstr "Neišsaugoti pakeitimai išliko atkūrimo versijoje"
 
-#: packages/admin/src/router.tsx:1219
+#: packages/admin/src/router.tsx:1228
 msgid "Your unsaved edits are in a recovery revision. Reload the page to edit with others."
 msgstr "Neišsaugoti pakeitimai išliko atkūrimo versijoje. Iš naujo įkelkite puslapį, kad galėtumėte redaguoti kartu su kitais."
 
-#: packages/admin/src/router.tsx:1223
+#: packages/admin/src/router.tsx:1232
 msgid "Your unsaved edits couldn’t be kept"
 msgstr "Nepavyko išlaikyti neišsaugotų pakeitimų"
 

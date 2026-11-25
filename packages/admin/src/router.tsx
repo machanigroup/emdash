@@ -25,6 +25,7 @@ import {
 	useNavigate,
 	useSearch,
 	useMatches,
+	Navigate,
 } from "@tanstack/react-router";
 import * as React from "react";
 
@@ -601,6 +602,12 @@ function DashboardPage() {
 	});
 
 	if (!manifest) return null;
+
+	// The shared admin of a multi-site deployment has no dashboard of its own
+	// before a site is selected: it starts on the organizations.
+	if (manifest.multiSite && !manifest.multiSite.siteId) {
+		return <Navigate to="/organizations" replace />;
+	}
 
 	return <Dashboard manifest={manifest} />;
 }
