@@ -298,6 +298,53 @@ describe("shared admin host", () => {
 		vi.spyOn(console, "error").mockImplementation(() => {});
 	});
 
+	it.each(["/", "/about", "/blog/launch", "/sitemap.xml"])(
+		"serves no public page at %s on the admin host",
+		async (path) => {
+			const { next } = seen();
+			const response = await onRequest(
+				contextFor(`https://admin.example.com${path}`, { userId: ravi.id }) as never,
+				next,
+			);
+
+			expect(next).not.toHaveBeenCalled();
+			expect(mockRuntimeCreate).not.toHaveBeenCalled();
+			expect(response.headers.get("X-Robots-Tag")).toBe("noindex, nofollow");
+			if (path === "/") expect(response.headers.get("Location")).toBe("/_emdash/admin");
+			else expect(response.status).toBe(404);
+		},
+	);
+
+	it("tells crawlers to stay off the admin host", async () => {
+		const response = await onRequest(
+			contextFor("https://admin.example.com/robots.txt") as never,
+			vi.fn(),
+		);
+		expect(await response.text()).toBe("User-agent: *\nDisallow: /\n");
+	});
+
+	it("marks a redirect from the admin host noindex too", async () => {
+		const next = vi.fn(async () =>
+			Response.redirect("https://admin.example.com/_emdash/admin/login", 302),
+		);
+		const response = await onRequest(
+			contextFor("https://admin.example.com/_emdash/admin") as never,
+			next,
+		);
+		expect(response.status).toBe(302);
+		expect(response.headers.get("X-Robots-Tag")).toBe("noindex, nofollow");
+	});
+
+	it("marks admin pages noindex", async () => {
+		const { next } = seen();
+		const response = await onRequest(
+			contextFor("https://admin.example.com/_emdash/admin", { userId: ravi.id }) as never,
+			next,
+		);
+		expect(next).toHaveBeenCalled();
+		expect(response.headers.get("X-Robots-Tag")).toBe("noindex, nofollow");
+	});
+
 	it("runs sign-in on the control plane", async () => {
 		const { contexts, next } = seen();
 		const ctx = contextFor("https://admin.example.com/_emdash/api/auth/passkey/options", {
