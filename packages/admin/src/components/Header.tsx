@@ -9,7 +9,6 @@ import { apiFetch, fetchManifest } from "../lib/api/client";
 import { useCurrentUser } from "../lib/api/current-user";
 import { createSiteSignInLink } from "../lib/api/multisite";
 import { AdminBreadcrumbs } from "./AdminBreadcrumbs.js";
-import { SiteSwitcher } from "./multisite/SiteSwitcher.js";
 import { Sidebar } from "./Sidebar";
 import { ThemeToggle } from "./ThemeToggle";
 import { UserAvatar } from "./UserAvatar.js";
@@ -103,7 +102,6 @@ export function Header({ staging = false }: { staging?: boolean }) {
 			<Sidebar.Trigger className="shrink-0 cursor-pointer md:hidden rtl:rotate-180" />
 
 			<div className="flex min-w-0 flex-1 items-center gap-2">
-				{manifest?.multiSite && <SiteSwitcher currentSiteId={manifest.multiSite.siteId} />}
 				<AdminBreadcrumbs />
 			</div>
 
