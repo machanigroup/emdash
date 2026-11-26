@@ -22,6 +22,7 @@ import {
 	MIGRATION_COUNT,
 	runMigrations,
 } from "../../../src/database/migrations/runner.js";
+import { MIGRATION_LOCK_BUSY_MESSAGE } from "../../../src/database/pg-migration-lock.js";
 import {
 	createTestPostgresDatabase,
 	hasPgTestDatabase,
@@ -162,6 +163,61 @@ describe.runIf(hasPgTestDatabase)("Fail-fast Postgres migration lock (#1744)", (
 				SELECT COUNT(*) as count FROM _emdash_migrations
 			`.execute(ctx.db);
 			expect(Number(count.rows[0]?.count)).toBe(MIGRATION_COUNT - 1);
+		} finally {
+			await teardownTestPostgresDatabase(ctx);
+		}
+	});
+});
+
+describe.runIf(hasPgTestDatabase)("Postgres migration lock outside a transaction", () => {
+	// Kysely 0.29.9 and later take the lock on the connection before the
+	// migration transaction starts, where a transaction-level advisory lock
+	// ends with its own statement. These call the adapter the way they do.
+	const options = { lockTable: "_emdash_migrations_lock", lockRowId: "migration_lock" };
+
+	async function lockTable(ctx: PgTestContext): Promise<void> {
+		await sql`CREATE TABLE _emdash_migrations_lock (id varchar(255) PRIMARY KEY, is_locked integer NOT NULL DEFAULT 0)`.execute(
+			ctx.db,
+		);
+		await sql`INSERT INTO _emdash_migrations_lock (id, is_locked) VALUES ('migration_lock', 0)`.execute(
+			ctx.db,
+		);
+	}
+
+	it("refuses a second migrator until the first releases the lock", async () => {
+		const ctx = await createTestPostgresDatabase();
+		try {
+			await lockTable(ctx);
+			const adapter = ctx.db.getExecutor().adapter;
+			const other = ctx.db.withPlugin({
+				transformQuery: (args) => args.node,
+				transformResult: async (args) => args.result,
+			});
+			await adapter.acquireMigrationLock(ctx.db, options);
+			await expect(adapter.acquireMigrationLock(other, options)).rejects.toThrow(
+				MIGRATION_LOCK_BUSY_MESSAGE,
+			);
+			await adapter.releaseMigrationLock(ctx.db, options);
+			await expect(adapter.acquireMigrationLock(other, options)).resolves.toBeUndefined();
+			await adapter.releaseMigrationLock(other, options);
+		} finally {
+			await teardownTestPostgresDatabase(ctx);
+		}
+	});
+
+	it("takes over a lock its holder left behind", async () => {
+		const ctx = await createTestPostgresDatabase();
+		try {
+			await lockTable(ctx);
+			const abandoned = Math.floor(Date.now() / 1000) - 11 * 60;
+			await sql`UPDATE _emdash_migrations_lock SET is_locked = ${abandoned}`.execute(ctx.db);
+			const adapter = ctx.db.getExecutor().adapter;
+			await expect(adapter.acquireMigrationLock(ctx.db, options)).resolves.toBeUndefined();
+			await adapter.releaseMigrationLock(ctx.db, options);
+			const row = await sql<{
+				is_locked: number;
+			}>`SELECT is_locked FROM _emdash_migrations_lock`.execute(ctx.db);
+			expect(row.rows[0]?.is_locked).toBe(0);
 		} finally {
 			await teardownTestPostgresDatabase(ctx);
 		}
