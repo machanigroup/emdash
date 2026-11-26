@@ -58,7 +58,11 @@ export function SiteSwitcher({ currentSiteId, logoUrl, brandName }: SiteSwitcher
 						<BrandIcon
 							logoUrl={logoUrl}
 							siteName={brandName}
-							className="size-5 shrink-0"
+							className={
+								logoUrl
+									? "h-5 w-auto max-w-14 shrink-0 group-data-[state=collapsed]/sidebar:max-w-5"
+									: "size-5 shrink-0"
+							}
 							aria-hidden="true"
 						/>
 						<span className="grid min-w-0 flex-1 grid-cols-[1fr] transition-[grid-template-columns] duration-(--sidebar-animation-duration) ease-(--sidebar-easing) motion-reduce:transition-none group-data-[state=collapsed]/sidebar:grid-cols-[0fr]">
