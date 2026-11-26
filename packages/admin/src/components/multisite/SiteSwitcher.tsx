@@ -21,10 +21,12 @@ interface SiteSwitcherProps {
 	brandName?: string;
 }
 
+const LEADING_WWW = /^www\./;
+
 function siteDomain(site: SwitcherSite): string | null {
 	if (!site.url) return null;
 	try {
-		return new URL(site.url).host.replace(/^www\./, "");
+		return new URL(site.url).host.replace(LEADING_WWW, "");
 	} catch {
 		return site.url;
 	}
