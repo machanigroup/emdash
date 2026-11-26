@@ -3424,7 +3424,7 @@ msgstr "請選擇可辨識的時區，以確保日期正確顯示。"
 msgid "Choose a relationship."
 msgstr "請選取關聯。"
 
-#: packages/admin/src/components/multisite/SiteSwitcher.tsx:45
+#: packages/admin/src/components/multisite/SiteSwitcher.tsx:54
 msgid "Choose a site"
 msgstr ""
 
@@ -9659,7 +9659,7 @@ msgstr ""
 msgid "Manage navigation menus for your site"
 msgstr "管理網站導覽選單"
 
-#: packages/admin/src/components/multisite/SiteSwitcher.tsx:113
+#: packages/admin/src/components/multisite/SiteSwitcher.tsx:132
 msgid "Manage organizations"
 msgstr ""
 
@@ -10636,6 +10636,7 @@ msgid "No detailed description available."
 msgstr "沒有可用的詳細說明。"
 
 #: packages/admin/src/components/multisite/OrganizationPage.tsx:242
+#: packages/admin/src/components/multisite/SiteSwitcher.tsx:55
 msgid "No domain yet"
 msgstr ""
 
@@ -11311,7 +11312,7 @@ msgid "Organization role"
 msgstr ""
 
 #: packages/admin/src/components/multisite/OrganizationsPage.tsx:55
-#: packages/admin/src/components/multisite/SiteSwitcher.tsx:46
+#: packages/admin/src/components/multisite/SiteSwitcher.tsx:56
 #: packages/admin/src/components/Sidebar.tsx:589
 #: packages/admin/src/router.tsx:3582
 msgid "Organizations"
@@ -14985,7 +14986,7 @@ msgstr "Swift"
 msgid "Switch back to staging"
 msgstr "切回測試模式"
 
-#: packages/admin/src/components/multisite/SiteSwitcher.tsx:56
+#: packages/admin/src/components/multisite/SiteSwitcher.tsx:66
 msgid "Switch site, current: {label}"
 msgstr ""
 
@@ -17718,7 +17719,7 @@ msgstr "您無法變更自己的角色"
 msgid "You do not have permission to edit this asset."
 msgstr "你沒有編輯這個媒體檔案的權限。"
 
-#: packages/admin/src/components/multisite/SiteSwitcher.tsx:106
+#: packages/admin/src/components/multisite/SiteSwitcher.tsx:125
 msgid "You don't have access to any sites yet"
 msgstr ""
 

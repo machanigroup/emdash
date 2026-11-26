@@ -3424,7 +3424,7 @@ msgstr "날짜가 정확하게 표시되도록 인식 가능한 시간대를 선
 msgid "Choose a relationship."
 msgstr ""
 
-#: packages/admin/src/components/multisite/SiteSwitcher.tsx:45
+#: packages/admin/src/components/multisite/SiteSwitcher.tsx:54
 msgid "Choose a site"
 msgstr ""
 
@@ -9659,7 +9659,7 @@ msgstr ""
 msgid "Manage navigation menus for your site"
 msgstr "사이트의 탐색 메뉴를 관리합니다"
 
-#: packages/admin/src/components/multisite/SiteSwitcher.tsx:113
+#: packages/admin/src/components/multisite/SiteSwitcher.tsx:132
 msgid "Manage organizations"
 msgstr ""
 
@@ -10636,6 +10636,7 @@ msgid "No detailed description available."
 msgstr "자세한 설명이 없습니다."
 
 #: packages/admin/src/components/multisite/OrganizationPage.tsx:242
+#: packages/admin/src/components/multisite/SiteSwitcher.tsx:55
 msgid "No domain yet"
 msgstr ""
 
@@ -11311,7 +11312,7 @@ msgid "Organization role"
 msgstr ""
 
 #: packages/admin/src/components/multisite/OrganizationsPage.tsx:55
-#: packages/admin/src/components/multisite/SiteSwitcher.tsx:46
+#: packages/admin/src/components/multisite/SiteSwitcher.tsx:56
 #: packages/admin/src/components/Sidebar.tsx:589
 #: packages/admin/src/router.tsx:3582
 msgid "Organizations"
@@ -14985,7 +14986,7 @@ msgstr "Swift"
 msgid "Switch back to staging"
 msgstr ""
 
-#: packages/admin/src/components/multisite/SiteSwitcher.tsx:56
+#: packages/admin/src/components/multisite/SiteSwitcher.tsx:66
 msgid "Switch site, current: {label}"
 msgstr ""
 
@@ -17718,7 +17719,7 @@ msgstr "자신의 역할을 변경할 수 없습니다."
 msgid "You do not have permission to edit this asset."
 msgstr "이 미디어를 편집할 권한이 없습니다."
 
-#: packages/admin/src/components/multisite/SiteSwitcher.tsx:106
+#: packages/admin/src/components/multisite/SiteSwitcher.tsx:125
 msgid "You don't have access to any sites yet"
 msgstr ""
 
