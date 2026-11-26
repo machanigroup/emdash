@@ -21,6 +21,15 @@ interface SiteSwitcherProps {
 	brandName?: string;
 }
 
+function siteDomain(site: SwitcherSite): string | null {
+	if (!site.url) return null;
+	try {
+		return new URL(site.url).host.replace(/^www\./, "");
+	} catch {
+		return site.url;
+	}
+}
+
 function groupByOrganization(sites: SwitcherSite[]) {
 	const groups = new Map<string, { name: string; sites: SwitcherSite[] }>();
 	for (const site of sites) {
@@ -43,7 +52,8 @@ export function SiteSwitcher({ currentSiteId, logoUrl, brandName }: SiteSwitcher
 
 	const current = sites?.find((site) => site.id === currentSiteId);
 	const label = current?.name ?? t`Choose a site`;
-	const organization = current?.orgName ?? brandName ?? t`Organizations`;
+	const noDomain = t`No domain yet`;
+	const subtitle = current ? (siteDomain(current) ?? noDomain) : (brandName ?? t`Organizations`);
 	const groups = sites ? groupByOrganization(sites) : [];
 
 	return (
@@ -68,10 +78,10 @@ export function SiteSwitcher({ currentSiteId, logoUrl, brandName }: SiteSwitcher
 						<span className="grid min-w-0 flex-1 grid-cols-[1fr] transition-[grid-template-columns] duration-(--sidebar-animation-duration) ease-(--sidebar-easing) motion-reduce:transition-none group-data-[state=collapsed]/sidebar:grid-cols-[0fr]">
 							<span className="flex min-w-0 items-center gap-1 overflow-hidden">
 								<span className="grid min-w-0 flex-1 text-start">
-									<span className="truncate text-xs font-normal text-kumo-subtle">
-										{organization}
-									</span>
 									<span className="truncate font-semibold">{label}</span>
+									<span className="truncate text-xs font-normal text-kumo-subtle" dir="ltr">
+										{subtitle}
+									</span>
 								</span>
 								<CaretUpDown className="size-3.5 shrink-0 text-kumo-subtle" aria-hidden="true" />
 							</span>
@@ -99,7 +109,12 @@ export function SiteSwitcher({ currentSiteId, logoUrl, brandName }: SiteSwitcher
 										if (site.id !== currentSiteId) switchToSite(site.id);
 									}}
 								>
-									<span className="truncate">{site.name}</span>
+									<span className="grid min-w-0 text-start">
+										<span className="truncate">{site.name}</span>
+										<span className="truncate text-xs text-kumo-subtle" dir="ltr">
+											{siteDomain(site) ?? noDomain}
+										</span>
+									</span>
 								</DropdownMenu.Item>
 							))}
 						</DropdownMenu.Group>
