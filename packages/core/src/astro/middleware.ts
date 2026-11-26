@@ -1023,6 +1023,7 @@ async function runAsSite(
 	siteConfig: EmDashConfig,
 	fn: (runtime: EmDashRuntime) => Promise<Response>,
 	siteOrgId?: string,
+	options: { queriesBeforeRender?: boolean } = {},
 ): Promise<Response> {
 	const migrationMode = resolveConfiguredMigrationMode(siteConfig);
 	const parent = getRequestContext();
@@ -1044,6 +1045,24 @@ async function runAsSite(
 			}
 			console.error("[emdash:multisite] site runtime init failed:", error);
 			return siteUnavailableResponse();
+		}
+		if (options.queriesBeforeRender) {
+			// runtime.db is the worker-wide connection until the render opens its
+			// own; a connection-backed adapter hangs a request that queries one
+			// opened by another request.
+			const scoped = createRequestScopedDb({
+				config: siteConfig.database?.config,
+				isAuthenticated: true,
+				isWrite: true,
+				canUseCachedBinding: false,
+				cookies: NOOP_COOKIE_JAR,
+				url: CRON_EVENT_URL,
+			});
+			if (scoped) {
+				return runWithContext({ ...siteContext, db: scoped.db }, () =>
+					finishScoped({ commit: () => {}, close: scoped.close }, () => fn(runtime)),
+				);
+			}
 		}
 		return runWithContext({ ...siteContext, db: runtime.db }, () => fn(runtime));
 	});
@@ -1243,64 +1262,77 @@ async function routeAdminHost(
 			return run(adminConfig);
 		});
 	}
-	return runAsSite(CONTROL_PLANE_SITE_ID, adminConfig, async (controlRuntime) => {
-		const sessionUser = await resolveSessionUser(context.session);
-		const user = sessionUser ? await findControlPlaneUser(controlRuntime.db, sessionUser.id) : null;
-		if (pathname === HANDOFF_START_PATH) {
-			if (!user || user.disabled) {
-				return finalizeResponse(apiError("NOT_AUTHENTICATED", "Not authenticated", 401));
-			}
-			return startHandoff(context, router, user);
-		}
-		if (!user || user.disabled) return run(adminConfig);
-		if (user.emailVerified) {
-			try {
-				await acceptOrgInvites(router.controlPlane, user.id, user.email);
-			} catch (error) {
-				console.error("[emdash:multisite] accepting organization invitations failed:", error);
-			}
-		}
-
-		let site: (RequestSite & { role: RoleLevel }) | null;
-		try {
-			site = await selectAdminSite(context, router, user);
-		} catch (error) {
-			console.error("[emdash:multisite] selecting the admin site failed:", error);
-			return siteUnavailableResponse();
-		}
-		if (!site) return run(adminConfig);
-		if (context.cookies.get(ADMIN_SITE_COOKIE)?.value !== site.siteId) {
-			context.cookies.set(ADMIN_SITE_COOKIE, site.siteId, {
-				path: "/",
-				httpOnly: true,
-				sameSite: "lax",
-				secure: context.url.protocol === "https:",
-			});
-		}
-
-		const selected = site;
-		if (isOrgManagedUserChange(context)) return orgManagedUsersResponse();
-		return runAsSite(
-			selected.siteId,
-			selected.config,
-			async (siteRuntime) => {
-				try {
-					await syncSiteUser(siteRuntime.db, user, selected.role);
-					await ensureSiteSetUp(siteRuntime.db, selected.name);
-				} catch (error) {
-					if (error instanceof MultiSiteError && error.code === "ACCOUNT_CONFLICT") {
-						return finalizeResponse(
-							apiError("ACCOUNT_CONFLICT", "This site has a separate account with your email", 409),
-						);
-					}
-					console.error("[emdash:multisite] preparing the site for the admin failed:", error);
-					return siteUnavailableResponse();
+	return runAsSite(
+		CONTROL_PLANE_SITE_ID,
+		adminConfig,
+		async (controlRuntime) => {
+			const sessionUser = await resolveSessionUser(context.session);
+			const user = sessionUser
+				? await findControlPlaneUser(controlRuntime.db, sessionUser.id)
+				: null;
+			if (pathname === HANDOFF_START_PATH) {
+				if (!user || user.disabled) {
+					return finalizeResponse(apiError("NOT_AUTHENTICATED", "Not authenticated", 401));
 				}
-				return run(selected.config);
-			},
-			selected.orgId,
-		);
-	});
+				return startHandoff(context, router, user);
+			}
+			if (!user || user.disabled) return run(adminConfig);
+			if (user.emailVerified) {
+				try {
+					await acceptOrgInvites(router.controlPlane, user.id, user.email);
+				} catch (error) {
+					console.error("[emdash:multisite] accepting organization invitations failed:", error);
+				}
+			}
+
+			let site: (RequestSite & { role: RoleLevel }) | null;
+			try {
+				site = await selectAdminSite(context, router, user);
+			} catch (error) {
+				console.error("[emdash:multisite] selecting the admin site failed:", error);
+				return siteUnavailableResponse();
+			}
+			if (!site) return run(adminConfig);
+			if (context.cookies.get(ADMIN_SITE_COOKIE)?.value !== site.siteId) {
+				context.cookies.set(ADMIN_SITE_COOKIE, site.siteId, {
+					path: "/",
+					httpOnly: true,
+					sameSite: "lax",
+					secure: context.url.protocol === "https:",
+				});
+			}
+
+			const selected = site;
+			if (isOrgManagedUserChange(context)) return orgManagedUsersResponse();
+			return runAsSite(
+				selected.siteId,
+				selected.config,
+				async (siteRuntime) => {
+					try {
+						await syncSiteUser(siteRuntime.db, user, selected.role);
+						await ensureSiteSetUp(siteRuntime.db, selected.name);
+					} catch (error) {
+						if (error instanceof MultiSiteError && error.code === "ACCOUNT_CONFLICT") {
+							return finalizeResponse(
+								apiError(
+									"ACCOUNT_CONFLICT",
+									"This site has a separate account with your email",
+									409,
+								),
+							);
+						}
+						console.error("[emdash:multisite] preparing the site for the admin failed:", error);
+						return siteUnavailableResponse();
+					}
+					return run(selected.config);
+				},
+				selected.orgId,
+				{ queriesBeforeRender: true },
+			);
+		},
+		undefined,
+		{ queriesBeforeRender: true },
+	);
 }
 
 /** Marks a response as not for search engines, copying it when its headers are read-only. */
@@ -1435,8 +1467,12 @@ async function routeToSiteWith(
 	if (!adminUrl) return runAsSite(site.siteId, siteConfig, () => run(siteConfig));
 	if (pathname === HANDOFF_COMPLETE_PATH) {
 		const siteId = site.siteId;
-		return runAsSite(siteId, siteConfig, (runtime) =>
-			completeHandoff(context, router, site, runtime.db),
+		return runAsSite(
+			siteId,
+			siteConfig,
+			(runtime) => completeHandoff(context, router, site, runtime.db),
+			site.orgId,
+			{ queriesBeforeRender: true },
 		);
 	}
 	return runAsSiteCheckingAccess(context, router, site, run);
