@@ -36,6 +36,7 @@ import {
 	toPhosphorIconName,
 } from "./admin-navigation-icons.js";
 import { BrandIcon } from "./Logo.js";
+import { SiteSwitcher } from "./multisite/SiteSwitcher.js";
 import { RouterLinkButton } from "./RouterLinkButton.js";
 
 // Re-export for Shell.tsx and Header.tsx
@@ -745,24 +746,32 @@ export function SidebarNav({ manifest }: SidebarNavProps) {
 	return (
 		<KumoSidebar className="emdash-sidebar" aria-label={t`Admin navigation`}>
 			<KumoSidebar.Header className="px-[11px] transition-[padding] duration-(--sidebar-animation-duration) motion-reduce:transition-none group-not-data-[state=collapsed]/sidebar:px-3.5">
-				<Link
-					to="/"
-					className="flex w-[calc(var(--sidebar-width)-1.75rem)] shrink-0 items-center gap-2 overflow-hidden py-1 ps-2.5 group-data-[state=collapsed]/sidebar:-translate-x-[3px] rtl:group-data-[state=collapsed]/sidebar:translate-x-[3px]"
-				>
-					<BrandIcon
+				{manifest.multiSite ? (
+					<SiteSwitcher
+						currentSiteId={manifest.multiSite.siteId}
 						logoUrl={manifest.admin?.logo}
-						siteName={manifest.admin?.siteName}
-						className="size-5 shrink-0"
-						aria-hidden="true"
+						brandName={manifest.admin?.siteName}
 					/>
-					<span className="grid min-w-0 flex-1 grid-cols-[1fr] transition-[grid-template-columns] duration-(--sidebar-animation-duration) ease-(--sidebar-easing) motion-reduce:transition-none group-data-[state=collapsed]/sidebar:grid-cols-[0fr]">
-						<span className="min-w-0 overflow-hidden">
-							<span className="block w-[calc(var(--sidebar-width)-4.5rem)] truncate font-semibold">
-								{manifest.admin?.siteName || "EmDash"}
+				) : (
+					<Link
+						to="/"
+						className="flex w-[calc(var(--sidebar-width)-1.75rem)] shrink-0 items-center gap-2 overflow-hidden py-1 ps-2.5 group-data-[state=collapsed]/sidebar:-translate-x-[3px] rtl:group-data-[state=collapsed]/sidebar:translate-x-[3px]"
+					>
+						<BrandIcon
+							logoUrl={manifest.admin?.logo}
+							siteName={manifest.admin?.siteName}
+							className="size-5 shrink-0"
+							aria-hidden="true"
+						/>
+						<span className="grid min-w-0 flex-1 grid-cols-[1fr] transition-[grid-template-columns] duration-(--sidebar-animation-duration) ease-(--sidebar-easing) motion-reduce:transition-none group-data-[state=collapsed]/sidebar:grid-cols-[0fr]">
+							<span className="min-w-0 overflow-hidden">
+								<span className="block w-[calc(var(--sidebar-width)-4.5rem)] truncate font-semibold">
+									{manifest.admin?.siteName || "EmDash"}
+								</span>
 							</span>
 						</span>
-					</span>
-				</Link>
+					</Link>
+				)}
 			</KumoSidebar.Header>
 
 			<KumoSidebar.Content>
