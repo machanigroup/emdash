@@ -35,6 +35,14 @@ const sites = [
 		role: 40,
 		url: "https://b.example",
 	},
+	{
+		id: "site-c",
+		name: "Beach House",
+		orgId: "p",
+		orgName: "Azara",
+		role: 50,
+		url: null,
+	},
 ];
 
 async function renderSwitcher(currentSiteId: string | null) {
@@ -61,6 +69,22 @@ describe("SiteSwitcher", () => {
 		await screen.getByRole("menuitem", { name: /Brand B/ }).click();
 
 		expect(api.switchToSite).toHaveBeenCalledWith("site-b");
+	});
+
+	it("shows the organization of the site being managed and groups sites by organization", async () => {
+		const screen = await renderSwitcher("site-c");
+		const trigger = screen.getByRole("button", { name: "Switch site, current: Beach House" });
+		await expect.element(trigger).toHaveTextContent("Azara");
+
+		await trigger.click();
+		const azara = screen.getByRole("group", { name: "Azara" });
+		await expect.element(azara.getByRole("menuitem", { name: "Beach House" })).toBeInTheDocument();
+		await expect.element(azara.getByRole("menuitem", { name: "Brand A" })).not.toBeInTheDocument();
+		await expect
+			.element(
+				screen.getByRole("group", { name: "Acme" }).getByRole("menuitem", { name: "Brand B" }),
+			)
+			.toBeInTheDocument();
 	});
 
 	it("asks for a site when the admin shows the control plane", async () => {

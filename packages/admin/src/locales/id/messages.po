@@ -1964,12 +1964,12 @@ msgstr "admin"
 msgid "Admin"
 msgstr "Admin"
 
-#: packages/admin/src/components/Sidebar.tsx:462
+#: packages/admin/src/components/Sidebar.tsx:463
 msgctxt "navigation group"
 msgid "Admin"
 msgstr ""
 
-#: packages/admin/src/components/Sidebar.tsx:746
+#: packages/admin/src/components/Sidebar.tsx:747
 msgid "Admin navigation"
 msgstr "Navigasi admin"
 
@@ -2930,7 +2930,7 @@ msgstr "Kolom byline"
 msgid "Byline schema"
 msgstr "Skema byline"
 
-#: packages/admin/src/components/Sidebar.tsx:585
+#: packages/admin/src/components/Sidebar.tsx:586
 #: packages/admin/src/router.tsx:3657
 msgid "Byline Schema"
 msgstr "Skema Byline"
@@ -2944,7 +2944,7 @@ msgstr "Byline diperbarui"
 #: packages/admin/src/components/ContentSettingsPanel.tsx:1219
 #: packages/admin/src/components/settings/transfer/labels.ts:19
 #: packages/admin/src/components/settings/transfer/labels.ts:79
-#: packages/admin/src/components/Sidebar.tsx:551
+#: packages/admin/src/components/Sidebar.tsx:552
 #: packages/admin/src/lib/editor-sections.ts:34
 #: packages/admin/src/router.tsx:3646
 #: packages/admin/src/routes/bylines.tsx:302
@@ -2965,7 +2965,7 @@ msgstr "C++"
 
 #: packages/admin/src/components/AdminCommandPalette.tsx:142
 #: packages/admin/src/components/ContentTypeEditor.tsx:586
-#: packages/admin/src/components/Sidebar.tsx:480
+#: packages/admin/src/components/Sidebar.tsx:481
 #: packages/admin/src/router.tsx:619
 #: packages/admin/src/routes/calendar.tsx:286
 msgid "Calendar"
@@ -3424,7 +3424,7 @@ msgstr "Pilih zona waktu yang dikenali untuk tampilan tanggal yang andal."
 msgid "Choose a relationship."
 msgstr "Pilih relasi."
 
-#: packages/admin/src/components/multisite/SiteSwitcher.tsx:23
+#: packages/admin/src/components/multisite/SiteSwitcher.tsx:45
 msgid "Choose a site"
 msgstr ""
 
@@ -3783,7 +3783,7 @@ msgstr "Reaksi komentar"
 #: packages/admin/src/components/ContentTypeEditor.tsx:702
 #: packages/admin/src/components/settings/transfer/labels.ts:34
 #: packages/admin/src/components/settings/transfer/labels.ts:88
-#: packages/admin/src/components/Sidebar.tsx:515
+#: packages/admin/src/components/Sidebar.tsx:516
 #: packages/admin/src/router.tsx:3054
 msgid "Comments"
 msgstr "Komentar"
@@ -3891,7 +3891,7 @@ msgstr "konten"
 #: packages/admin/src/components/comments/CommentInbox.tsx:359
 #: packages/admin/src/components/Dashboard.tsx:499
 #: packages/admin/src/components/SectionEditor.tsx:197
-#: packages/admin/src/components/Sidebar.tsx:460
+#: packages/admin/src/components/Sidebar.tsx:461
 #: packages/admin/src/components/Widgets.tsx:986
 #: packages/admin/src/router.tsx:631
 msgid "Content"
@@ -3977,7 +3977,7 @@ msgstr "Tipe konten"
 
 #: packages/admin/src/components/AdminCommandPalette.tsx:197
 #: packages/admin/src/components/ContentTypeList.tsx:148
-#: packages/admin/src/components/Sidebar.tsx:581
+#: packages/admin/src/components/Sidebar.tsx:582
 #: packages/admin/src/router.tsx:3665
 msgid "Content Types"
 msgstr "Tipe Konten"
@@ -4651,7 +4651,7 @@ msgid "Custom Taxonomies"
 msgstr "Taksonomi Kustom"
 
 #: packages/admin/src/components/ContentEditor.tsx:3235
-#: packages/admin/src/components/Sidebar.tsx:801
+#: packages/admin/src/components/Sidebar.tsx:810
 msgid "Customize sidebar"
 msgstr "Sesuaikan bilah samping"
 
@@ -4669,7 +4669,7 @@ msgstr "Varian mode gelap"
 #: packages/admin/src/components/ContentTypeList.tsx:408
 #: packages/admin/src/components/Dashboard.tsx:75
 #: packages/admin/src/components/Shell.tsx:90
-#: packages/admin/src/components/Sidebar.tsx:477
+#: packages/admin/src/components/Sidebar.tsx:478
 #: packages/admin/src/router.tsx:595
 msgid "Dashboard"
 msgstr "Dasbor"
@@ -8181,8 +8181,8 @@ msgstr "hero, spanduk, cta"
 msgid "Hidden from search engines"
 msgstr "Tersembunyi dari mesin pencarian"
 
-#: packages/admin/src/components/Header.tsx:113
-#: packages/admin/src/components/Header.tsx:117
+#: packages/admin/src/components/Header.tsx:111
+#: packages/admin/src/components/Header.tsx:115
 msgid "Hidden from search engines until you go live"
 msgstr "Tersembunyi dari mesin pencarian hingga Anda tayang langsung"
 
@@ -8484,7 +8484,7 @@ msgstr "TLS implisit (port 465)"
 
 #: packages/admin/src/components/AdminCommandPalette.tsx:239
 #: packages/admin/src/components/settings/transfer/ImportSection.tsx:210
-#: packages/admin/src/components/Sidebar.tsx:610
+#: packages/admin/src/components/Sidebar.tsx:611
 #: packages/admin/src/components/WordPressImport.tsx:785
 msgid "Import"
 msgstr "Impor"
@@ -9584,7 +9584,7 @@ msgstr "Dikunci karena kolom ini memiliki nilai tersimpan. Hapus nilainya (atau 
 msgid "Log in"
 msgstr "Masuk"
 
-#: packages/admin/src/components/Header.tsx:177
+#: packages/admin/src/components/Header.tsx:175
 msgid "Log out"
 msgstr "Keluar"
 
@@ -9629,7 +9629,7 @@ msgid "Main Sidebar"
 msgstr "Bilah Samping Utama"
 
 #: packages/admin/src/components/multisite/OrganizationPage.tsx:250
-#: packages/admin/src/components/Sidebar.tsx:461
+#: packages/admin/src/components/Sidebar.tsx:462
 msgid "Manage"
 msgstr "Kelola"
 
@@ -9658,6 +9658,10 @@ msgstr ""
 #: packages/admin/src/components/MenuList.tsx:161
 msgid "Manage navigation menus for your site"
 msgstr "Kelola menu navigasi untuk situs Anda"
+
+#: packages/admin/src/components/multisite/SiteSwitcher.tsx:113
+msgid "Manage organizations"
+msgstr ""
 
 #: packages/admin/src/routes/bylines.tsx:304
 msgid "Manage the people and teams credited on your content."
@@ -9771,7 +9775,7 @@ msgstr "MDX"
 #: packages/admin/src/components/Settings.tsx:75
 #: packages/admin/src/components/settings/transfer/labels.ts:17
 #: packages/admin/src/components/settings/transfer/labels.ts:84
-#: packages/admin/src/components/Sidebar.tsx:502
+#: packages/admin/src/components/Sidebar.tsx:503
 #: packages/admin/src/components/WordPressImport.tsx:799
 #: packages/admin/src/components/WordPressImport.tsx:1197
 #: packages/admin/src/components/WordPressImport.tsx:1390
@@ -9944,7 +9948,7 @@ msgstr "Menu diganti nama"
 #: packages/admin/src/components/AdminCommandPalette.tsx:173
 #: packages/admin/src/components/MenuList.tsx:159
 #: packages/admin/src/components/settings/transfer/labels.ts:28
-#: packages/admin/src/components/Sidebar.tsx:523
+#: packages/admin/src/components/Sidebar.tsx:524
 #: packages/admin/src/components/WordPressImport.tsx:1201
 #: packages/admin/src/router.tsx:3533
 msgid "Menus"
@@ -11307,8 +11311,8 @@ msgid "Organization role"
 msgstr ""
 
 #: packages/admin/src/components/multisite/OrganizationsPage.tsx:55
-#: packages/admin/src/components/multisite/SiteSwitcher.tsx:73
-#: packages/admin/src/components/Sidebar.tsx:588
+#: packages/admin/src/components/multisite/SiteSwitcher.tsx:46
+#: packages/admin/src/components/Sidebar.tsx:589
 #: packages/admin/src/router.tsx:3582
 msgid "Organizations"
 msgstr ""
@@ -11848,8 +11852,8 @@ msgstr "Galat widget pengaya"
 #: packages/admin/src/components/PluginManager.tsx:181
 #: packages/admin/src/components/PluginManager.tsx:190
 #: packages/admin/src/components/PluginManager.tsx:200
-#: packages/admin/src/components/Sidebar.tsx:463
-#: packages/admin/src/components/Sidebar.tsx:592
+#: packages/admin/src/components/Sidebar.tsx:464
+#: packages/admin/src/components/Sidebar.tsx:593
 #: packages/admin/src/router.tsx:3389
 msgid "Plugins"
 msgstr "Pengaya"
@@ -12346,7 +12350,7 @@ msgstr "Mengalihkan ke masuk..."
 #: packages/admin/src/components/Redirects.tsx:731
 #: packages/admin/src/components/settings/transfer/labels.ts:33
 #: packages/admin/src/components/settings/transfer/labels.ts:90
-#: packages/admin/src/components/Sidebar.tsx:530
+#: packages/admin/src/components/Sidebar.tsx:531
 #: packages/admin/src/router.tsx:3575
 msgid "Redirects"
 msgstr "Pengalihan"
@@ -12417,7 +12421,7 @@ msgstr "Pendaftaran telah dibatalkan atau waktu habis. Silakan coba lagi."
 
 #: packages/admin/src/components/PluginManager.tsx:218
 #: packages/admin/src/components/PluginManager.tsx:463
-#: packages/admin/src/components/Sidebar.tsx:601
+#: packages/admin/src/components/Sidebar.tsx:602
 #: packages/admin/src/router.tsx:3404
 msgid "Registry"
 msgstr "Registri"
@@ -13811,7 +13815,7 @@ msgstr "Judul bagian"
 #: packages/admin/src/components/Sections.tsx:218
 #: packages/admin/src/components/settings/transfer/labels.ts:32
 #: packages/admin/src/components/settings/transfer/labels.ts:93
-#: packages/admin/src/components/Sidebar.tsx:544
+#: packages/admin/src/components/Sidebar.tsx:545
 #: packages/admin/src/router.tsx:3602
 msgid "Sections"
 msgstr "Bagian"
@@ -13866,7 +13870,7 @@ msgid "Security error. Make sure you're on a secure connection."
 msgstr "Galat keamanan. Pastikan Anda berada di sambungan yang aman."
 
 #: packages/admin/src/components/AdminCommandPalette.tsx:263
-#: packages/admin/src/components/Header.tsx:161
+#: packages/admin/src/components/Header.tsx:159
 #: packages/admin/src/components/Settings.tsx:86
 #: packages/admin/src/components/settings/SecuritySettings.tsx:93
 #: packages/admin/src/components/settings/SecuritySettings.tsx:115
@@ -14225,10 +14229,10 @@ msgstr "Menyiapkan..."
 #: packages/admin/src/components/AdminCommandPalette.tsx:247
 #: packages/admin/src/components/ContentEditor.tsx:3132
 #: packages/admin/src/components/ContentTypeEditor.tsx:485
-#: packages/admin/src/components/Header.tsx:169
+#: packages/admin/src/components/Header.tsx:167
 #: packages/admin/src/components/PluginManager.tsx:546
 #: packages/admin/src/components/Settings.tsx:47
-#: packages/admin/src/components/Sidebar.tsx:615
+#: packages/admin/src/components/Sidebar.tsx:616
 #: packages/admin/src/components/WordPressImport.tsx:1861
 #: packages/admin/src/router.tsx:3224
 msgid "Settings"
@@ -14812,7 +14816,7 @@ msgstr "Persegi (1:1)"
 msgid "Stable identifier for your site, such as primary or footer."
 msgstr "Pengenal stabil untuk situs Anda, seperti primer atau footer."
 
-#: packages/admin/src/components/Header.tsx:94
+#: packages/admin/src/components/Header.tsx:93
 #: packages/admin/src/components/settings/GeneralSettings.tsx:114
 msgid "Staging"
 msgstr "Tahapan"
@@ -14981,7 +14985,7 @@ msgstr "Swift"
 msgid "Switch back to staging"
 msgstr "Alihkan kembali ke tahapan"
 
-#: packages/admin/src/components/multisite/SiteSwitcher.tsx:33
+#: packages/admin/src/components/multisite/SiteSwitcher.tsx:56
 msgid "Switch site, current: {label}"
 msgstr ""
 
@@ -17081,8 +17085,8 @@ msgid "Used to identify this section. Lowercase letters, numbers, and hyphens on
 msgstr "Digunakan untuk mengidentifikasi bagian ini. Hanya huruf kecil, angka, dan hubung."
 
 #: packages/admin/src/components/DeviceAuthorizePage.tsx:254
-#: packages/admin/src/components/Header.tsx:89
-#: packages/admin/src/components/Header.tsx:149
+#: packages/admin/src/components/Header.tsx:88
+#: packages/admin/src/components/Header.tsx:147
 #: packages/admin/src/components/users/UserList.tsx:105
 msgid "User"
 msgstr "Pengguna"
@@ -17118,7 +17122,7 @@ msgid "Username"
 msgstr "Nama pengguna"
 
 #: packages/admin/src/components/AdminCommandPalette.tsx:223
-#: packages/admin/src/components/Sidebar.tsx:586
+#: packages/admin/src/components/Sidebar.tsx:587
 #: packages/admin/src/components/users/UserList.tsx:69
 #: packages/admin/src/router.tsx:3624
 msgid "Users"
@@ -17266,10 +17270,10 @@ msgstr "Lihat terpublikasi"
 msgid "View setup"
 msgstr "Lihat penyiapan"
 
-#: packages/admin/src/components/Header.tsx:69
-#: packages/admin/src/components/Header.tsx:73
+#: packages/admin/src/components/Header.tsx:68
+#: packages/admin/src/components/Header.tsx:72
+#: packages/admin/src/components/Header.tsx:122
 #: packages/admin/src/components/Header.tsx:124
-#: packages/admin/src/components/Header.tsx:126
 msgid "View Site"
 msgstr "Lihat Situs"
 
@@ -17558,7 +17562,7 @@ msgstr "Widget diperbarui"
 #: packages/admin/src/components/PluginManager.tsx:494
 #: packages/admin/src/components/settings/transfer/labels.ts:31
 #: packages/admin/src/components/settings/transfer/labels.ts:91
-#: packages/admin/src/components/Sidebar.tsx:537
+#: packages/admin/src/components/Sidebar.tsx:538
 #: packages/admin/src/components/Widgets.tsx:456
 #: packages/admin/src/components/WordPressImport.tsx:1209
 #: packages/admin/src/router.tsx:3567
@@ -17714,7 +17718,7 @@ msgstr "Anda tidak dapat mengubah peran Anda sendiri"
 msgid "You do not have permission to edit this asset."
 msgstr "Anda tidak memiliki izin untuk menyunting aset ini."
 
-#: packages/admin/src/components/multisite/SiteSwitcher.tsx:66
+#: packages/admin/src/components/multisite/SiteSwitcher.tsx:106
 msgid "You don't have access to any sites yet"
 msgstr ""
 
