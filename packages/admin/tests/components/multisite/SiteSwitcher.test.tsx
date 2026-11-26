@@ -25,7 +25,7 @@ const sites = [
 		orgId: "o",
 		orgName: "Acme",
 		role: 50,
-		url: "https://a.example",
+		url: "https://www.a.example",
 	},
 	{
 		id: "site-b",
@@ -71,18 +71,29 @@ describe("SiteSwitcher", () => {
 		expect(api.switchToSite).toHaveBeenCalledWith("site-b");
 	});
 
-	it("shows the organization of the site being managed and groups sites by organization", async () => {
-		const screen = await renderSwitcher("site-c");
-		const trigger = screen.getByRole("button", { name: "Switch site, current: Beach House" });
-		await expect.element(trigger).toHaveTextContent("Azara");
+	it("shows the domain of the site being managed and of each site in the menu", async () => {
+		const screen = await renderSwitcher("site-a");
+		const trigger = screen.getByRole("button", { name: "Switch site, current: Brand A" });
+		await expect.element(trigger).toHaveTextContent("a.example");
 
 		await trigger.click();
+		await expect
+			.element(screen.getByRole("menuitem", { name: /Brand B/ }))
+			.toHaveTextContent("b.example");
+		await expect
+			.element(screen.getByRole("menuitem", { name: /Beach House/ }))
+			.toHaveTextContent("No domain yet");
+	});
+
+	it("groups sites by organization", async () => {
+		const screen = await renderSwitcher("site-c");
+		await screen.getByRole("button", { name: "Switch site, current: Beach House" }).click();
 		const azara = screen.getByRole("group", { name: "Azara" });
-		await expect.element(azara.getByRole("menuitem", { name: "Beach House" })).toBeInTheDocument();
-		await expect.element(azara.getByRole("menuitem", { name: "Brand A" })).not.toBeInTheDocument();
+		await expect.element(azara.getByRole("menuitem", { name: /Beach House/ })).toBeInTheDocument();
+		await expect.element(azara.getByRole("menuitem", { name: /Brand A/ })).not.toBeInTheDocument();
 		await expect
 			.element(
-				screen.getByRole("group", { name: "Acme" }).getByRole("menuitem", { name: "Brand B" }),
+				screen.getByRole("group", { name: "Acme" }).getByRole("menuitem", { name: /Brand B/ }),
 			)
 			.toBeInTheDocument();
 	});

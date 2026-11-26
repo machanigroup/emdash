@@ -3426,7 +3426,7 @@ msgstr ""
 msgid "Choose a relationship."
 msgstr ""
 
-#: packages/admin/src/components/multisite/SiteSwitcher.tsx:45
+#: packages/admin/src/components/multisite/SiteSwitcher.tsx:54
 msgid "Choose a site"
 msgstr ""
 
@@ -9658,7 +9658,7 @@ msgstr ""
 msgid "Manage navigation menus for your site"
 msgstr "مدیریت فهرستهای ناوبری وبسایت شما"
 
-#: packages/admin/src/components/multisite/SiteSwitcher.tsx:113
+#: packages/admin/src/components/multisite/SiteSwitcher.tsx:132
 msgid "Manage organizations"
 msgstr ""
 
@@ -10635,6 +10635,7 @@ msgid "No detailed description available."
 msgstr "توضیحات تفصیلی موجود نیست."
 
 #: packages/admin/src/components/multisite/OrganizationPage.tsx:242
+#: packages/admin/src/components/multisite/SiteSwitcher.tsx:55
 msgid "No domain yet"
 msgstr ""
 
@@ -11307,7 +11308,7 @@ msgid "Organization role"
 msgstr ""
 
 #: packages/admin/src/components/multisite/OrganizationsPage.tsx:55
-#: packages/admin/src/components/multisite/SiteSwitcher.tsx:46
+#: packages/admin/src/components/multisite/SiteSwitcher.tsx:56
 #: packages/admin/src/components/Sidebar.tsx:589
 #: packages/admin/src/router.tsx:3582
 msgid "Organizations"
@@ -14981,7 +14982,7 @@ msgstr ""
 msgid "Switch back to staging"
 msgstr ""
 
-#: packages/admin/src/components/multisite/SiteSwitcher.tsx:56
+#: packages/admin/src/components/multisite/SiteSwitcher.tsx:66
 msgid "Switch site, current: {label}"
 msgstr ""
 
@@ -17714,7 +17715,7 @@ msgstr "نمی‌توانید نقش خود را تغییر دهید"
 msgid "You do not have permission to edit this asset."
 msgstr ""
 
-#: packages/admin/src/components/multisite/SiteSwitcher.tsx:106
+#: packages/admin/src/components/multisite/SiteSwitcher.tsx:125
 msgid "You don't have access to any sites yet"
 msgstr ""
 
