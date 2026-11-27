@@ -26,7 +26,7 @@ import { sanitizeRedirectUrl } from "../lib/url";
 import { SUPPORTED_LOCALES } from "../locales/index.js";
 import { useLocale } from "../locales/useLocale.js";
 import { PasskeyLogin } from "./auth/PasskeyLogin";
-import { BrandLogo } from "./Logo.js";
+import { BrandLogo, SignInLogo } from "./Logo.js";
 import { ProviderSignIn } from "./multisite/ProviderSignIn.js";
 
 // ============================================================================
@@ -170,7 +170,7 @@ export function LoginPage({ redirectUrl = "/_emdash/admin" }: LoginPageProps) {
 	const safeRedirectUrl = sanitizeRedirectUrl(redirectUrl);
 	const { t } = useLingui();
 	const { locale, setLocale } = useLocale();
-	const { logo: brandLogo, siteName: brandSiteName } = useAdminBranding();
+	const { logo: brandLogo, siteName: brandSiteName, loginLogos } = useAdminBranding();
 	const [method, setMethod] = React.useState<LoginMethod>("passkey");
 	const [urlError, setUrlError] = React.useState<string | null>(null);
 	const [activeProvider, setActiveProvider] = React.useState<string | null>(null);
@@ -255,7 +255,12 @@ export function LoginPage({ redirectUrl = "/_emdash/admin" }: LoginPageProps) {
 			<div className="w-full max-w-md">
 				{/* Header */}
 				<div className="text-center mb-8">
-					<BrandLogo logoUrl={brandLogo} siteName={brandSiteName} className="h-10 mx-auto mb-2" />
+					<SignInLogo
+						logoUrl={brandLogo}
+						siteName={brandSiteName}
+						logos={loginLogos}
+						className="h-10 mx-auto mb-2"
+					/>
 					<h1 className="text-2xl font-semibold text-kumo-default">
 						{method === "magic-link"
 							? t`Sign in with email`

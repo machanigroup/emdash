@@ -370,6 +370,8 @@ export interface AdminManifest {
 		/** Built-in navigation entries hidden from the sidebar and command palette. */
 		hiddenNavItems?: string[];
 		favicon?: string;
+		/** `false` hides the dashboard's create and upload buttons. */
+		quickActions?: boolean;
 	};
 }
 

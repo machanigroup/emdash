@@ -8,7 +8,7 @@ import * as React from "react";
 
 import { useAdminBranding } from "../../lib/admin-branding-context";
 import { useAuthProviderList } from "../../lib/auth-provider-context";
-import { BrandLogo } from "../Logo.js";
+import { SignInLogo } from "../Logo.js";
 
 export function ProviderSignIn({
 	title,
@@ -20,14 +20,19 @@ export function ProviderSignIn({
 	error?: string | null;
 }) {
 	const { t } = useLingui();
-	const { logo, siteName } = useAdminBranding();
+	const { logo, siteName, loginLogos } = useAdminBranding();
 	const providers = useAuthProviderList().filter((provider) => provider.LoginButton);
 
 	return (
 		<div className="min-h-screen flex items-center justify-center bg-kumo-base p-4">
 			<div className="w-full max-w-md">
 				<div className="text-center mb-8">
-					<BrandLogo logoUrl={logo} siteName={siteName} className="h-10 mx-auto mb-2" />
+					<SignInLogo
+						logoUrl={logo}
+						siteName={siteName}
+						logos={loginLogos}
+						className="h-10 mx-auto mb-2"
+					/>
 					<h1 className="text-2xl font-semibold text-kumo-default">{title}</h1>
 					<p className="mt-2 text-sm text-kumo-subtle">{description}</p>
 				</div>

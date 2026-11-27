@@ -452,6 +452,20 @@ describe("Dashboard", () => {
 		await expect.element(screen.getByRole("link", { name: "Setting" })).not.toBeInTheDocument();
 	});
 
+	it("leaves out every create and upload button when quick actions are off", async () => {
+		mockFetchDashboardStats.mockResolvedValue(makeStats([]));
+
+		const screen = await render(
+			<Dashboard manifest={{ ...manifest, admin: { quickActions: false } }} />,
+		);
+
+		await expect.element(screen.getByRole("heading", { name: "Dashboard" })).toBeInTheDocument();
+		await expect.element(screen.getByRole("link", { name: "Page" })).not.toBeInTheDocument();
+		await expect
+			.element(screen.getByRole("link", { name: "Upload Media" }))
+			.not.toBeInTheDocument();
+	});
+
 	it("omits hidden collections from the Content card", async () => {
 		mockFetchDashboardStats.mockResolvedValue(
 			makeStats([

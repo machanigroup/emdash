@@ -1,5 +1,7 @@
 import * as React from "react";
 
+import { cn } from "../lib/utils";
+
 /**
  * EmDash icon mark — the rounded-rect em dash symbol.
  * Used in the sidebar brand and as favicon.
@@ -185,4 +187,47 @@ export function BrandIcon({ logoUrl, siteName, className }: BrandIconProps) {
 		);
 	}
 	return <LogoIcon className={className} />;
+}
+
+const LOGO_INTERVAL_MS = 2600;
+
+interface SignInLogoProps {
+	logoUrl?: string;
+	siteName?: string;
+	logos?: { src: string; name: string }[];
+	className?: string;
+}
+
+/**
+ * The sign-in page's logo: the brand logo, or with several `logos` each in turn, crossfading. Every logo stays in the page,
+ * stacked, so none loads late; only the one showing is exposed to assistive technology. Reduced motion keeps the first.
+ */
+export function SignInLogo({ logoUrl, siteName, logos, className }: SignInLogoProps) {
+	const [shown, setShown] = React.useState(0);
+	const count = logos?.length ?? 0;
+
+	React.useEffect(() => {
+		if (count < 2 || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+		const timer = window.setInterval(() => setShown((i) => (i + 1) % count), LOGO_INTERVAL_MS);
+		return () => window.clearInterval(timer);
+	}, [count]);
+
+	if (!logos || count < 2)
+		return <BrandLogo logoUrl={logoUrl} siteName={siteName} className={className} />;
+	return (
+		<div className={cn("relative w-full", className)}>
+			{logos.map((logo, i) => (
+				<img
+					key={logo.src}
+					src={logo.src}
+					alt={i === shown ? logo.name : ""}
+					aria-hidden={i === shown ? undefined : true}
+					className={cn(
+						"absolute inset-0 size-full object-contain transition-all duration-700 ease-out motion-reduce:transition-none",
+						i === shown ? "scale-100 opacity-100" : "scale-95 opacity-0",
+					)}
+				/>
+			))}
+		</div>
+	);
 }

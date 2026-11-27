@@ -76,6 +76,8 @@ const configShape = {
 			.string()
 			.regex(HEX_COLOR, { error: "Expected a hex colour such as #115b78" })
 			.optional(),
+		quickActions: z.boolean({ error: "Expected true or false" }).optional(),
+		loginLogos: z.array(z.object({ src: z.string().min(1), name: z.string().min(1) })).optional(),
 		locales: z.unknown().optional(),
 		hiddenNavItems: z.unknown().optional(),
 	}),
