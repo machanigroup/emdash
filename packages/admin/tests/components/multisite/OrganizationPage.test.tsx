@@ -153,6 +153,22 @@ describe("OrganizationPage", () => {
 		await expect.element(screen.getByRole("heading", { name: "Invitation created" })).toBeVisible();
 	});
 
+	it("offers the invitation as a written email to the invited address", async () => {
+		const link = "https://admin.example.com/_emdash/admin/invite/accept?token=abc";
+		api.addMember.mockResolvedValue({ status: "invited", inviteUrl: link });
+		const screen = await renderPage();
+		await screen.getByRole("button", { name: "Add member" }).click();
+		await userEvent.fill(screen.getByLabelText("Email"), "sam@example.com");
+		await screen.getByRole("dialog").getByRole("button", { name: "Add member" }).click();
+
+		const href = screen.getByRole("link", { name: "Email invite" }).element().getAttribute("href")!;
+		const mail = new URL(href);
+		expect(mail.protocol).toBe("mailto:");
+		expect(decodeURIComponent(mail.pathname)).toBe("sam@example.com");
+		expect(mail.searchParams.get("body")).toContain(link);
+		expect(mail.searchParams.get("body")).toContain("sam@example.com");
+	});
+
 	it("opens a member's site roles and closes with Done", async () => {
 		const screen = await renderPage();
 		await screen.getByRole("button", { name: "Site roles of Ravi" }).click();

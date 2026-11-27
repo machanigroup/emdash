@@ -10,6 +10,7 @@ import {
 	Input,
 	InputArea,
 	LayerDialog,
+	LinkButton,
 	Loader,
 	Select,
 	Switch,
@@ -17,7 +18,14 @@ import {
 } from "@cloudflare/kumo";
 import { plural } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react/macro";
-import { ArrowSquareOut, Pencil, Plus, Trash, UserGear } from "@phosphor-icons/react";
+import {
+	ArrowSquareOut,
+	EnvelopeSimple,
+	Pencil,
+	Plus,
+	Trash,
+	UserGear,
+} from "@phosphor-icons/react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import * as React from "react";
 
@@ -781,6 +789,25 @@ function AddMemberDialog({
 							<p className="text-xs text-kumo-subtle">
 								{t`This link expires in 7 days and can only be used once.`}
 							</p>
+							<LinkButton
+								href={inviteEmailHref(
+									email.trim(),
+									t`You're invited to ${org.name}`,
+									t`Hello,
+
+You've been invited to help manage ${org.name}'s website.
+
+1. Open this link: ${inviteUrl}
+2. Sign in with the account for ${email.trim()}.
+
+The link works once and expires in 7 days.`,
+								)}
+								variant="secondary"
+								icon={<EnvelopeSimple aria-hidden="true" />}
+								className="justify-self-start"
+							>
+								{t`Email invite`}
+							</LinkButton>
 						</div>
 					) : (
 						<form
@@ -938,3 +965,8 @@ function InvitesSection({ org }: { org: OrganizationDetail }) {
 }
 
 export default OrganizationPage;
+
+/** A mailto: link that opens the person's email app with the invitation written, ready to send. */
+function inviteEmailHref(to: string, subject: string, body: string): string {
+	return `mailto:${encodeURIComponent(to)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+}

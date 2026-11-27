@@ -1,16 +1,18 @@
 /**
  * Standalone invite acceptance page (not wrapped in admin Shell).
- * Validates an invite token, then registers a passkey to complete signup.
+ * Validates an invite token, then completes signup with a passkey or a sign-in provider. On an admin that only signs in
+ * through providers, the provider buttons are the only way in.
  */
 
 import { Input, Loader } from "@cloudflare/kumo";
 import { Trans } from "@lingui/react/macro";
 import { useLingui } from "@lingui/react/macro";
+import { useQuery } from "@tanstack/react-query";
 import { useSearch } from "@tanstack/react-router";
 import * as React from "react";
 
 import { useAdminBranding } from "../lib/admin-branding-context";
-import { validateInviteToken, type InviteVerifyResult } from "../lib/api";
+import { fetchAuthMode, validateInviteToken, type InviteVerifyResult } from "../lib/api";
 import { useAuthProviderList } from "../lib/auth-provider-context";
 import { PasskeyRegistration } from "./auth/PasskeyRegistration";
 import { BrandLogo } from "./Logo.js";
@@ -32,6 +34,8 @@ function RegisterStep({ inviteData, token }: RegisterStepProps) {
 	const [name, setName] = React.useState("");
 	const [passkeyComplete, setPasskeyComplete] = React.useState(false);
 	const buttonProviders = useAuthProviderList().filter((p) => p.LoginButton);
+	const { data: authInfo } = useQuery({ queryKey: ["authMode"], queryFn: fetchAuthMode });
+	const providersOnly = authInfo?.providersOnly === true && buttonProviders.length > 0;
 
 	return (
 		<div className="space-y-6">
@@ -68,44 +72,11 @@ function RegisterStep({ inviteData, token }: RegisterStepProps) {
 				className="bg-kumo-tint"
 			/>
 
-			<Input
-				label={t`Your name (optional)`}
-				type="text"
-				value={name}
-				onChange={(e) => setName(e.target.value)}
-				placeholder={t`Jane Doe`}
-				autoComplete="name"
-				autoFocus
-			/>
-
-			<div className="pt-4 border-t">
-				<PasskeyRegistration
-					optionsEndpoint="/_emdash/api/auth/invite/register-options"
-					verifyEndpoint="/_emdash/api/auth/invite/complete"
-					onSuccess={handleInviteSuccess}
-					additionalData={{ token, name: name || undefined }}
-					showEducation
-					showSuccessStep
-					successButtonText={t`Open the dashboard`}
-					onSuccessReady={() => setPasskeyComplete(true)}
-				/>
-			</div>
-
-			{!passkeyComplete && buttonProviders.length > 0 && (
-				<>
-					{/* Divider */}
-					<div className="relative">
-						<div className="absolute inset-0 flex items-center">
-							<span className="w-full border-t" />
-						</div>
-						<div className="relative flex justify-center text-xs uppercase">
-							<span className="bg-kumo-base px-2 text-kumo-subtle">{t`Or continue with`}</span>
-						</div>
-					</div>
-
-					{/* Accept the invite via an OAuth provider. The button carries the
-					    invite token; the callback only completes the invite when the
-					    provider-verified email matches the invited address. */}
+			{providersOnly ? (
+				<div className="space-y-3 pt-4 border-t">
+					<p className="text-sm text-kumo-subtle">
+						{t`Sign in with the account for ${inviteData.email} to accept the invitation.`}
+					</p>
 					<div
 						className={`grid gap-3 ${buttonProviders.length === 1 ? "grid-cols-1" : "grid-cols-2"}`}
 					>
@@ -118,6 +89,61 @@ function RegisterStep({ inviteData, token }: RegisterStepProps) {
 							);
 						})}
 					</div>
+				</div>
+			) : (
+				<>
+					<Input
+						label={t`Your name (optional)`}
+						type="text"
+						value={name}
+						onChange={(e) => setName(e.target.value)}
+						placeholder={t`Jane Doe`}
+						autoComplete="name"
+						autoFocus
+					/>
+
+					<div className="pt-4 border-t">
+						<PasskeyRegistration
+							optionsEndpoint="/_emdash/api/auth/invite/register-options"
+							verifyEndpoint="/_emdash/api/auth/invite/complete"
+							onSuccess={handleInviteSuccess}
+							additionalData={{ token, name: name || undefined }}
+							showEducation
+							showSuccessStep
+							successButtonText={t`Open the dashboard`}
+							onSuccessReady={() => setPasskeyComplete(true)}
+						/>
+					</div>
+
+					{!passkeyComplete && buttonProviders.length > 0 && (
+						<>
+							{/* Divider */}
+							<div className="relative">
+								<div className="absolute inset-0 flex items-center">
+									<span className="w-full border-t" />
+								</div>
+								<div className="relative flex justify-center text-xs uppercase">
+									<span className="bg-kumo-base px-2 text-kumo-subtle">{t`Or continue with`}</span>
+								</div>
+							</div>
+
+							{/* Accept the invite via an OAuth provider. The button carries the
+							    invite token; the callback only completes the invite when the
+							    provider-verified email matches the invited address. */}
+							<div
+								className={`grid gap-3 ${buttonProviders.length === 1 ? "grid-cols-1" : "grid-cols-2"}`}
+							>
+								{buttonProviders.map((provider) => {
+									const Btn = provider.LoginButton!;
+									return (
+										<div key={provider.id}>
+											<Btn inviteToken={token} />
+										</div>
+									);
+								})}
+							</div>
+						</>
+					)}
 				</>
 			)}
 		</div>

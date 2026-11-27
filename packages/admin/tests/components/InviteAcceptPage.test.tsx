@@ -2,6 +2,7 @@ import * as React from "react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
 import { AdminBrandingProvider } from "../../src/lib/admin-branding-context";
+import { AuthProviderProvider } from "../../src/lib/auth-provider-context";
 import { render } from "../utils/render.tsx";
 
 // Mock router — provide a token so the page reaches the "register" step
@@ -16,6 +17,7 @@ vi.mock("@tanstack/react-router", async () => {
 });
 
 // Mock API
+const mockFetchAuthMode = vi.fn().mockResolvedValue({ authMode: "passkey" });
 const mockValidateInviteToken = vi.fn().mockResolvedValue({
 	email: "invitee@example.com",
 	role: 30,
@@ -27,6 +29,7 @@ vi.mock("../../src/lib/api", async () => {
 	return {
 		...actual,
 		validateInviteToken: (...args: unknown[]) => mockValidateInviteToken(...args),
+		fetchAuthMode: (...args: unknown[]) => mockFetchAuthMode(...args),
 	};
 });
 
@@ -65,6 +68,35 @@ describe("InviteAcceptPage", () => {
 		await expect.element(logoImg).toBeInTheDocument();
 		expect(logoImg.element().getAttribute("src")).toBe("https://example.com/logo.png");
 		expect(screen.getByRole("img", { name: "EmDash" }).query()).toBeNull();
+	});
+
+	it("offers only the sign-in provider when the admin signs in through providers only", async () => {
+		mockFetchAuthMode.mockResolvedValueOnce({ authMode: "passkey", providersOnly: true });
+		const google = {
+			id: "google",
+			label: "Google",
+			LoginButton: ({ inviteToken }: { inviteToken?: string }) => (
+				<button type="button" data-token={inviteToken}>
+					Continue with Google
+				</button>
+			),
+		};
+		const screen = await render(
+			<AuthProviderProvider authProviders={{ google }}>
+				<InviteAcceptPage />
+			</AuthProviderProvider>,
+		);
+
+		const button = screen.getByRole("button", { name: "Continue with Google" });
+		await expect.element(button).toBeInTheDocument();
+		expect(button.element().getAttribute("data-token")).toBe("valid-invite-token");
+		await expect
+			.element(
+				screen.getByText("Sign in with the account for invitee@example.com", { exact: false }),
+			)
+			.toBeInTheDocument();
+		expect(screen.getByText("Or continue with").query()).toBeNull();
+		expect(screen.getByRole("textbox", { name: "Your name (optional)" }).query()).toBeNull();
 	});
 
 	it("falls back to the stock EmDash mark when no admin branding is configured", async () => {
