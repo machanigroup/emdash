@@ -737,7 +737,9 @@ describe("ContentEditor's save button in a room", () => {
 		].filter(
 			(button) =>
 				button !== saveButton() &&
-				!/^(Hide|Show) settings$/.test(button.getAttribute("aria-label") ?? ""),
+				!/^(Hide|Show) (settings|the site beside the editor)$/.test(
+					button.getAttribute("aria-label") ?? "",
+				),
 		);
 		expect(others.length).toBeGreaterThan(1);
 		for (const button of others) {
