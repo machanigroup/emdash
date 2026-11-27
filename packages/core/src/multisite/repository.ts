@@ -263,6 +263,19 @@ export async function cancelOrgInvite(
 		.execute();
 }
 
+/** Whether `email` has an invitation to any organization that hasn't been accepted yet. */
+export async function hasPendingOrgInvite(
+	db: Kysely<ControlPlaneDatabase>,
+	email: string,
+): Promise<boolean> {
+	const invite = await db
+		.selectFrom("_emdash_org_invites")
+		.select("org_id")
+		.where("email", "=", email.trim().toLowerCase())
+		.executeTakeFirst();
+	return invite !== undefined;
+}
+
 /**
  * Turns pending invitations for `email` into memberships for `userId`.
  * Returns the number of organizations joined. Existing memberships keep their

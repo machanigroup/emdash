@@ -46,29 +46,49 @@ describe("admin host sign-in domains", () => {
 });
 
 describe("adminHostSignup", () => {
-	it("makes the first allowed account the deployment Admin", () => {
-		expect(onAdminHost(() => adminHostSignup(config, "priya@machanigroup.com", false))).toEqual({
-			allowed: true,
-			role: Role.ADMIN,
-		});
-	});
+	const invited =
+		(...emails: string[]) =>
+		async (email: string) =>
+			emails.includes(email);
+	const nobody = invited();
 
-	it("refuses other domains, even for the first account", () => {
-		expect(onAdminHost(() => adminHostSignup(config, "someone@gmail.com", false))).toBeNull();
-		expect(onAdminHost(() => adminHostSignup(config, "someone@gmail.com", true))).toBeNull();
-	});
-
-	it("gives later accounts no deployment-wide role", () => {
-		expect(onAdminHost(() => adminHostSignup(config, "ravi@machanigroup.com", true))).toEqual({
-			allowed: true,
-			role: Role.SUBSCRIBER,
-		});
-	});
-
-	it("leaves sites and single-site deployments to the usual rules", () => {
+	it("makes the first allowed account the deployment Admin", async () => {
 		expect(
-			onAdminHost(() => adminHostSignup(config, "a@gmail.com", false), "site-a"),
+			await onAdminHost(() => adminHostSignup(config, "priya@machanigroup.com", false, nobody)),
+		).toEqual({ allowed: true, role: Role.ADMIN });
+	});
+
+	it("refuses other domains for the first account", async () => {
+		expect(
+			await onAdminHost(() => adminHostSignup(config, "someone@gmail.com", false, nobody)),
+		).toBeNull();
+	});
+
+	it("refuses anyone without an invitation once set up, even from a sign-in domain", async () => {
+		expect(
+			await onAdminHost(() => adminHostSignup(config, "ravi@machanigroup.com", true, nobody)),
+		).toBeNull();
+		expect(
+			await onAdminHost(() => adminHostSignup(config, "someone@gmail.com", true, nobody)),
+		).toBeNull();
+	});
+
+	it("lets invited people in with no deployment-wide role, from any domain", async () => {
+		const check = invited("ravi@machanigroup.com", "writer@gmail.com");
+		for (const email of ["ravi@machanigroup.com", "writer@gmail.com"]) {
+			expect(await onAdminHost(() => adminHostSignup(config, email, true, check))).toEqual({
+				allowed: true,
+				role: Role.SUBSCRIBER,
+			});
+		}
+	});
+
+	it("leaves sites and single-site deployments to the usual rules", async () => {
+		expect(
+			await onAdminHost(() => adminHostSignup(config, "a@gmail.com", false, nobody), "site-a"),
 		).toBeUndefined();
-		expect(onAdminHost(() => adminHostSignup({}, "a@gmail.com", false))).toBeUndefined();
+		expect(
+			await onAdminHost(() => adminHostSignup({}, "a@gmail.com", false, nobody)),
+		).toBeUndefined();
 	});
 });

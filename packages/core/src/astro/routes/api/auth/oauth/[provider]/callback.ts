@@ -17,6 +17,7 @@ import {
 	type RoleLevel,
 } from "@emdash-cms/auth";
 import { createKyselyAdapter } from "@emdash-cms/auth/adapters/kysely";
+import type { Kysely } from "kysely";
 
 import { getPublicOrigin } from "#api/public-url.js";
 import { finalizeSetup } from "#api/setup-complete.js";
@@ -26,7 +27,9 @@ import { startUserSession } from "#auth/start-user-session.js";
 import type { AuthProviderDescriptor } from "#auth/types.js";
 import { OptionsRepository } from "#db/repositories/options.js";
 
+import { hasPendingOrgInvite } from "../../../../../../multisite/repository.js";
 import { adminHostSignup } from "../../../../../../multisite/sign-in.js";
+import type { ControlPlaneDatabase } from "../../../../../../multisite/types.js";
 import { SESSION_UNAVAILABLE_MESSAGE } from "../../../../../session-user.js";
 
 type ProviderName = "github" | "google" | "microsoft";
@@ -202,7 +205,12 @@ export const GET: APIRoute = async ({ params, request, locals, session, redirect
 				const setupComplete = await options.get("emdash:setup_complete");
 				const isSetUp = setupComplete === true || setupComplete === "true";
 
-				const adminHost = adminHostSignup(emdash.config, email, isSetUp);
+				// On the admin host, the runtime's database is the control plane, which holds the invitations.
+				// eslint-disable-next-line typescript/no-unsafe-type-assertion -- same database, control-plane tables
+				const controlPlane = emdash.db as unknown as Kysely<ControlPlaneDatabase>;
+				const adminHost = await adminHostSignup(emdash.config, email, isSetUp, (address) =>
+					hasPendingOrgInvite(controlPlane, address),
+				);
 				if (adminHost !== undefined) return adminHost;
 
 				if (!isSetUp) {
