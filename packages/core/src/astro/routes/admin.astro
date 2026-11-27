@@ -20,12 +20,14 @@ export const prerender = false;
 
 import { resolveLocale, loadMessages, getLocaleDir } from "@emdash-cms/admin/locales";
 import { getSiteSettingsWithDb } from "#settings/index.js";
+import { adminAccentCss } from "../admin-accent.js";
 
 const resolvedLocale = resolveLocale(Astro.request);
 const resolvedDir = getLocaleDir(resolvedLocale);
 const messages = await loadMessages(resolvedLocale);
 
 const adminConfig = Astro.locals.emdash?.config?.admin;
+const accentCss = adminAccentCss(adminConfig?.accentColor);
 const pageTitle = adminConfig?.siteName ? `${adminConfig.siteName} Admin` : "EmDash Admin";
 
 // The admin shell must never be stored by a shared cache. Without an explicit
@@ -86,6 +88,7 @@ const faviconType = adminConfig?.favicon ? undefined : siteFaviconType;
 			})();
 		</script>
 		<link rel="stylesheet" href={adminStylesUrl} />
+		{accentCss ? <style is:inline set:html={accentCss} /> : null}
 		{componentDataByCssVariable.has("--font-emdash") ? <Font cssVariable="--font-emdash" /> : null}
 		{favicon ? (
 			<link rel="icon" href={favicon} type={faviconType} />

@@ -665,6 +665,7 @@ export interface EmDashConfig {
 	 *     siteName: "AgencyX CMS",
 	 *     footerLabel: "AgencyX",
 	 *     favicon: "/favicon.ico",
+	 *     accentColor: "#115b78",
 	 *   },
 	 * })
 	 * ```
@@ -678,6 +679,11 @@ export interface EmDashConfig {
 		footerLabel?: string | false;
 		/** URL or path to a custom favicon for the admin panel. */
 		favicon?: string;
+		/**
+		 * Brand colour for the admin, as a hex colour such as `"#115b78"`. Recolours primary buttons, links and the brand fill
+		 * in light and dark mode. Other formats fail the build.
+		 */
+		accentColor?: string;
 		/**
 		 * Build-time allowlist of admin UI locales to ship.
 		 *

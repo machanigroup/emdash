@@ -9,6 +9,7 @@
 
 import { z } from "zod";
 
+import { HEX_COLOR } from "../astro/admin-accent.js";
 import type { EmDashConfig } from "../astro/integration/runtime.js";
 
 function isObject(value: unknown): value is Record<string, unknown> {
@@ -71,6 +72,10 @@ const configShape = {
 			.union([z.string(), z.literal(false)], { error: "Expected a string or `false`" })
 			.optional(),
 		favicon: z.string().optional(),
+		accentColor: z
+			.string()
+			.regex(HEX_COLOR, { error: "Expected a hex colour such as #115b78" })
+			.optional(),
 		locales: z.unknown().optional(),
 		hiddenNavItems: z.unknown().optional(),
 	}),

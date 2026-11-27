@@ -21,6 +21,8 @@ interface WelcomeModalProps {
 	onClose: () => void;
 	userName?: string;
 	userRole: number;
+	/** On a multi-site admin host, people reach sites through organizations, not a site's Users screen. */
+	multiSite?: boolean;
 }
 
 const MSG_ROLE_ADMINISTRATOR = msg`Administrator`;
@@ -58,6 +60,9 @@ function scopeDescriptor(isAdmin: boolean, userRole: number): MessageDescriptor 
 }
 
 const MSG_ADMIN_INVITE = msg`As an administrator, you can invite other users from the Users section.`;
+const MSG_MULTISITE_ACCESS = msg`Your access comes from the organizations you belong to. Switch between their sites from the menu at the top of the sidebar.`;
+const MSG_MULTISITE_ADMIN_INVITE = msg`As an administrator, you can invite people under Organizations, then Members.`;
+const MSG_PREVIEW_TIP = msg`While you edit, Show the site beside the editor previews your draft on the website.`;
 
 async function dismissWelcome(fallbackMessage: string): Promise<void> {
 	const response = await apiFetch("/_emdash/api/auth/me", {
@@ -68,7 +73,7 @@ async function dismissWelcome(fallbackMessage: string): Promise<void> {
 	if (!response.ok) await throwResponseError(response, fallbackMessage);
 }
 
-export function WelcomeModal({ open, onClose, userName, userRole }: WelcomeModalProps) {
+export function WelcomeModal({ open, onClose, userName, userRole, multiSite }: WelcomeModalProps) {
 	const { t } = useLingui();
 	const { logo: brandLogo, siteName } = useAdminBranding();
 	const queryClient = useQueryClient();
@@ -120,7 +125,11 @@ export function WelcomeModal({ open, onClose, userName, userRole }: WelcomeModal
 				<LayerDialog.Title>
 					<span className="grid justify-items-start gap-4">
 						<span aria-hidden="true">
-							<BrandIcon logoUrl={brandLogo} siteName={siteName} className="size-8" />
+							<BrandIcon
+								logoUrl={brandLogo}
+								siteName={siteName}
+								className={brandLogo ? "h-8 w-auto max-w-40" : "size-8"}
+							/>
 						</span>
 						{t(titleDescriptor)}
 					</span>
@@ -140,8 +149,16 @@ export function WelcomeModal({ open, onClose, userName, userRole }: WelcomeModal
 								{t(scopeDescriptor(isAdmin, userRole))}
 							</p>
 						</div>
+						{multiSite && (
+							<p className="text-base text-pretty text-kumo-default">{t(MSG_MULTISITE_ACCESS)}</p>
+						)}
 						{isAdmin && (
-							<p className="text-base text-pretty text-kumo-subtle">{t(MSG_ADMIN_INVITE)}</p>
+							<p className="text-base text-pretty text-kumo-subtle">
+								{t(multiSite ? MSG_MULTISITE_ADMIN_INVITE : MSG_ADMIN_INVITE)}
+							</p>
+						)}
+						{multiSite && (
+							<p className="text-base text-pretty text-kumo-subtle">{t(MSG_PREVIEW_TIP)}</p>
 						)}
 					</div>
 				</LayerDialog.Body>

@@ -59,81 +59,91 @@ export function SiteSwitcher({ currentSiteId, logoUrl, brandName }: SiteSwitcher
 	const groups = sites ? groupByOrganization(sites) : [];
 
 	return (
-		<DropdownMenu>
-			<DropdownMenu.Trigger
-				render={
-					<Button
-						variant="ghost"
-						className="h-auto w-[calc(var(--sidebar-width)-1.75rem)] shrink-0 justify-start gap-2 overflow-hidden py-1 ps-2.5 group-data-[state=collapsed]/sidebar:-translate-x-[3px] rtl:group-data-[state=collapsed]/sidebar:translate-x-[3px]"
-						aria-label={t`Switch site, current: ${label}`}
-					>
-						<BrandIcon
-							logoUrl={logoUrl}
-							siteName={brandName}
-							className={
-								logoUrl
-									? "h-5 w-auto max-w-14 shrink-0 group-data-[state=collapsed]/sidebar:max-w-5"
-									: "size-5 shrink-0"
-							}
-							aria-hidden="true"
-						/>
-						<span className="grid min-w-0 flex-1 grid-cols-[1fr] transition-[grid-template-columns] duration-(--sidebar-animation-duration) ease-(--sidebar-easing) motion-reduce:transition-none group-data-[state=collapsed]/sidebar:grid-cols-[0fr]">
-							<span className="flex min-w-0 items-center gap-1 overflow-hidden">
-								<span className="grid min-w-0 flex-1 text-start">
-									<span className="truncate font-semibold">{label}</span>
-									<span className="truncate text-xs font-normal text-kumo-subtle" dir="ltr">
-										{subtitle}
-									</span>
-								</span>
-								<CaretUpDown className="size-3.5 shrink-0 text-kumo-subtle" aria-hidden="true" />
-							</span>
-						</span>
-					</Button>
-				}
-			/>
-			<DropdownMenu.Content align="start" className="min-w-[16rem]">
-				{groups.length > 0 ? (
-					groups.map((group, index) => (
-						<DropdownMenu.Group key={group.id}>
-							{index > 0 && <DropdownMenu.Separator />}
-							<DropdownMenu.Label>{group.name}</DropdownMenu.Label>
-							{group.sites.map((site) => (
-								<DropdownMenu.Item
-									key={site.id}
-									icon={
-										site.id === currentSiteId ? (
-											<Check className="size-4" aria-hidden="true" />
-										) : (
-											<span className="size-4" aria-hidden="true" />
-										)
-									}
-									onClick={() => {
-										if (site.id !== currentSiteId) switchToSite(site.id);
-									}}
-								>
-									<span className="grid min-w-0 text-start">
-										<span className="truncate">{site.name}</span>
-										<span className="truncate text-xs text-kumo-subtle" dir="ltr">
-											{siteDomain(site) ?? noDomain}
+		<div className="grid gap-2">
+			{logoUrl && (
+				// The full logo, at a size it can be read, while the sidebar is open; the collapsed rail shows the switcher's icon.
+				<img
+					src={logoUrl}
+					alt={brandName ?? ""}
+					className="h-8 w-auto max-w-40 object-contain object-left ps-2.5 group-data-[state=collapsed]/sidebar:hidden rtl:object-right"
+				/>
+			)}
+			<DropdownMenu>
+				<DropdownMenu.Trigger
+					render={
+						<Button
+							variant="ghost"
+							className="h-auto w-[calc(var(--sidebar-width)-1.75rem)] shrink-0 justify-start gap-2 overflow-hidden py-1 ps-2.5 group-data-[state=collapsed]/sidebar:-translate-x-[3px] rtl:group-data-[state=collapsed]/sidebar:translate-x-[3px]"
+							aria-label={t`Switch site, current: ${label}`}
+						>
+							<BrandIcon
+								logoUrl={logoUrl}
+								siteName={brandName}
+								className={
+									logoUrl
+										? "hidden h-5 w-auto max-w-5 shrink-0 group-data-[state=collapsed]/sidebar:block"
+										: "size-5 shrink-0"
+								}
+								aria-hidden="true"
+							/>
+							<span className="grid min-w-0 flex-1 grid-cols-[1fr] transition-[grid-template-columns] duration-(--sidebar-animation-duration) ease-(--sidebar-easing) motion-reduce:transition-none group-data-[state=collapsed]/sidebar:grid-cols-[0fr]">
+								<span className="flex min-w-0 items-center gap-1 overflow-hidden">
+									<span className="grid min-w-0 flex-1 text-start">
+										<span className="truncate font-semibold">{label}</span>
+										<span className="truncate text-xs font-normal text-kumo-subtle" dir="ltr">
+											{subtitle}
 										</span>
 									</span>
-								</DropdownMenu.Item>
-							))}
-						</DropdownMenu.Group>
-					))
-				) : (
+									<CaretUpDown className="size-3.5 shrink-0 text-kumo-subtle" aria-hidden="true" />
+								</span>
+							</span>
+						</Button>
+					}
+				/>
+				<DropdownMenu.Content align="start" className="min-w-[16rem]">
+					{groups.length > 0 ? (
+						groups.map((group, index) => (
+							<DropdownMenu.Group key={group.id}>
+								{index > 0 && <DropdownMenu.Separator />}
+								<DropdownMenu.Label>{group.name}</DropdownMenu.Label>
+								{group.sites.map((site) => (
+									<DropdownMenu.Item
+										key={site.id}
+										icon={
+											site.id === currentSiteId ? (
+												<Check className="size-4" aria-hidden="true" />
+											) : (
+												<span className="size-4" aria-hidden="true" />
+											)
+										}
+										onClick={() => {
+											if (site.id !== currentSiteId) switchToSite(site.id);
+										}}
+									>
+										<span className="grid min-w-0 text-start">
+											<span className="truncate">{site.name}</span>
+											<span className="truncate text-xs text-kumo-subtle" dir="ltr">
+												{siteDomain(site) ?? noDomain}
+											</span>
+										</span>
+									</DropdownMenu.Item>
+								))}
+							</DropdownMenu.Group>
+						))
+					) : (
+						<DropdownMenu.Item
+							disabled
+						>{t`You don't have access to any sites yet`}</DropdownMenu.Item>
+					)}
+					<DropdownMenu.Separator />
 					<DropdownMenu.Item
-						disabled
-					>{t`You don't have access to any sites yet`}</DropdownMenu.Item>
-				)}
-				<DropdownMenu.Separator />
-				<DropdownMenu.Item
-					icon={<Buildings className="size-4" aria-hidden="true" />}
-					onClick={() => void navigate({ to: "/organizations" })}
-				>
-					{t`Manage organizations`}
-				</DropdownMenu.Item>
-			</DropdownMenu.Content>
-		</DropdownMenu>
+						icon={<Buildings className="size-4" aria-hidden="true" />}
+						onClick={() => void navigate({ to: "/organizations" })}
+					>
+						{t`Manage organizations`}
+					</DropdownMenu.Item>
+				</DropdownMenu.Content>
+			</DropdownMenu>
+		</div>
 	);
 }

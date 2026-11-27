@@ -59,6 +59,7 @@ export interface ShellProps {
 		version?: string;
 		siteTitle?: string;
 		admin?: AdminManifest["admin"];
+		multiSite?: AdminManifest["multiSite"];
 		registryConfigurationError?: AdminManifest["registryConfigurationError"];
 		staging?: boolean;
 	};
@@ -192,6 +193,7 @@ export function Shell({ children, manifest }: ShellProps) {
 						onClose={() => setWelcomeModalOpen(false)}
 						userName={user.name}
 						userRole={user.role}
+						multiSite={Boolean(manifest.multiSite)}
 					/>
 				)}
 

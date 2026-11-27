@@ -45,11 +45,14 @@ const sites = [
 	},
 ];
 
-async function renderSwitcher(currentSiteId: string | null) {
+async function renderSwitcher(
+	currentSiteId: string | null,
+	branding: { logoUrl?: string; brandName?: string } = {},
+) {
 	const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
 	return render(
 		<QueryClientProvider client={queryClient}>
-			<SiteSwitcher currentSiteId={currentSiteId} />
+			<SiteSwitcher currentSiteId={currentSiteId} {...branding} />
 		</QueryClientProvider>,
 	);
 }
@@ -103,5 +106,16 @@ describe("SiteSwitcher", () => {
 		await expect
 			.element(screen.getByRole("button", { name: "Switch site, current: Choose a site" }))
 			.toBeInTheDocument();
+	});
+
+	it("shows the deployment's full logo above the switcher", async () => {
+		const logo =
+			"data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='260' height='100'/>";
+		const screen = await renderSwitcher("site-a", { logoUrl: logo, brandName: "Acme Group" });
+		const image = screen.getByRole("img", { name: "Acme Group" });
+		await expect.element(image).toBeVisible();
+		const { width, height } = image.element().getBoundingClientRect();
+		expect(height).toBe(32);
+		expect(width).toBeGreaterThan(height * 2);
 	});
 });
