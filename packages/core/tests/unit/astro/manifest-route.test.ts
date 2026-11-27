@@ -16,6 +16,7 @@ import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { GET as getManifest } from "../../../src/astro/routes/api/manifest.js";
 import { MediaRepository } from "../../../src/database/repositories/media.js";
 import { OptionsRepository } from "../../../src/database/repositories/options.js";
+import { runWithContext } from "../../../src/request-context.js";
 import {
 	describeEachDialect,
 	setupForDialect,
@@ -325,6 +326,27 @@ describeEachDialect("manifest route saved site logo", (dialect) => {
 		const response = await getManifest(makeDatabaseContext(branding));
 		const body = (await response.json()) as ManifestEnvelope;
 		expect(body.data.admin).toEqual(branding);
+	});
+
+	it("brands a managed site of a shared admin with its own saved title and logo", async () => {
+		const media = await new MediaRepository(ctx.db).create({
+			filename: "logo.svg",
+			mimeType: "image/svg+xml",
+			storageKey: "svasa-life-logo.svg",
+		});
+		const options = new OptionsRepository(ctx.db);
+		await options.set("site:logo", { mediaId: media.id });
+		await options.set("site:title", "Svasa Life");
+		const branding = { logo: "/group-logo.svg", siteName: "Machani Group" };
+
+		const response = await runWithContext({ editMode: false, siteId: "site-svasa-life" }, () =>
+			getManifest(makeDatabaseContext(branding)),
+		);
+		const body = (await response.json()) as ManifestEnvelope;
+		expect(body.data.admin).toEqual({
+			logo: "/_emdash/api/media/file/svasa-life-logo.svg",
+			siteName: "Svasa Life",
+		});
 	});
 
 	it("falls back to the default branding when the saved logo media is missing", async () => {

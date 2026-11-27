@@ -52,6 +52,11 @@ export const GET: APIRoute = async ({ locals }) => {
 		// doesn't assign it to globalThis, so getStoredConfig() always returned
 		// null and the React SPA never received custom logo/siteName/favicon.
 		// See issue #835.
+		// On the shared admin of a multi-site deployment, the site being managed brands the admin with its own saved title and
+		// logo, over the deployment-wide admin branding, so each company's backend shows its own name and logo.
+		const requestContext = getRequestContext();
+		const siteId = requestContext?.siteId;
+		const managedSite = siteId !== undefined && siteId !== CONTROL_PLANE_SITE_ID;
 		let adminBranding = emdash?.config?.admin;
 		let siteTitle: string | undefined;
 		let siteTimezone = "UTC";
@@ -83,13 +88,13 @@ export const GET: APIRoute = async ({ locals }) => {
 				const timezone = titles.get("site:timezone");
 				siteTimezone = typeof timezone === "string" && timezone ? timezone : "UTC";
 				staging = titles.get("site:staging") === true;
-				if (!adminBranding?.siteName && brandingSiteTitle) {
+				if ((!adminBranding?.siteName || managedSite) && brandingSiteTitle) {
 					adminBranding = { ...adminBranding, siteName: brandingSiteTitle };
 				}
 
 				const siteLogo: unknown = titles.get("site:logo");
 				if (
-					!adminBranding?.logo &&
+					(!adminBranding?.logo || managedSite) &&
 					typeof siteLogo === "object" &&
 					siteLogo !== null &&
 					"mediaId" in siteLogo &&
@@ -125,9 +130,6 @@ export const GET: APIRoute = async ({ locals }) => {
 
 		// On the shared admin of a multi-site deployment, tell the admin which
 		// site it is managing; null when it shows the control plane itself.
-		const requestContext = getRequestContext();
-		const siteId = requestContext?.siteId;
-		const managedSite = siteId !== undefined && siteId !== CONTROL_PLANE_SITE_ID;
 		const multiSite = emdash?.config.multiSite?.adminUrl
 			? {
 					siteId: managedSite ? siteId : null,

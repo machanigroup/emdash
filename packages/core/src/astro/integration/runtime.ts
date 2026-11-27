@@ -685,6 +685,17 @@ export interface EmDashConfig {
 		 */
 		accentColor?: string;
 		/**
+		 * Whether the dashboard shows its row of buttons for creating an entry of each collection and uploading media. Set to
+		 * `false` for a dashboard of headings and status only; the sidebar still creates and uploads. Default: `true`.
+		 */
+		quickActions?: boolean;
+		/**
+		 * Logos the sign-in page cycles through, one at a time, in place of the single `logo` (for a group of companies sharing
+		 * one admin). Each needs a `src` and the company's `name`, which is the logo's text alternative. With reduced motion
+		 * the first stays still.
+		 */
+		loginLogos?: { src: string; name: string }[];
+		/**
 		 * Build-time allowlist of admin UI locales to ship.
 		 *
 		 * Only the listed locales are bundled and offered in the language

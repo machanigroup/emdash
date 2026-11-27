@@ -22,6 +22,8 @@ export interface AdminBranding {
 	logo?: string;
 	/** Custom name displayed in place of "EmDash". */
 	siteName?: string;
+	/** Logos the sign-in page cycles through in place of `logo`. */
+	loginLogos?: { src: string; name: string }[];
 }
 
 const AdminBrandingContext = createContext<AdminBranding>({});

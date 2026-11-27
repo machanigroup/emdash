@@ -73,7 +73,7 @@ export function Dashboard({ manifest }: DashboardProps) {
 			{manifest.marketplace && (user?.role ?? 0) >= ROLE_ADMIN && <MarketplaceMigrationBanner />}
 			<div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
 				<h1 className="text-2xl font-semibold leading-tight">{t`Dashboard`}</h1>
-				<QuickActions manifest={manifest} />
+				{manifest.admin?.quickActions !== false && <QuickActions manifest={manifest} />}
 			</div>
 
 			<CoreUpdateBanner />

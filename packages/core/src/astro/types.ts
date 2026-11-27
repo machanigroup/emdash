@@ -275,6 +275,7 @@ export interface EmDashManifest {
 		footerLabel?: string | false;
 		favicon?: string;
 		hiddenNavItems?: string[];
+		quickActions?: boolean;
 	};
 }
 
