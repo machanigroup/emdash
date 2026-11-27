@@ -72,7 +72,7 @@ export function SiteSwitcher({ currentSiteId, logoUrl, brandName }: SiteSwitcher
 							siteName={brandName}
 							className={
 								logoUrl
-									? "h-5 w-auto max-w-14 shrink-0 group-data-[state=collapsed]/sidebar:max-w-5"
+									? "h-7 w-auto max-w-20 shrink-0 object-contain group-data-[state=collapsed]/sidebar:h-5 group-data-[state=collapsed]/sidebar:max-w-5"
 									: "size-5 shrink-0"
 							}
 							aria-hidden="true"

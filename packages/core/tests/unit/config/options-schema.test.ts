@@ -22,7 +22,7 @@ describe("emdash() config validation", () => {
 				maxUploadSize: 100 * 1024 * 1024,
 				toolbar: "client",
 				fonts: false,
-				admin: { siteName: "Agency CMS", footerLabel: false },
+				admin: { siteName: "Agency CMS", footerLabel: false, accentColor: "#115b78" },
 			}),
 		).not.toThrow();
 	});
@@ -34,6 +34,7 @@ describe("emdash() config validation", () => {
 		["database", { database: "file:./data.db" }],
 		["plugins", { plugins: ["audit-log"] }],
 		["admin.siteName", { admin: { siteName: 42 } }],
+		["admin.accentColor", { admin: { accentColor: "teal; } body { display: none" } }],
 		["fonts", { fonts: { scripts: "arabic" } }],
 		["imagePlaceholders", { imagePlaceholders: "no" }],
 	])("names the option path for a wrong %s value", (path, config) => {

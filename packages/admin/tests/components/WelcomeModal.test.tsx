@@ -155,4 +155,28 @@ describe("WelcomeModal", () => {
 		);
 		await expect.element(screen.getByRole("heading", { name: title })).toBeInTheDocument();
 	});
+
+	it("points administrators to organizations on a multi-site admin host", async () => {
+		const screen = await render(
+			<QueryWrapper>
+				<WelcomeModal open={true} onClose={noop} userRole={50} multiSite />
+			</QueryWrapper>,
+		);
+		await expect
+			.element(screen.getByText(/invite people under Organizations, then Members/))
+			.toBeInTheDocument();
+		await expect.element(screen.getByText(/organizations you belong to/)).toBeInTheDocument();
+		await expect.element(screen.getByText(/Show the site beside the editor/)).toBeInTheDocument();
+		expect(screen.getByText(ADMIN_TEXT_REGEX).query()).toBeNull();
+	});
+
+	it("keeps the Users section text on a single site", async () => {
+		const screen = await render(
+			<QueryWrapper>
+				<WelcomeModal open={true} onClose={noop} userRole={50} />
+			</QueryWrapper>,
+		);
+		await expect.element(screen.getByText(ADMIN_TEXT_REGEX)).toBeInTheDocument();
+		expect(screen.getByText(/organizations you belong to/).query()).toBeNull();
+	});
 });
