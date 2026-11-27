@@ -428,4 +428,28 @@ describe("webhook-notifier plugin", () => {
 		const newest = await deliveries.query({ orderBy: { timestamp: "desc" }, limit: 1 });
 		expect(newest.items[0]?.data).toMatchObject({ resourceId: post.id });
 	});
+
+	it("sends publishing changes and no saves when the site sends publishing only", async () => {
+		await ctx.kv.set("settings:events", "publishing");
+
+		const post = await createPost("Launch");
+		const actor = { id: "editor-1", role: 40 };
+		expect((await runtime.handleContentPublish("post", post.id, { actor })).success).toBe(true);
+		await waitForDeferredTasks();
+		expect((await runtime.handleContentUnpublish("post", post.id, { actor })).success).toBe(true);
+		await waitForDeferredTasks();
+		expect((await runtime.handleContentDelete("post", post.id)).success).toBe(true);
+		await waitForDeferredTasks();
+		await uploadPhoto();
+		await waitForDeferredTasks();
+
+		expect(sent.map((webhook) => (webhook.payload as { event: string }).event)).toEqual([
+			"content:publish",
+			"content:unpublish",
+			"content:delete",
+		]);
+		expect(sent[0]?.payload).toEqual(
+			expect.objectContaining({ collection: "post", resourceId: post.id }),
+		);
+	});
 });

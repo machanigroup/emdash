@@ -223,6 +223,27 @@ async function recordDelivery(ctx: PluginContext, record: DeliveryRecord): Promi
 	}
 }
 
+/** Publishing and unpublishing change what the site shows, so every content setting sends them. */
+async function sendStateChange(
+	name: "content:publish" | "content:unpublish",
+	event: { content: Record<string, unknown>; collection: string },
+	ctx: PluginContext,
+): Promise<void> {
+	const { url, token, enabled, events, includeData } = await getConfig(ctx);
+	if (enabled === false || !url || events === "media") return;
+	const id = event.content.id;
+	const payload: WebhookPayload = {
+		event: name,
+		timestamp: new Date().toISOString(),
+		collection: event.collection,
+		resourceId: typeof id === "string" ? id : String(id),
+		resourceType: "content",
+		data: includeData && isRecord(event.content.data) ? event.content.data : undefined,
+		metadata: { slug: event.content.slug, status: event.content.status },
+	};
+	await deliver(ctx, url, token, payload);
+}
+
 // ── Plugin definition ──
 
 export default {
@@ -233,7 +254,7 @@ export default {
 			errorPolicy: "continue",
 			handler: async (event, ctx) => {
 				const { url, token, enabled, events, includeData } = await getConfig(ctx);
-				if (enabled === false || !url || events === "media") return;
+				if (enabled === false || !url || events === "media" || events === "publishing") return;
 
 				const contentId =
 					typeof event.content.id === "string" ? event.content.id : String(event.content.id);
@@ -276,13 +297,27 @@ export default {
 			},
 		},
 
+		"content:afterPublish": {
+			priority: 210,
+			timeout: 10000,
+			errorPolicy: "continue",
+			handler: async (event, ctx) => sendStateChange("content:publish", event, ctx),
+		},
+
+		"content:afterUnpublish": {
+			priority: 210,
+			timeout: 10000,
+			errorPolicy: "continue",
+			handler: async (event, ctx) => sendStateChange("content:unpublish", event, ctx),
+		},
+
 		"media:afterUpload": {
 			priority: 210,
 			timeout: 10000,
 			errorPolicy: "continue",
 			handler: async (event, ctx) => {
 				const { url, token, enabled, events, includeData } = await getConfig(ctx);
-				if (enabled === false || !url || events === "content") return;
+				if (enabled === false || !url || events === "content" || events === "publishing") return;
 
 				const payload: WebhookPayload = {
 					event: "media:upload",
@@ -544,6 +579,7 @@ async function buildSettingsPage(ctx: PluginContext) {
 							options: [
 								{ label: "All events", value: "all" },
 								{ label: "Content changes only", value: "content" },
+								{ label: "Publishing only (publish, unpublish, delete)", value: "publishing" },
 								{ label: "Media uploads only", value: "media" },
 							],
 							initial_value: events,
