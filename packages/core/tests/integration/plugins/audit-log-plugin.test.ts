@@ -35,7 +35,9 @@ interface AuditLogManifest {
 interface AuditEntry {
 	action: string;
 	resourceId: string;
+	collection?: string;
 	userId?: string;
+	metadata?: Record<string, unknown>;
 	changes?: { before?: Record<string, unknown>; after?: Record<string, unknown> };
 }
 
@@ -171,5 +173,34 @@ describe("audit-log plugin", () => {
 		expect(await readEntries()).toContainEqual(
 			expect.objectContaining({ action: "media:upload", resourceId: "media-1" }),
 		);
+	});
+
+	it("records who published and unpublished an entry, with its title", async () => {
+		const created = await runtime.handleContentCreate("post", {
+			data: { title: "Launch day" },
+			slug: "launch-day",
+			status: "draft",
+		});
+		if (!created.success) throw new Error("create failed");
+		const id = created.data.item.id;
+		const actor = { id: "publisher-user", role: Role.EDITOR };
+
+		expect((await runtime.handleContentPublish("post", id, { actor })).success).toBe(true);
+		await waitForDeferredTasks();
+		expect((await runtime.handleContentUnpublish("post", id, { actor })).success).toBe(true);
+		await waitForDeferredTasks();
+
+		const entries = await readEntries();
+		for (const action of ["publish", "unpublish"]) {
+			expect(entries).toContainEqual(
+				expect.objectContaining({
+					action,
+					resourceId: id,
+					collection: "post",
+					userId: "publisher-user",
+					metadata: expect.objectContaining({ title: "Launch day", slug: "launch-day" }),
+				}),
+			);
+		}
 	});
 });

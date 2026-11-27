@@ -841,13 +841,16 @@ export class HookPipeline {
 		name: ContentStateChangeHookName,
 		content: Record<string, unknown>,
 		collection: string,
+		actor?: ActorInfo,
 	): Promise<HookResult<void>[]> {
 		const hooks = this.getTypedHooks(name);
 		const results: HookResult<void>[] = [];
 
 		for (const hook of hooks) {
 			const { handler } = hook;
-			const event: ContentStateChangeEvent = { content, collection };
+			const event: ContentStateChangeEvent = actor
+				? { content, collection, actor }
+				: { content, collection };
 			const ctx = this.getContext(hook.pluginId);
 			const start = Date.now();
 
@@ -881,8 +884,9 @@ export class HookPipeline {
 	async runContentAfterPublish(
 		content: Record<string, unknown>,
 		collection: string,
+		actor?: ActorInfo,
 	): Promise<HookResult<void>[]> {
-		return this.runContentStateChangeHook("content:afterPublish", content, collection);
+		return this.runContentStateChangeHook("content:afterPublish", content, collection, actor);
 	}
 
 	/**
@@ -891,8 +895,9 @@ export class HookPipeline {
 	async runContentAfterUnpublish(
 		content: Record<string, unknown>,
 		collection: string,
+		actor?: ActorInfo,
 	): Promise<HookResult<void>[]> {
-		return this.runContentStateChangeHook("content:afterUnpublish", content, collection);
+		return this.runContentStateChangeHook("content:afterUnpublish", content, collection, actor);
 	}
 
 	/**
@@ -901,8 +906,9 @@ export class HookPipeline {
 	async runContentAfterRestore(
 		content: Record<string, unknown>,
 		collection: string,
+		actor?: ActorInfo,
 	): Promise<HookResult<void>[]> {
-		return this.runContentStateChangeHook("content:afterRestore", content, collection);
+		return this.runContentStateChangeHook("content:afterRestore", content, collection, actor);
 	}
 
 	/**
@@ -911,8 +917,9 @@ export class HookPipeline {
 	async runContentAfterSchedule(
 		content: Record<string, unknown>,
 		collection: string,
+		actor?: ActorInfo,
 	): Promise<HookResult<void>[]> {
-		return this.runContentStateChangeHook("content:afterSchedule", content, collection);
+		return this.runContentStateChangeHook("content:afterSchedule", content, collection, actor);
 	}
 
 	/**
@@ -921,8 +928,9 @@ export class HookPipeline {
 	async runContentAfterUnschedule(
 		content: Record<string, unknown>,
 		collection: string,
+		actor?: ActorInfo,
 	): Promise<HookResult<void>[]> {
-		return this.runContentStateChangeHook("content:afterUnschedule", content, collection);
+		return this.runContentStateChangeHook("content:afterUnschedule", content, collection, actor);
 	}
 
 	// =========================================================================

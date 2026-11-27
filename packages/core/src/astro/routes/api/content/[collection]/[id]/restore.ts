@@ -47,7 +47,9 @@ export const POST: APIRoute = async ({ params, locals, cache }) => {
 
 	const resolvedId = typeof existingItem?.id === "string" ? existingItem.id : id;
 
-	const result = await emdash.handleContentRestore(collection, resolvedId);
+	const result = await emdash.handleContentRestore(collection, resolvedId, {
+		actor: { id: user!.id, role: user!.role },
+	});
 
 	if (!result.success) return unwrapResult(result);
 

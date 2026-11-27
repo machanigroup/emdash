@@ -371,9 +371,10 @@ export class PluginManager {
 	async runContentAfterPublish(
 		content: Record<string, unknown>,
 		collection: string,
+		actor?: ActorInfo,
 	): Promise<HookResult<void>[]> {
 		this.ensureInitialized();
-		return this.hookPipeline!.runContentAfterPublish(content, collection);
+		return this.hookPipeline!.runContentAfterPublish(content, collection, actor);
 	}
 
 	/**
@@ -382,9 +383,10 @@ export class PluginManager {
 	async runContentAfterUnpublish(
 		content: Record<string, unknown>,
 		collection: string,
+		actor?: ActorInfo,
 	): Promise<HookResult<void>[]> {
 		this.ensureInitialized();
-		return this.hookPipeline!.runContentAfterUnpublish(content, collection);
+		return this.hookPipeline!.runContentAfterUnpublish(content, collection, actor);
 	}
 
 	/**
@@ -393,9 +395,10 @@ export class PluginManager {
 	async runContentAfterRestore(
 		content: Record<string, unknown>,
 		collection: string,
+		actor?: ActorInfo,
 	): Promise<HookResult<void>[]> {
 		this.ensureInitialized();
-		return this.hookPipeline!.runContentAfterRestore(content, collection);
+		return this.hookPipeline!.runContentAfterRestore(content, collection, actor);
 	}
 
 	/**
@@ -404,9 +407,10 @@ export class PluginManager {
 	async runContentAfterSchedule(
 		content: Record<string, unknown>,
 		collection: string,
+		actor?: ActorInfo,
 	): Promise<HookResult<void>[]> {
 		this.ensureInitialized();
-		return this.hookPipeline!.runContentAfterSchedule(content, collection);
+		return this.hookPipeline!.runContentAfterSchedule(content, collection, actor);
 	}
 
 	/**
@@ -415,9 +419,10 @@ export class PluginManager {
 	async runContentAfterUnschedule(
 		content: Record<string, unknown>,
 		collection: string,
+		actor?: ActorInfo,
 	): Promise<HookResult<void>[]> {
 		this.ensureInitialized();
-		return this.hookPipeline!.runContentAfterUnschedule(content, collection);
+		return this.hookPipeline!.runContentAfterUnschedule(content, collection, actor);
 	}
 
 	/**
