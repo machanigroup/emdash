@@ -108,7 +108,7 @@ describe("SiteSwitcher", () => {
 			.toBeInTheDocument();
 	});
 
-	it("shows the deployment's full logo above the switcher", async () => {
+	it("shows the deployment's logo at a readable size beside the site", async () => {
 		const logo =
 			"data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='260' height='100'/>";
 		const screen = await renderSwitcher("site-a", { logoUrl: logo, brandName: "Acme Group" });

@@ -11,4 +11,4 @@ emdash({
 });
 ```
 
-On a multi-site admin host, a configured `admin.logo` now shows at full width above the site switcher, with the small icon only in the collapsed sidebar. The first-login welcome there explains that access comes from organizations, sends administrators to **Organizations → Members** to invite people, and mentions the preview beside the editor.
+On a multi-site admin host, a configured `admin.logo` now shows at a readable size in the site switcher (32px high, up to 96px wide), shrinking back to an icon in the collapsed sidebar. The first-login welcome there explains that access comes from organizations, sends administrators to **Organizations → Members** to invite people, and mentions the preview beside the editor.
