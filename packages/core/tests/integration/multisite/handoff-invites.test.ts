@@ -13,6 +13,7 @@ import {
 	acceptOrgInvites,
 	cancelOrgInvite,
 	createOrganization,
+	hasPendingOrgInvite,
 	createSite,
 	inviteToOrg,
 	setOrgMember,
@@ -138,6 +139,21 @@ describeEachDialect("multi-site handoffs and invitations", (dialect) => {
 			});
 			await cancelOrgInvite(db, orgId, "RAVI@example.com");
 			expect(await acceptOrgInvites(db, "user-ravi", "ravi@example.com")).toBe(0);
+		});
+
+		it("are pending for their email, ignoring case, until accepted", async () => {
+			expect(await hasPendingOrgInvite(db, "ravi@example.com")).toBe(false);
+			await inviteToOrg(db, {
+				orgId,
+				email: "ravi@example.com",
+				role: Role.AUTHOR,
+				invitedBy: null,
+			});
+			expect(await hasPendingOrgInvite(db, " RAVI@Example.com ")).toBe(true);
+			expect(await hasPendingOrgInvite(db, "other@example.com")).toBe(false);
+
+			await acceptOrgInvites(db, "user-ravi", "ravi@example.com");
+			expect(await hasPendingOrgInvite(db, "ravi@example.com")).toBe(false);
 		});
 	});
 });
