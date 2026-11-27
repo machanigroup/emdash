@@ -115,7 +115,7 @@ describe("SiteSwitcher", () => {
 		const image = screen.getByRole("img", { name: "Acme Group" });
 		await expect.element(image).toBeVisible();
 		const { width, height } = image.element().getBoundingClientRect();
-		expect(height).toBe(32);
+		expect(height).toBe(28);
 		expect(width).toBeGreaterThan(height * 2);
 	});
 });
