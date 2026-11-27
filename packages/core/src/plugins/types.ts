@@ -1465,6 +1465,8 @@ export interface ContentDeleteEvent {
 export interface ContentStateChangeEvent {
 	content: Record<string, unknown>;
 	collection: string;
+	/** Who made the change, when a signed-in user or API token did. Absent for scheduled and system changes. */
+	actor?: ActorInfo;
 }
 
 /**

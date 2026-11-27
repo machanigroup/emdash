@@ -14,7 +14,17 @@ import type { PluginContext, SandboxedPlugin } from "emdash/plugin";
 
 interface AuditEntry {
 	timestamp: string;
-	action: "create" | "update" | "delete" | "media:upload" | "media:delete";
+	action:
+		| "create"
+		| "update"
+		| "delete"
+		| "publish"
+		| "unpublish"
+		| "schedule"
+		| "unschedule"
+		| "restore"
+		| "media:upload"
+		| "media:delete";
 	collection?: string;
 	resourceId: string;
 	resourceType: "content" | "media";
@@ -65,6 +75,67 @@ function cacheBeforeState(key: string, value: unknown): void {
 		const oldest = beforeSaveCache.keys().next().value;
 		if (oldest !== undefined) beforeSaveCache.delete(oldest);
 	}
+}
+
+type StateChangeAction = "publish" | "unpublish" | "schedule" | "unschedule" | "restore";
+
+/** The entry's own name for the log: its title, else its name, else its slug. */
+function entryTitle(content: Record<string, unknown>): string | undefined {
+	const data = isRecord(content.data) ? content.data : {};
+	for (const value of [data.title, data.name, content.slug]) {
+		if (typeof value === "string" && value.trim()) return value.trim();
+	}
+	return undefined;
+}
+
+async function recordStateChange(
+	action: StateChangeAction,
+	event: { content: Record<string, unknown>; collection: string; actor?: { id: string } },
+	ctx: PluginContext,
+): Promise<void> {
+	const contentId = stringifyId(event.content.id);
+	if (!contentId) return;
+	const entry: AuditEntry = {
+		timestamp: new Date().toISOString(),
+		action,
+		collection: event.collection,
+		resourceId: contentId,
+		resourceType: "content",
+		...(event.actor ? { userId: event.actor.id } : {}),
+		metadata: {
+			title: entryTitle(event.content),
+			slug: event.content.slug,
+			status: event.content.status,
+		},
+	};
+	try {
+		await ctx.storage.entries!.put(`${Date.now()}-${contentId}-${action}`, entry);
+	} catch (error) {
+		ctx.log.error("Failed to persist entry", error);
+	}
+	ctx.log.info(`${action} content/${event.collection}/${contentId}`);
+}
+
+/** Names for the people in a page of entries, looked up once each. Unknown or removed accounts keep their ID. */
+async function namesFor(entries: AuditEntry[], ctx: PluginContext): Promise<Map<string, string>> {
+	const names = new Map<string, string>();
+	const ids = [...new Set(entries.map((e) => e.userId).filter((id): id is string => Boolean(id)))];
+	await Promise.all(
+		ids.map(async (id) => {
+			try {
+				const user = await ctx.users?.get(id);
+				names.set(id, user?.name || user?.email || id);
+			} catch {
+				names.set(id, id);
+			}
+		}),
+	);
+	return names;
+}
+
+function entryLabel(e: AuditEntry): string {
+	const title = typeof e.metadata?.title === "string" ? e.metadata.title : undefined;
+	return title ?? e.resourceId;
 }
 
 // ── Plugin definition ──
@@ -125,7 +196,11 @@ export default {
 					...(event.actor ? { userId: event.actor.id } : {}),
 					changes:
 						beforeRecord || afterRecord ? { before: beforeRecord, after: afterRecord } : undefined,
-					metadata: { slug: event.content.slug, status: event.content.status },
+					metadata: {
+						title: entryTitle(event.content),
+						slug: event.content.slug,
+						status: event.content.status,
+					},
 				};
 
 				try {
@@ -179,6 +254,26 @@ export default {
 
 				ctx.log.info(`- delete content/${event.collection}/${event.id}`);
 			},
+		},
+
+		"content:afterPublish": {
+			handler: async (event, ctx) => recordStateChange("publish", event, ctx),
+		},
+
+		"content:afterUnpublish": {
+			handler: async (event, ctx) => recordStateChange("unpublish", event, ctx),
+		},
+
+		"content:afterSchedule": {
+			handler: async (event, ctx) => recordStateChange("schedule", event, ctx),
+		},
+
+		"content:afterUnschedule": {
+			handler: async (event, ctx) => recordStateChange("unschedule", event, ctx),
+		},
+
+		"content:afterRestore": {
+			handler: async (event, ctx) => recordStateChange("restore", event, ctx),
 		},
 
 		"media:afterUpload": {
@@ -294,25 +389,32 @@ async function buildHistoryBlocks(ctx: PluginContext, cursor?: string) {
 				...(item.data as AuditEntry),
 			}));
 
+		const names = await namesFor(entries, ctx);
+
 		return {
 			blocks: [
 				{ type: "header", text: "Audit History" },
-				{ type: "context", text: "Track all content and media changes" },
+				{
+					type: "context",
+					text: "Who changed what, and when: saves, publishing, scheduling, deletions and uploads",
+				},
 				{ type: "divider" },
 				{
 					type: "table",
 					blockId: "history-table",
 					columns: [
+						{ key: "time", label: "When", format: "relative_time" },
+						{ key: "who", label: "Who", format: "text" },
 						{ key: "action", label: "Action", format: "badge" },
-						{ key: "resource", label: "Resource", format: "code" },
 						{ key: "collection", label: "Collection", format: "text" },
-						{ key: "time", label: "Time", format: "relative_time" },
+						{ key: "entry", label: "Entry", format: "text" },
 					],
 					rows: entries.map((e) => ({
-						action: e.action,
-						resource: e.resourceId,
-						collection: e.collection ?? "-",
 						time: e.timestamp,
+						who: e.userId ? (names.get(e.userId) ?? e.userId) : "System",
+						action: e.action,
+						collection: e.collection ?? "-",
+						entry: entryLabel(e),
 					})),
 					pageActionId: "load-page",
 					nextCursor: result.cursor,
@@ -343,14 +445,15 @@ async function buildRecentBlocks(ctx: PluginContext) {
 		if (entries.length === 0) {
 			return { blocks: [{ type: "context", text: "No recent activity" }] };
 		}
+		const names = await namesFor(entries, ctx);
 
 		return {
 			blocks: [
 				{
 					type: "fields",
 					fields: entries.slice(0, 4).map((e) => ({
-						label: e.action,
-						value: `${e.collection ? `${e.collection}/` : ""}${e.resourceId}`,
+						label: `${e.action} · ${e.userId ? (names.get(e.userId) ?? e.userId) : "System"}`,
+						value: `${e.collection ? `${e.collection}: ` : ""}${entryLabel(e)}`,
 					})),
 				},
 				{ type: "context", text: `${entries.length} changes` },

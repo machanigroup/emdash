@@ -437,7 +437,11 @@ export interface EmDashHandlers {
 		params?: { cursor?: string; page?: number; limit?: number; locale?: string },
 	) => Promise<HandlerResponse>;
 
-	handleContentRestore: (collection: string, id: string) => Promise<HandlerResponse>;
+	handleContentRestore: (
+		collection: string,
+		id: string,
+		options?: { actor?: ActorInfo },
+	) => Promise<HandlerResponse>;
 
 	handleContentPermanentDelete: (collection: string, id: string) => Promise<HandlerResponse>;
 

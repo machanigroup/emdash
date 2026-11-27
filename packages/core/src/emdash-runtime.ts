@@ -5237,6 +5237,7 @@ export class EmDashRuntime {
 		id: string,
 		options: {
 			_rev?: string;
+			actor?: ActorInfo;
 			origin?: ContentActionOrigin;
 			pluginInvocationId?: string;
 		} = {},
@@ -5253,6 +5254,7 @@ export class EmDashRuntime {
 				collection,
 				options.origin?.source === "plugin" ? options.origin.pluginId : undefined,
 				options.pluginInvocationId,
+				options.actor,
 			);
 		}
 
@@ -5850,6 +5852,7 @@ export class EmDashRuntime {
 				collection,
 				options.origin?.source === "plugin" ? options.origin.pluginId : undefined,
 				options.pluginInvocationId,
+				options.actor,
 			);
 		}
 
@@ -5894,6 +5897,7 @@ export class EmDashRuntime {
 				collection,
 				options.origin?.source === "plugin" ? options.origin.pluginId : undefined,
 				options.pluginInvocationId,
+				options.actor,
 			);
 		}
 
@@ -5952,6 +5956,7 @@ export class EmDashRuntime {
 				collection,
 				options.origin?.source === "plugin" ? options.origin.pluginId : undefined,
 				options.pluginInvocationId,
+				options.actor,
 			);
 		}
 
@@ -5985,6 +5990,7 @@ export class EmDashRuntime {
 				collection,
 				options.origin?.source === "plugin" ? options.origin.pluginId : undefined,
 				options.pluginInvocationId,
+				options.actor,
 			);
 		}
 
@@ -7555,6 +7561,7 @@ export class EmDashRuntime {
 		collection: string,
 		afterPluginId?: string,
 		pluginInvocationId?: string,
+		actor?: ActorInfo,
 	): void {
 		const label = name.slice("content:".length);
 
@@ -7564,19 +7571,19 @@ export class EmDashRuntime {
 				try {
 					switch (name) {
 						case "content:afterPublish":
-							await this.hooks.runContentAfterPublish(content, collection);
+							await this.hooks.runContentAfterPublish(content, collection, actor);
 							break;
 						case "content:afterUnpublish":
-							await this.hooks.runContentAfterUnpublish(content, collection);
+							await this.hooks.runContentAfterUnpublish(content, collection, actor);
 							break;
 						case "content:afterRestore":
-							await this.hooks.runContentAfterRestore(content, collection);
+							await this.hooks.runContentAfterRestore(content, collection, actor);
 							break;
 						case "content:afterSchedule":
-							await this.hooks.runContentAfterSchedule(content, collection);
+							await this.hooks.runContentAfterSchedule(content, collection, actor);
 							break;
 						case "content:afterUnschedule":
-							await this.hooks.runContentAfterUnschedule(content, collection);
+							await this.hooks.runContentAfterUnschedule(content, collection, actor);
 							break;
 					}
 				} catch (err) {
@@ -7691,6 +7698,7 @@ export class EmDashRuntime {
 		collection: string,
 		afterPluginId?: string,
 		pluginInvocationId?: string,
+		actor?: ActorInfo,
 	): void {
 		this.runDeferredContentHook(
 			"content:afterPublish",
@@ -7698,6 +7706,7 @@ export class EmDashRuntime {
 			collection,
 			afterPluginId,
 			pluginInvocationId,
+			actor,
 		);
 	}
 
@@ -7706,6 +7715,7 @@ export class EmDashRuntime {
 		collection: string,
 		afterPluginId?: string,
 		pluginInvocationId?: string,
+		actor?: ActorInfo,
 	): void {
 		this.runDeferredContentHook(
 			"content:afterUnpublish",
@@ -7713,6 +7723,7 @@ export class EmDashRuntime {
 			collection,
 			afterPluginId,
 			pluginInvocationId,
+			actor,
 		);
 	}
 
@@ -7721,6 +7732,7 @@ export class EmDashRuntime {
 		collection: string,
 		afterPluginId?: string,
 		pluginInvocationId?: string,
+		actor?: ActorInfo,
 	): void {
 		this.runDeferredContentHook(
 			"content:afterRestore",
@@ -7728,6 +7740,7 @@ export class EmDashRuntime {
 			collection,
 			afterPluginId,
 			pluginInvocationId,
+			actor,
 		);
 	}
 
@@ -7736,6 +7749,7 @@ export class EmDashRuntime {
 		collection: string,
 		afterPluginId?: string,
 		pluginInvocationId?: string,
+		actor?: ActorInfo,
 	): void {
 		this.runDeferredContentHook(
 			"content:afterSchedule",
@@ -7743,6 +7757,7 @@ export class EmDashRuntime {
 			collection,
 			afterPluginId,
 			pluginInvocationId,
+			actor,
 		);
 	}
 
@@ -7751,6 +7766,7 @@ export class EmDashRuntime {
 		collection: string,
 		afterPluginId?: string,
 		pluginInvocationId?: string,
+		actor?: ActorInfo,
 	): void {
 		this.runDeferredContentHook(
 			"content:afterUnschedule",
@@ -7758,6 +7774,7 @@ export class EmDashRuntime {
 			collection,
 			afterPluginId,
 			pluginInvocationId,
+			actor,
 		);
 	}
 
