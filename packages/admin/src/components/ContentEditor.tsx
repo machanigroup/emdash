@@ -83,6 +83,7 @@ import {
 	selectEditorDraftFields,
 	type EditorDraftAccessDeclaration,
 } from "../lib/sandboxed-editor-extensions.js";
+import { onSiteOrigin, useSiteOrigin } from "../lib/site-origin.js";
 import { contentUrl, isSafeUrl } from "../lib/url.js";
 import { cn, slugify } from "../lib/utils";
 import { getLocaleDir } from "../locales/config.js";
@@ -118,6 +119,7 @@ import {
 } from "./ContentSettingsPanel.js";
 import { focusDocumentStart } from "./editor/BlockCommands.js";
 import { EditorDraftPatchPreview } from "./EditorDraftPatchPreview.js";
+import { EditorPreviewPane, PreviewPaneToggle, usePreviewPane } from "./EditorPreviewPane.js";
 import { ImageFieldRenderer, type ImageFieldValue } from "./ImageFieldRenderer.js";
 import { NonListFieldValue, isNonListValue } from "./NonListFieldValue.js";
 import { PluginFieldErrorBoundary } from "./PluginFieldErrorBoundary.js";
@@ -2413,6 +2415,10 @@ export function ContentEditor({
 	const [isLoadingPreview, setIsLoadingPreview] = React.useState(false);
 
 	const urlPattern = manifest?.collections[collection]?.urlPattern;
+	// On a multi-site admin host, preview and live links open on the site's own domain.
+	const siteOrigin = useSiteOrigin(manifest?.multiSite?.siteId);
+	const previewPane = usePreviewPane();
+	const previewPaneId = React.useId();
 
 	// When the collection configures a titleField, the editor header
 	// shows the entry's title for existing entries; otherwise it keeps the
@@ -2460,13 +2466,16 @@ export function ContentEditor({
 		const entry = item;
 		const previewUrl = async (entrySlug: string) => {
 			const result = await getPreviewUrl(collection, entry.id).catch(() => null);
-			if (result?.url) return result.url;
-			return contentUrl(collection, entrySlug || entry.id, urlPattern, {
-				locale: entry.locale,
-				i18n,
-				id: entry.id,
-				date: entry.publishedAt,
-			});
+			if (result?.url) return onSiteOrigin(result.url, siteOrigin);
+			return onSiteOrigin(
+				contentUrl(collection, entrySlug || entry.id, urlPattern, {
+					locale: entry.locale,
+					i18n,
+					id: entry.id,
+					date: entry.publishedAt,
+				}),
+				siteOrigin,
+			);
 		};
 
 		if (room) {
@@ -2694,13 +2703,24 @@ export function ContentEditor({
 	const isLive = draftStatus === "published" || draftStatus === "published_with_changes";
 	const liveViewUrl =
 		isLive && item?.slug
-			? contentUrl(collection, item.slug, urlPattern, {
-					locale: item.locale,
-					i18n,
-					id: item.id,
-					date: item.publishedAt,
-				})
+			? onSiteOrigin(
+					contentUrl(collection, item.slug, urlPattern, {
+						locale: item.locale,
+						i18n,
+						id: item.id,
+						date: item.publishedAt,
+					}),
+					siteOrigin,
+				)
 			: null;
+	const previewEntryId = isNew ? null : (item?.id ?? null);
+	const canShowPreviewPane = !isBelowLg && supportsPreview && previewEntryId !== null;
+	const resolvePanePreviewUrl = React.useCallback(async () => {
+		if (!previewEntryId) throw new Error("No saved entry to preview");
+		const result = await getPreviewUrl(collection, previewEntryId);
+		if (!result?.url) throw new Error("No preview URL for this entry");
+		return onSiteOrigin(result.url, siteOrigin);
+	}, [collection, previewEntryId, siteOrigin]);
 
 	// Scheduling — keyed off scheduledAt rather than status, since published
 	// posts can now have a pending schedule without changing status.
@@ -2872,6 +2892,13 @@ export function ContentEditor({
 							buttonRef={settingsButtonRef}
 							panelId={settingsPanelId}
 							disabled={readOnly}
+						/>
+					)}
+					{canShowPreviewPane && (
+						<PreviewPaneToggle
+							open={previewPane.open}
+							onClick={previewPane.toggle}
+							controls={previewPaneId}
 						/>
 					)}
 					{settingsPanel.toggle && <SettingsPanelToggle {...settingsPanel.toggle} />}
@@ -3126,6 +3153,16 @@ export function ContentEditor({
 							<ScrollArea.Thumb className="w-full rounded-full bg-kumo-interact" />
 						</ScrollArea.Scrollbar>
 					</ScrollArea.Root>
+
+					{canShowPreviewPane && previewPane.open && (
+						<EditorPreviewPane
+							id={previewPaneId}
+							resolveUrl={resolvePanePreviewUrl}
+							version={roomSaveState?.rev ?? lastSavedData}
+							onClose={previewPane.close}
+							className="w-[45%] max-w-[56rem] min-w-80 shrink-0"
+						/>
+					)}
 
 					<Sidebar
 						id={settingsPanelId}
