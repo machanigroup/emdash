@@ -16,6 +16,8 @@ export interface SwitcherSite {
 	orgName: string;
 	role: number;
 	url: string | null;
+	/** The logo saved in the site's settings; null or absent when it has none the admin can load. */
+	logoUrl?: string | null;
 }
 
 export interface OrganizationSummary {

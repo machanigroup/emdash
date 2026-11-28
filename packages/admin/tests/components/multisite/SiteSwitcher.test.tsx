@@ -18,6 +18,9 @@ vi.mock("@tanstack/react-router", async () => ({
 	useNavigate: () => navigate,
 }));
 
+const svgLogo = (width: number, height: number) =>
+	`data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='${width}' height='${height}'/>`;
+
 const sites = [
 	{
 		id: "site-a",
@@ -26,6 +29,7 @@ const sites = [
 		orgName: "Acme",
 		role: 50,
 		url: "https://www.a.example",
+		logoUrl: svgLogo(120, 40),
 	},
 	{
 		id: "site-b",
@@ -42,6 +46,15 @@ const sites = [
 		orgName: "Azara",
 		role: 50,
 		url: null,
+	},
+	{
+		id: "site-s",
+		name: "Svasa Homes",
+		orgId: "s",
+		orgName: " svasa homes ",
+		role: 50,
+		url: "https://svasahomes.com",
+		logoUrl: "https://broken.invalid/logo.png",
 	},
 ];
 
@@ -99,6 +112,65 @@ describe("SiteSwitcher", () => {
 				screen.getByRole("group", { name: "Acme" }).getByRole("menuitem", { name: /Brand B/ }),
 			)
 			.toBeInTheDocument();
+	});
+
+	it("names a one-site organization only once when the site has the organization's name", async () => {
+		const screen = await renderSwitcher("site-a");
+		await screen.getByRole("button", { name: "Switch site, current: Brand A" }).click();
+		const row = screen.getByRole("menuitem", { name: /Svasa Homes/ });
+		await expect.element(row).toHaveTextContent("svasahomes.com");
+		expect(
+			screen
+				.getByRole("menu")
+				.getByText(/svasa homes/i)
+				.elements(),
+		).toHaveLength(1);
+		await expect
+			.element(screen.getByRole("group", { name: /svasa homes/i }))
+			.not.toBeInTheDocument();
+	});
+
+	it("heads an organization with several sites, or one whose site has another name", async () => {
+		const screen = await renderSwitcher("site-a");
+		await screen.getByRole("button", { name: "Switch site, current: Brand A" }).click();
+		await expect.element(screen.getByRole("group", { name: "Acme" })).toBeInTheDocument();
+		await expect.element(screen.getByRole("group", { name: "Azara" })).toBeInTheDocument();
+	});
+
+	it("shows each site's logo on a square tile, or its initial when it has no logo that loads", async () => {
+		const screen = await renderSwitcher("site-a");
+		await screen.getByRole("button", { name: "Switch site, current: Brand A" }).click();
+
+		const brandA = screen.getByRole("menuitem", { name: /Brand A/ });
+		await expect.element(brandA).toBeVisible();
+		const image = brandA.element().querySelector("img");
+		expect(image?.getAttribute("alt")).toBe("");
+		expect([image?.offsetWidth, image?.offsetHeight]).toEqual([32, 32]);
+
+		for (const [name, initial] of [
+			[/Brand B/, "B"],
+			[/Svasa Homes/, "S"],
+		] as const) {
+			const fallback = screen.getByRole("menuitem", { name }).getByTestId("site-logo-fallback");
+			await expect.element(fallback).toHaveTextContent(initial);
+			await expect.element(fallback).toHaveAttribute("aria-hidden", "true");
+			const tile = fallback.element() as HTMLElement;
+			expect([tile.offsetWidth, tile.offsetHeight]).toEqual([32, 32]);
+		}
+	});
+
+	it("marks the site being managed with a check", async () => {
+		const screen = await renderSwitcher("site-b");
+		await screen.getByRole("button", { name: "Switch site, current: Brand B" }).click();
+		const current = screen.getByRole("menuitem", { name: /Brand B/ });
+		const other = screen.getByRole("menuitem", { name: /Brand A/ });
+		await expect.element(current).toHaveAttribute("aria-current", "true");
+		await expect.element(other).not.toHaveAttribute("aria-current");
+		expect(current.element().querySelectorAll("svg")).toHaveLength(1);
+		expect(other.element().querySelectorAll("svg")).toHaveLength(0);
+
+		await current.click();
+		expect(api.switchToSite).not.toHaveBeenCalled();
 	});
 
 	it("asks for a site when the admin shows the control plane", async () => {

@@ -19,6 +19,8 @@ import {
 	isControlPlaneDatabase,
 	siteOrigin,
 } from "../../astro/middleware/site.js";
+import { MediaRepository } from "../../database/repositories/media.js";
+import { OptionsRepository } from "../../database/repositories/options.js";
 import type { Database } from "../../database/types.js";
 import { MultiSiteError } from "../../multisite/errors.js";
 import { requireHostname } from "../../multisite/hosts.js";
@@ -48,6 +50,7 @@ import {
 } from "../../multisite/repository.js";
 import type { ControlPlaneDatabase } from "../../multisite/types.js";
 import type { ApiResult } from "../types.js";
+import type { SharedMediaUrl } from "./shared-media.js";
 
 export interface MultiSiteHandlerContext {
 	controlPlane: Kysely<ControlPlaneDatabase>;
@@ -155,13 +158,46 @@ export interface SiteSwitcherItem {
 	role: RoleLevel;
 	/** The site's public address, or null while it has no hostname. */
 	url: string | null;
+	/**
+	 * Absolute URL of the logo saved in the site's settings, or null when it has none or its media has no public
+	 * address. Only present when the caller resolves logos.
+	 */
+	logoUrl?: string | null;
 }
 
-/** The sites the user can manage, for the admin's site switcher. */
+async function siteLogoUrl(
+	ctx: MultiSiteHandlerContext,
+	siteId: string,
+	mediaUrls: (siteId: string) => Promise<SharedMediaUrl | null>,
+): Promise<string | null> {
+	try {
+		const [siteDb, urlFor] = await Promise.all([ctx.siteDatabase(siteId), mediaUrls(siteId)]);
+		if (!siteDb || !urlFor) return null;
+		const logo = await new OptionsRepository(siteDb).get("site:logo");
+		if (typeof logo !== "object" || logo === null || !("mediaId" in logo)) return null;
+		if (typeof logo.mediaId !== "string") return null;
+		const media = await new MediaRepository(siteDb).findById(logo.mediaId);
+		return media ? urlFor(media.storageKey) : null;
+	} catch (error) {
+		console.error("[emdash:multisite] reading a site's logo failed:", error);
+		return null;
+	}
+}
+
+/**
+ * The sites the user can manage, for the admin's site switcher. With `mediaUrls`, each site also carries the logo
+ * saved in its settings.
+ */
 export async function handleListMySites(
 	ctx: MultiSiteHandlerContext,
 	actor: MultiSiteActor,
+	mediaUrls?: (siteId: string) => Promise<SharedMediaUrl | null>,
 ): Promise<ApiResult<{ items: SiteSwitcherItem[] }>> {
+	const withLogos = async (items: SiteSwitcherItem[]) => {
+		if (!mediaUrls) return items;
+		const logos = await Promise.all(items.map((item) => siteLogoUrl(ctx, item.id, mediaUrls)));
+		return items.map((item, index) => ({ ...item, logoUrl: logos[index] ?? null }));
+	};
 	try {
 		if (isDeploymentAdmin(actor)) {
 			const orgs = await listOrganizations(ctx.controlPlane, actor.id, { all: true });
@@ -180,7 +216,7 @@ export async function handleListMySites(
 					});
 				}
 			}
-			return { success: true, data: { items } };
+			return { success: true, data: { items: await withLogos(items) } };
 		}
 		const sites = await listSitesForUser(ctx.controlPlane, actor.id);
 		const items: SiteSwitcherItem[] = [];
@@ -196,7 +232,7 @@ export async function handleListMySites(
 				url: siteUrl(ctx, detail?.primaryHostname ?? null),
 			});
 		}
-		return { success: true, data: { items } };
+		return { success: true, data: { items: await withLogos(items) } };
 	} catch (error) {
 		return fromError(error, "Failed to list sites");
 	}
