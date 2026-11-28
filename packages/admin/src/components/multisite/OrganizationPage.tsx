@@ -52,6 +52,7 @@ import { ConfirmDialog } from "../ConfirmDialog.js";
 import { DialogError, getMutationError } from "../DialogError.js";
 import { SettingRow, SettingsFrame, SettingsSection } from "../settings/SettingsLayout.js";
 import { useRolesConfig } from "../users/useRolesConfig.js";
+import { gmailComposeUrl, mailtoUrl, parseEmailList, type InviteResult } from "./invite-email.js";
 import { slugFromName } from "./slug.js";
 
 const ORG_ROLE_VALUE = "org";
@@ -733,40 +734,65 @@ function AddMemberDialog({
 }) {
 	const { t } = useLingui();
 	const queryClient = useQueryClient();
-	const toastManager = useKumoToastManager();
 	const formId = React.useId();
-	const [email, setEmail] = React.useState("");
+	const [emails, setEmails] = React.useState("");
 	const [role, setRole] = React.useState("30");
-	const [inviteUrl, setInviteUrl] = React.useState<string | null>(null);
-	const [copied, setCopied] = React.useState(false);
+	const [results, setResults] = React.useState<InviteResult[] | null>(null);
+	const [subject, setSubject] = React.useState("");
+	const [message, setMessage] = React.useState("");
+	const [copied, setCopied] = React.useState<string | null>(null);
+	const parsed = parseEmailList(emails);
+	const adminUrl = `${window.location.origin}/_emdash/admin`;
+
 	const mutation = useMutation({
-		mutationFn: () => addMember(org.id, { email: email.trim(), role: Number(role) }),
-		onSuccess: ({ status, inviteUrl: link }) => {
-			void queryClient.invalidateQueries({ queryKey: ["multisite"] });
-			if (link) {
-				setInviteUrl(link);
-				return;
+		mutationFn: async () => {
+			const done: InviteResult[] = [];
+			for (const email of parsed.valid) {
+				try {
+					// oxlint-disable-next-line no-await-in-loop -- one request at a time keeps the order and the server's rate limits
+					const { status, inviteUrl } = await addMember(org.id, { email, role: Number(role) });
+					done.push({ email, status, inviteUrl });
+				} catch (error) {
+					done.push({
+						email,
+						status: "failed",
+						error: getMutationError(error) ?? t`Couldn't add this address`,
+					});
+				}
 			}
-			toastManager.add({
-				title:
-					status === "added"
-						? t`Member added`
-						: t`Invitation saved. They join when they sign in with this email.`,
-				variant: "success",
-				timeout: 4000,
-			});
-			onClose();
+			return done;
+		},
+		onSuccess: (done) => {
+			void queryClient.invalidateQueries({ queryKey: ["multisite"] });
+			setSubject(t`You're invited to ${org.name}'s website`);
+			setMessage(
+				t`Hello,
+
+You've been invited to help manage ${org.name}'s website.
+
+1. Go to ${adminUrl}
+2. Choose "Sign in with Google" and use the email address this message was sent to.
+
+If you have any trouble, reply to this email.`,
+			);
+			setResults(done);
 		},
 	});
 	React.useEffect(() => {
 		if (!open) return;
-		setEmail("");
+		setEmails("");
 		setRole("30");
-		setInviteUrl(null);
-		setCopied(false);
+		setResults(null);
+		setCopied(null);
 		mutation.reset();
 		// oxlint-disable-next-line react-hooks/exhaustive-deps -- reset when the dialog opens
 	}, [open]);
+
+	const recipients = results?.filter((r) => r.status !== "failed").map((r) => r.email) ?? [];
+	const copy = (text: string, key: string) =>
+		void navigator.clipboard.writeText(text).then(() => setCopied(key));
+	const statusLabel = (result: InviteResult) =>
+		result.status === "added" ? t`Added` : result.status === "invited" ? t`Invited` : result.error;
 
 	return (
 		<LayerDialog.Root
@@ -774,40 +800,83 @@ function AddMemberDialog({
 			onOpenChange={(next) => !next && !mutation.isPending && onClose()}
 		>
 			<LayerDialog.Content>
-				<LayerDialog.Title>{inviteUrl ? t`Invitation created` : t`Add member`}</LayerDialog.Title>
+				<LayerDialog.Title>{results ? t`Send the invitation` : t`Add members`}</LayerDialog.Title>
 				<LayerDialog.Description>
-					{inviteUrl
-						? t`No email provider is configured. Send this link to ${email.trim()} so they can create an account and join ${org.name}.`
-						: t`If nobody has an account with this email yet, they're invited to create one and join ${org.name}.`}
+					{results
+						? t`Write the invitation once and send it to everyone from your own email. Each person signs in with Google using the address it was sent to.`
+						: t`Add one address or many. People without an account are invited to create one and join ${org.name}.`}
 				</LayerDialog.Description>
 				<LayerDialog.Body>
-					{inviteUrl ? (
-						<div className="grid gap-3">
-							<code dir="ltr" className="block break-all rounded-lg bg-kumo-tint p-3 text-sm">
-								{inviteUrl}
-							</code>
-							<p className="text-xs text-kumo-subtle">
-								{t`This link expires in 7 days and can only be used once.`}
-							</p>
-							<LinkButton
-								href={inviteEmailHref(
-									email.trim(),
-									t`You're invited to ${org.name}`,
-									t`Hello,
-
-You've been invited to help manage ${org.name}'s website.
-
-1. Open this link: ${inviteUrl}
-2. Sign in with the account for ${email.trim()}.
-
-The link works once and expires in 7 days.`,
-								)}
-								variant="secondary"
-								icon={<EnvelopeSimple aria-hidden="true" />}
-								className="justify-self-start"
-							>
-								{t`Email invite`}
-							</LinkButton>
+					{results ? (
+						<div className="grid gap-4">
+							<ul className="grid gap-2" aria-label={t`Results`}>
+								{results.map((result) => (
+									<li
+										key={result.email}
+										className="grid gap-1 rounded-lg border border-kumo-line p-2.5"
+									>
+										<div className="flex items-center justify-between gap-3">
+											<span dir="ltr" className="truncate text-sm">
+												{result.email}
+											</span>
+											<Badge variant={result.status === "failed" ? "destructive" : "secondary"}>
+												{statusLabel(result)}
+											</Badge>
+										</div>
+										{result.inviteUrl && (
+											<div className="flex items-center gap-2">
+												<code
+													dir="ltr"
+													className="min-w-0 flex-1 truncate text-xs text-kumo-subtle"
+												>
+													{result.inviteUrl}
+												</code>
+												<Button
+													variant="ghost"
+													size="sm"
+													onClick={() => copy(result.inviteUrl!, result.email)}
+												>
+													{copied === result.email ? t`Copied` : t`Copy link`}
+												</Button>
+											</div>
+										)}
+									</li>
+								))}
+							</ul>
+							{recipients.length > 0 && (
+								<div className="grid gap-3">
+									<Input
+										label={t`Subject`}
+										value={subject}
+										onChange={(e) => setSubject(e.target.value)}
+									/>
+									<InputArea
+										label={t`Message`}
+										value={message}
+										rows={8}
+										onChange={(e) => setMessage(e.target.value)}
+									/>
+									<div className="flex flex-wrap gap-2">
+										<LinkButton
+											href={gmailComposeUrl(recipients, subject, message)}
+											external
+											variant="primary"
+											icon={<EnvelopeSimple aria-hidden="true" />}
+										>
+											{t`Open in Gmail`}
+										</LinkButton>
+										<LinkButton href={mailtoUrl(recipients, subject, message)} variant="secondary">
+											{t`Open in email app`}
+										</LinkButton>
+										<Button
+											variant="secondary"
+											onClick={() => copy(`${subject}\n\n${message}`, "message")}
+										>
+											{copied === "message" ? t`Copied` : t`Copy message`}
+										</Button>
+									</div>
+								</div>
+							)}
 						</div>
 					) : (
 						<form
@@ -816,35 +885,43 @@ The link works once and expires in 7 days.`,
 							className="grid gap-4"
 							onSubmit={(event) => {
 								event.preventDefault();
-								if (email.trim() && !mutation.isPending) mutation.mutate();
+								if (parsed.valid.length && !parsed.invalid.length && !mutation.isPending)
+									mutation.mutate();
 							}}
 						>
-							<Input
+							<InputArea
 								dir="ltr"
-								type="email"
-								label={t`Email`}
-								value={email}
+								label={t`Email addresses`}
+								description={t`One per line, or separated by commas.`}
+								value={emails}
+								rows={4}
 								required
-								onChange={(event) => setEmail(event.target.value)}
+								onChange={(event) => setEmails(event.target.value)}
+								error={
+									parsed.invalid.length
+										? t`Not an email address: ${parsed.invalid.join(", ")}`
+										: undefined
+								}
 							/>
 							<div className="grid gap-1.5">
 								<span className="text-sm font-medium">{t`Role`}</span>
 								<RoleSelect label={t`Role`} value={role} onChange={setRole} />
 							</div>
-							<DialogError message={getMutationError(mutation.error)} />
 						</form>
 					)}
 				</LayerDialog.Body>
-				{inviteUrl ? (
+				{results ? (
 					<LayerDialog.Actions dismissLabel={t`Done`}>
 						<LayerDialog.Action
-							key="copy-invite-link"
-							autoFocus
-							onClick={() =>
-								void navigator.clipboard.writeText(inviteUrl).then(() => setCopied(true))
-							}
+							key="add-more"
+							onClick={() => {
+								setResults(null);
+								setEmails("");
+								setCopied(null);
+								mutation.reset();
+							}}
 						>
-							{copied ? t`Copied` : t`Copy invite link`}
+							{t`Add more`}
 						</LayerDialog.Action>
 					</LayerDialog.Actions>
 				) : (
@@ -852,9 +929,11 @@ The link works once and expires in 7 days.`,
 						<LayerDialog.Action
 							type="submit"
 							form={formId}
-							disabled={!email.trim() || mutation.isPending}
+							disabled={!parsed.valid.length || parsed.invalid.length > 0 || mutation.isPending}
 						>
-							{mutation.isPending ? t`Adding...` : t`Add member`}
+							{mutation.isPending
+								? t`Adding...`
+								: plural(parsed.valid.length, { one: "Add # member", other: "Add # members" })}
 						</LayerDialog.Action>
 					</LayerDialog.Actions>
 				)}
@@ -965,8 +1044,3 @@ function InvitesSection({ org }: { org: OrganizationDetail }) {
 }
 
 export default OrganizationPage;
-
-/** A mailto: link that opens the person's email app with the invitation written, ready to send. */
-function inviteEmailHref(to: string, subject: string, body: string): string {
-	return `mailto:${encodeURIComponent(to)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-}

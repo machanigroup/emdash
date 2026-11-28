@@ -291,4 +291,68 @@ describe("LoginPage", () => {
 		await expect.element(screen.getByText("Custom provider help.")).toBeInTheDocument();
 		expect(screen.getByText("Continue with Custom Provider.").query()).toBeNull();
 	});
+
+	describe("on a shared admin that signs in through providers only", () => {
+		const google: AuthProviderModule = {
+			id: "google",
+			label: "Google",
+			LoginButton: () => <button type="button">Google</button>,
+		};
+		const branding = {
+			siteName: "Machani Group",
+			loginLogos: [
+				{ src: "/a.svg", name: "Machani Group" },
+				{ src: "/b.svg", name: "Svasa Life" },
+			],
+		};
+		const renderShared = () =>
+			render(
+				<QueryWrapper>
+					<AdminBrandingProvider adminBranding={branding}>
+						<AuthProviderProvider authProviders={{ google }}>
+							<LoginPage />
+						</AuthProviderProvider>
+					</AdminBrandingProvider>
+				</QueryWrapper>,
+			);
+
+		beforeEach(() => {
+			mockFetchAuthMode.mockResolvedValue({ authMode: "passkey", providersOnly: true });
+		});
+
+		it("says what the sign-in is for and which companies it covers", async () => {
+			const screen = await renderShared();
+			await expect
+				.element(screen.getByRole("heading", { name: "Sign in to Machani Group" }))
+				.toBeVisible();
+			await expect.element(screen.getByText("Machani Group and Svasa Life")).toBeVisible();
+			await expect.element(screen.getByRole("button", { name: "Google" })).toBeVisible();
+			await expect
+				.element(screen.getByText("Use the account your invitation was sent to."))
+				.toBeVisible();
+			await expect.element(screen.getByText("Can't sign in?")).toBeVisible();
+		});
+
+		it("explains a refused sign-in by its error code, not the server's wording", async () => {
+			window.history.replaceState(
+				{},
+				"",
+				"?error=signup_not_allowed&message=Self-signup%20is%20not%20allowed",
+			);
+			const screen = await renderShared();
+			const alert = screen.getByRole("alert");
+			await expect.element(alert).toHaveTextContent("There's no invitation for that account.");
+			expect(alert.element().textContent).not.toContain("Self-signup");
+		});
+
+		it("falls back to the server's message for an error it doesn't know", async () => {
+			window.history.replaceState(
+				{},
+				"",
+				"?error=something_new&message=Something%20new%20went%20wrong",
+			);
+			const screen = await renderShared();
+			await expect.element(screen.getByRole("alert")).toHaveTextContent("Something new went wrong");
+		});
+	});
 });
