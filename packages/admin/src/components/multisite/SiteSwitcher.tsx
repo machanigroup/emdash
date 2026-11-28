@@ -1,14 +1,17 @@
 /**
  * Sidebar header of the shared admin in a multi-site deployment: the
  * deployment's logo with the organization and site being managed, and a menu
- * that switches to another site the user can reach, grouped by organization.
+ * that switches to another site the user can reach. Each site shows its logo,
+ * name, and domain; an organization heading appears only when it tells the
+ * user something the site's name doesn't.
  */
 
 import { Button, DropdownMenu } from "@cloudflare/kumo";
 import { useLingui } from "@lingui/react/macro";
-import { Buildings, CaretUpDown, Check } from "@phosphor-icons/react";
+import { Buildings, CaretUpDown } from "@phosphor-icons/react";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
+import * as React from "react";
 
 import { fetchSwitcherSites, type SwitcherSite, switchToSite } from "../../lib/api";
 import { BrandIcon } from "../Logo.js";
@@ -32,6 +35,10 @@ function siteDomain(site: SwitcherSite): string | null {
 	}
 }
 
+function sameName(a: string, b: string): boolean {
+	return a.trim().toLocaleLowerCase() === b.trim().toLocaleLowerCase();
+}
+
 function groupByOrganization(sites: SwitcherSite[]) {
 	const groups = new Map<string, { name: string; sites: SwitcherSite[] }>();
 	for (const site of sites) {
@@ -39,8 +46,37 @@ function groupByOrganization(sites: SwitcherSite[]) {
 		group.sites.push(site);
 		groups.set(site.orgId, group);
 	}
-	return Array.from(groups.entries(), ([id, group]) => ({ id, ...group })).toSorted((a, b) =>
-		a.name.localeCompare(b.name),
+	return Array.from(groups.entries(), ([id, group]) => {
+		const only = group.sites.length === 1 ? group.sites[0] : undefined;
+		return { id, ...group, showHeading: !only || !sameName(only.name, group.name) };
+	}).toSorted((a, b) => a.name.localeCompare(b.name));
+}
+
+function initial(name: string): string {
+	const [first] = new Intl.Segmenter().segment(name.trim());
+	return first ? first.segment.toLocaleUpperCase() : "";
+}
+
+function SiteLogoTile({ site }: { site: SwitcherSite }) {
+	const [failed, setFailed] = React.useState(false);
+	if (site.logoUrl && !failed) {
+		return (
+			<BrandIcon
+				logoUrl={site.logoUrl}
+				tile
+				className="size-8 shrink-0"
+				onError={() => setFailed(true)}
+			/>
+		);
+	}
+	return (
+		<span
+			data-testid="site-logo-fallback"
+			className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-kumo-tint text-sm font-semibold text-kumo-subtle ring-1 ring-kumo-line"
+			aria-hidden="true"
+		>
+			{initial(site.name)}
+		</span>
 	);
 }
 
@@ -92,36 +128,47 @@ export function SiteSwitcher({ currentSiteId, logoUrl, brandName }: SiteSwitcher
 					</Button>
 				}
 			/>
-			<DropdownMenu.Content align="start" className="min-w-[16rem]">
+			<DropdownMenu.Content align="start" className="min-w-[16rem] max-w-80">
 				{groups.length > 0 ? (
-					groups.map((group, index) => (
-						<DropdownMenu.Group key={group.id}>
-							{index > 0 && <DropdownMenu.Separator />}
-							<DropdownMenu.Label>{group.name}</DropdownMenu.Label>
-							{group.sites.map((site) => (
-								<DropdownMenu.Item
-									key={site.id}
-									icon={
-										site.id === currentSiteId ? (
-											<Check className="size-4" aria-hidden="true" />
-										) : (
-											<span className="size-4" aria-hidden="true" />
-										)
-									}
-									onClick={() => {
-										if (site.id !== currentSiteId) switchToSite(site.id);
-									}}
-								>
-									<span className="grid min-w-0 text-start">
-										<span className="truncate">{site.name}</span>
-										<span className="truncate text-xs text-kumo-subtle" dir="ltr">
-											{siteDomain(site) ?? noDomain}
-										</span>
-									</span>
-								</DropdownMenu.Item>
-							))}
-						</DropdownMenu.Group>
-					))
+					groups.map((group, index) => {
+						const previous = groups[index - 1];
+						const separated = previous && (previous.showHeading || group.showHeading);
+						return (
+							<DropdownMenu.Group key={group.id}>
+								{separated && <DropdownMenu.Separator />}
+								{group.showHeading && (
+									<DropdownMenu.Label className="text-xs font-medium text-kumo-subtle">
+										{group.name}
+									</DropdownMenu.Label>
+								)}
+								{group.sites.map((site) => {
+									const isCurrent = site.id === currentSiteId;
+									const hostname = siteDomain(site);
+									const domain = hostname ?? noDomain;
+									return (
+										<DropdownMenu.Item
+											key={site.id}
+											icon={<SiteLogoTile site={site} />}
+											selected={isCurrent}
+											aria-current={isCurrent ? "true" : undefined}
+											onClick={() => {
+												if (!isCurrent) switchToSite(site.id);
+											}}
+										>
+											<span className="grid min-w-0 flex-1 text-start">
+												<span className="truncate" title={site.name}>
+													{site.name}
+												</span>
+												<span className="truncate text-xs text-kumo-subtle" title={domain}>
+													<bdi dir={hostname ? "ltr" : undefined}>{domain}</bdi>
+												</span>
+											</span>
+										</DropdownMenu.Item>
+									);
+								})}
+							</DropdownMenu.Group>
+						);
+					})
 				) : (
 					<DropdownMenu.Item
 						disabled

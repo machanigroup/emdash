@@ -175,17 +175,19 @@ interface BrandIconProps {
 	className?: string;
 	/** Sets the logo on a light rounded tile, like an app icon, so a logo drawn for light backgrounds reads in dark mode. */
 	tile?: boolean;
+	onError?: React.ReactEventHandler<HTMLImageElement>;
 }
 
 /** A logo tile's light surface. Company logos are drawn for white, whatever the admin's theme. */
 export const LOGO_TILE_BACKGROUND = "#ffffff";
 
-export function BrandIcon({ logoUrl, siteName, className, tile = false }: BrandIconProps) {
+export function BrandIcon({ logoUrl, siteName, className, tile = false, onError }: BrandIconProps) {
 	if (logoUrl) {
 		return (
 			<img
 				src={logoUrl}
 				alt={siteName || ""}
+				onError={onError}
 				className={cn(tile && "rounded-lg p-1 shadow-sm ring-1 ring-kumo-line", className)}
 				style={{ objectFit: "contain", ...(tile ? { backgroundColor: LOGO_TILE_BACKGROUND } : {}) }}
 			/>

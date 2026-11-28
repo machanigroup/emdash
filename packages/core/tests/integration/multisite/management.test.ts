@@ -18,9 +18,13 @@ import {
 	type MultiSiteActor,
 	type MultiSiteHandlerContext,
 } from "../../../src/api/handlers/multisite.js";
+import { siteMediaUrlResolver } from "../../../src/api/handlers/shared-media.js";
+import { MediaRepository } from "../../../src/database/repositories/media.js";
+import { OptionsRepository } from "../../../src/database/repositories/options.js";
 import { runControlPlaneMigrations } from "../../../src/multisite/migrations.js";
 import { resolveEffectiveRole } from "../../../src/multisite/roles.js";
 import type { ControlPlaneDatabase } from "../../../src/multisite/types.js";
+import { createStorage as createLocalStorage } from "../../../src/storage/local.js";
 import {
 	type DialectTestContext,
 	describeEachDialect,
@@ -254,6 +258,36 @@ describeEachDialect("multi-site management", (dialect) => {
 		).toEqual([["brand-a", Role.EDITOR, "https://a.example"]]);
 		expect(ok(await handleListMySites(ctx, admin)).items.map((s) => s.name)).toEqual(["brand-a"]);
 		expect(ok(await handleListMySites(ctx, outsider)).items).toEqual([]);
+	});
+
+	it("gives each site in the switcher the logo saved in its settings", async () => {
+		ok(await site(["a.example"]));
+		ok(await handleAddMember(ctx, priya, orgId, { email: "ravi@example.com", role: Role.EDITOR }));
+		const mediaUrls = async () =>
+			siteMediaUrlResolver(
+				{
+					siteUrl: "https://a.example",
+					storage: { entrypoint: "local", config: { baseUrl: "/_emdash/api/media/file" } },
+				},
+				createLocalStorage,
+			);
+
+		expect(ok(await handleListMySites(ctx, ravi, mediaUrls)).items[0]?.logoUrl).toBeNull();
+		expect(ok(await handleListMySites(ctx, ravi)).items[0]).not.toHaveProperty("logoUrl");
+
+		const media = await new MediaRepository(siteDb.db).create({
+			filename: "logo.svg",
+			mimeType: "image/svg+xml",
+			storageKey: "logo-key.svg",
+		});
+		await new OptionsRepository(siteDb.db).set("site:logo", { mediaId: media.id });
+
+		for (const actor of [ravi, admin]) {
+			expect(ok(await handleListMySites(ctx, actor, mediaUrls)).items[0]?.logoUrl).toBe(
+				"https://a.example/_emdash/api/media/file/logo-key.svg",
+			);
+		}
+		expect(ok(await handleListMySites(ctx, ravi, async () => null)).items[0]?.logoUrl).toBeNull();
 	});
 
 	it("never offers or accepts the control-plane database for a site", async () => {
