@@ -452,4 +452,133 @@ describe("webhook-notifier plugin", () => {
 			expect.objectContaining({ collection: "post", resourceId: post.id }),
 		);
 	});
+	function route(path: string, body: unknown, user = { id: "editor-1", role: 40 }) {
+		return runtime.handlePluginApiRoute(
+			"webhook-notifier",
+			"POST",
+			path,
+			new Request(`http://localhost/_emdash/api/plugins/webhook-notifier/${path}`, {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify(body),
+			}),
+			{
+				...user,
+				email: `${user.id}@example.com`,
+				name: null,
+				createdAt: new Date().toISOString(),
+			},
+		);
+	}
+
+	async function publish(postId: string) {
+		const published = await runtime.handleContentPublish("post", postId, {
+			actor: { id: "editor-1", role: 40 },
+		});
+		expect(published.success).toBe(true);
+		await waitForDeferredTasks();
+	}
+
+	it("tells the editor the live site answered the publish webhook", async () => {
+		const post = await createPost("Launch");
+		await publish(post.id);
+
+		expect(await route("publish-status", { id: post.id })).toMatchObject({
+			success: true,
+			data: {
+				configured: true,
+				delivery: { status: "success", httpStatus: 200, host: "hooks.example.com" },
+			},
+		});
+	});
+
+	it("reports a publish webhook the site refused, without exposing the webhook URL", async () => {
+		await ctx.kv.set("settings:webhookUrl", `${WEBHOOK_URL}?key=secret`);
+		const post = await createPost("Launch");
+		responseStatus = 502;
+		await publish(post.id);
+
+		const status = await route("publish-status", { id: post.id });
+		expect(status).toMatchObject({
+			success: true,
+			data: { delivery: { status: "failed", httpStatus: 502, host: "hooks.example.com" } },
+		});
+		expect(JSON.stringify(status)).not.toContain("secret");
+	});
+
+	it("resends a failed publish webhook and reports the new answer", async () => {
+		const post = await createPost("Launch");
+		responseStatus = 502;
+		await publish(post.id);
+		responseStatus = 200;
+		const before = sent.length;
+
+		expect(await route("publish-retry", { collection: "post", id: post.id })).toMatchObject({
+			success: true,
+			data: { delivery: { status: "success", httpStatus: 200 } },
+		});
+		expect(sent.slice(before)).toEqual([
+			{
+				url: WEBHOOK_URL,
+				payload: expect.objectContaining({ event: "content:publish", resourceId: post.id }),
+			},
+		]);
+		expect(await route("publish-status", { id: post.id })).toMatchObject({
+			data: { delivery: { status: "success" } },
+		});
+	});
+
+	it("refuses to resend another author's publish to an author", async () => {
+		const post = await createPost("Launch");
+		await publish(post.id);
+		const before = sent.length;
+
+		const result = await route(
+			"publish-retry",
+			{ collection: "post", id: post.id },
+			{ id: "author-2", role: 30 },
+		);
+		expect(result).toMatchObject({ success: false, error: { code: "FORBIDDEN" } });
+		expect(sent).toHaveLength(before);
+	});
+
+	it("says no publish webhook is sent when webhooks are off", async () => {
+		await ctx.kv.set("settings:enabled", false);
+		const post = await createPost("Launch");
+		expect(await route("publish-status", { id: post.id })).toMatchObject({
+			data: { configured: false, delivery: null },
+		});
+	});
+
+	it.each([
+		[200, "hooks.example.com answered 200"],
+		[401, "401: token rejected"],
+	])(
+		"sends a test call when settings are saved and shows the answer (%i)",
+		async (status, title) => {
+			responseStatus = status;
+			const result = await route(
+				"admin",
+				{
+					type: "form_submit",
+					action_id: "save_settings",
+					values: { webhookUrl: WEBHOOK_URL, enabled: true },
+				},
+				{ id: "admin-1", role: 50 },
+			);
+
+			expect(sent).toEqual([
+				{
+					url: WEBHOOK_URL,
+					payload: expect.objectContaining({ metadata: expect.objectContaining({ test: true }) }),
+				},
+			]);
+			expect(result).toMatchObject({
+				success: true,
+				data: {
+					blocks: expect.arrayContaining([expect.objectContaining({ type: "banner", title })]),
+				},
+			});
+		},
+	);
 });

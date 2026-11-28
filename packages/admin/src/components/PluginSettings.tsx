@@ -21,6 +21,7 @@ import {
 } from "../lib/api/plugins.js";
 import { useBreadcrumbLabel } from "./AdminBreadcrumbs.js";
 import { EditorHeader } from "./EditorHeader";
+import { SiteContext } from "./multisite/SiteContext.js";
 
 export interface PluginSettingsProps {
 	pluginId: string;
@@ -114,6 +115,7 @@ export function PluginSettings({ pluginId }: PluginSettingsProps) {
 	if (isLoading) {
 		return (
 			<div className="space-y-6">
+				<SiteContext />
 				<h1 className="text-2xl font-semibold leading-tight">{t`${pluginName} Settings`}</h1>
 				<div className="rounded-lg border bg-kumo-base p-6">
 					<p className="text-kumo-subtle">{t`Loading settings...`}</p>
@@ -125,6 +127,7 @@ export function PluginSettings({ pluginId }: PluginSettingsProps) {
 	if (error || !settings) {
 		return (
 			<div className="space-y-6">
+				<SiteContext />
 				<h1 className="text-2xl font-semibold leading-tight">{t`${pluginName} Settings`}</h1>
 				<div className="rounded-lg border bg-kumo-base p-6">
 					<p className="text-kumo-danger">
@@ -139,6 +142,7 @@ export function PluginSettings({ pluginId }: PluginSettingsProps) {
 
 	return (
 		<div className="space-y-6">
+			<SiteContext />
 			<EditorHeader
 				actions={
 					<Button

@@ -22,6 +22,7 @@ import { fetchManifest } from "../lib/api";
 import { useCurrentUser } from "../lib/api/current-user.js";
 import { SUPPORTED_LOCALES } from "../locales/index.js";
 import { useLocale } from "../locales/useLocale.js";
+import { SiteContext } from "./multisite/SiteContext.js";
 import { SettingsNavRow, SettingsSection } from "./settings/SettingsLayout.js";
 
 /**
@@ -44,6 +45,7 @@ export function Settings() {
 	return (
 		<div className="max-w-4xl pb-6">
 			<header>
+				<SiteContext className="mb-4" />
 				<h1 className="text-2xl font-semibold leading-tight text-balance">{t`Settings`}</h1>
 			</header>
 
