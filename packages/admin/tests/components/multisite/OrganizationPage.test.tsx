@@ -113,15 +113,15 @@ describe("OrganizationPage", () => {
 	it("adds a member by email with the chosen role", async () => {
 		const screen = await renderPage();
 		await screen.getByRole("button", { name: "Add member" }).click();
-		await userEvent.fill(screen.getByLabelText("Email"), "sam@example.com");
-		await screen.getByRole("dialog").getByRole("button", { name: "Add member" }).click();
+		await userEvent.fill(screen.getByLabelText("Email addresses"), "sam@example.com");
+		await screen.getByRole("dialog").getByRole("button", { name: "Add 1 member" }).click();
 
 		await vi.waitFor(() =>
 			expect(api.addMember).toHaveBeenCalledWith("org-1", { email: "sam@example.com", role: 30 }),
 		);
-		await expect
-			.element(screen.getByText("Invitation saved. They join when they sign in with this email."))
-			.toBeInTheDocument();
+		const results = screen.getByRole("list", { name: "Results" });
+		await expect.element(results.getByText("sam@example.com")).toBeVisible();
+		await expect.element(results.getByText("Invited")).toBeVisible();
 	});
 
 	it("shows roles without controls to members who can't manage the organization", async () => {
@@ -144,29 +144,64 @@ describe("OrganizationPage", () => {
 		});
 		const screen = await renderPage();
 		await screen.getByRole("button", { name: "Add member" }).click();
-		await userEvent.fill(screen.getByLabelText("Email"), "sam@example.com");
-		await screen.getByRole("dialog").getByRole("button", { name: "Add member" }).click();
+		await userEvent.fill(screen.getByLabelText("Email addresses"), "sam@example.com");
+		await screen.getByRole("dialog").getByRole("button", { name: "Add 1 member" }).click();
 
 		await expect
 			.element(screen.getByText("https://admin.example.com/_emdash/admin/invite/accept?token=abc"))
 			.toBeVisible();
-		await expect.element(screen.getByRole("heading", { name: "Invitation created" })).toBeVisible();
+		await expect
+			.element(screen.getByRole("heading", { name: "Send the invitation" }))
+			.toBeVisible();
 	});
 
-	it("offers the invitation as a written email to the invited address", async () => {
-		const link = "https://admin.example.com/_emdash/admin/invite/accept?token=abc";
-		api.addMember.mockResolvedValue({ status: "invited", inviteUrl: link });
+	it("invites several people at once and writes one email to all of them", async () => {
+		api.addMember.mockImplementation(async (_org: string, { email }: { email: string }) => {
+			if (email === "ravi@example.com") return { status: "added" };
+			if (email === "dup@example.com") throw new Error("This person is already a member");
+			return { status: "invited" };
+		});
 		const screen = await renderPage();
 		await screen.getByRole("button", { name: "Add member" }).click();
-		await userEvent.fill(screen.getByLabelText("Email"), "sam@example.com");
-		await screen.getByRole("dialog").getByRole("button", { name: "Add member" }).click();
+		await userEvent.fill(
+			screen.getByLabelText("Email addresses"),
+			"sam@example.com, Ravi@example.com\nana@example.com;dup@example.com sam@example.com",
+		);
+		await screen.getByRole("dialog").getByRole("button", { name: "Add 4 members" }).click();
 
-		const href = screen.getByRole("link", { name: "Email invite" }).element().getAttribute("href")!;
-		const mail = new URL(href);
-		expect(mail.protocol).toBe("mailto:");
-		expect(decodeURIComponent(mail.pathname)).toBe("sam@example.com");
-		expect(mail.searchParams.get("body")).toContain(link);
-		expect(mail.searchParams.get("body")).toContain("sam@example.com");
+		await vi.waitFor(() => expect(api.addMember).toHaveBeenCalledTimes(4));
+		const results = screen.getByRole("list", { name: "Results" });
+		await expect.element(results.getByText("Added")).toBeVisible();
+		await expect.element(results.getByText("This person is already a member")).toBeVisible();
+
+		const gmail = new URL(
+			screen.getByRole("link", { name: "Open in Gmail" }).element().getAttribute("href")!,
+		);
+		expect(gmail.origin).toBe("https://mail.google.com");
+		expect(gmail.searchParams.get("bcc")?.split(",")).toEqual([
+			"sam@example.com",
+			"ravi@example.com",
+			"ana@example.com",
+		]);
+		expect(gmail.searchParams.get("body")).toContain("Sign in with Google");
+		expect(gmail.searchParams.get("body")).toContain("/_emdash/admin");
+
+		const mail = screen
+			.getByRole("link", { name: "Open in email app" })
+			.element()
+			.getAttribute("href")!;
+		expect(mail.startsWith("mailto:?bcc=")).toBe(true);
+	});
+
+	it("refuses a list with something that isn't an email address", async () => {
+		const screen = await renderPage();
+		await screen.getByRole("button", { name: "Add member" }).click();
+		await userEvent.fill(screen.getByLabelText("Email addresses"), "sam@example.com, not-an-email");
+
+		await expect.element(screen.getByText("Not an email address: not-an-email")).toBeVisible();
+		await expect
+			.element(screen.getByRole("dialog").getByRole("button", { name: "Add 1 member" }))
+			.toBeDisabled();
 	});
 
 	it("opens a member's site roles and closes with Done", async () => {

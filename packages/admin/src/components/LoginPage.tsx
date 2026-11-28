@@ -191,6 +191,26 @@ export function LoginPage({ redirectUrl = "/_emdash/admin" }: LoginPageProps) {
 		}
 	}, [authInfo, safeRedirectUrl]);
 
+	/** What a failed sign-in means for the person, by the error code the server sends back. */
+	const signInErrorMessage = (code: string): string | undefined => {
+		switch (code) {
+			case "signup_not_allowed":
+				return t`There's no invitation for that account. Check that you chose the account your invitation was sent to, or ask your administrator to invite you.`;
+			case "invite_email_mismatch":
+				return t`This invitation was sent to a different email address. Sign in with the account it was sent to.`;
+			case "invite_invalid":
+				return t`This invitation link has expired or was already used. If your invitation is still pending, sign in below; otherwise ask for a new one.`;
+			case "user_not_found":
+				return t`Your account no longer exists. Ask your administrator to invite you again.`;
+			case "oauth_denied":
+				return t`Sign-in was cancelled. Try again when you're ready.`;
+			case "invalid_state":
+				return t`Your sign-in took too long. Please try again.`;
+			default:
+				return undefined;
+		}
+	};
+
 	// Check for error in URL (from OAuth/provider redirect)
 	React.useEffect(() => {
 		const params = new URLSearchParams(window.location.search);
@@ -198,7 +218,7 @@ export function LoginPage({ redirectUrl = "/_emdash/admin" }: LoginPageProps) {
 		const message = params.get("message");
 
 		if (error) {
-			setUrlError(message || t`Authentication error: ${error}`);
+			setUrlError(signInErrorMessage(error) ?? (message || t`Authentication error: ${error}`));
 			// Clean up URL
 			window.history.replaceState({}, "", window.location.pathname);
 		}
@@ -243,9 +263,14 @@ export function LoginPage({ redirectUrl = "/_emdash/admin" }: LoginPageProps) {
 	if (authInfo?.providersOnly) {
 		return (
 			<ProviderSignIn
-				title={t`Sign in`}
-				description={t`Use your organization account to continue.`}
+				title={brandSiteName ? t`Sign in to ${brandSiteName}` : t`Sign in`}
+				description={
+					loginLogos && loginLogos.length > 1
+						? t`One sign-in for every company's website:`
+						: t`Use your organization account to continue.`
+				}
 				error={urlError}
+				accessHelp
 			/>
 		);
 	}
