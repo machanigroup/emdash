@@ -199,7 +199,8 @@ interface SignInLogoProps {
 }
 
 /**
- * The sign-in page's logo: the brand logo, or with several `logos` each in turn, crossfading. Every logo stays in the page,
+ * The sign-in page's logo: the brand logo, or with several `logos` each in turn, crossfading, larger than a single brand
+ * logo since each company's mark has to read on its own. Every logo stays in the page,
  * stacked, so none loads late; only the one showing is exposed to assistive technology. Reduced motion keeps the first.
  */
 export function SignInLogo({ logoUrl, siteName, logos, className }: SignInLogoProps) {
@@ -215,7 +216,7 @@ export function SignInLogo({ logoUrl, siteName, logos, className }: SignInLogoPr
 	if (!logos || count < 2)
 		return <BrandLogo logoUrl={logoUrl} siteName={siteName} className={className} />;
 	return (
-		<div className={cn("relative w-full", className)}>
+		<div className={cn("relative w-full", className, "mb-6 h-28 sm:h-32")}>
 			{logos.map((logo, i) => (
 				<img
 					key={logo.src}
