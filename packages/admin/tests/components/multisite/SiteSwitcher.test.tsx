@@ -108,14 +108,15 @@ describe("SiteSwitcher", () => {
 			.toBeInTheDocument();
 	});
 
-	it("shows the deployment's logo at a readable size beside the site", async () => {
+	it("shows the deployment's logo on a wide light tile beside the site", async () => {
 		const logo =
 			"data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='260' height='100'/>";
 		const screen = await renderSwitcher("site-a", { logoUrl: logo, brandName: "Acme Group" });
 		const image = screen.getByRole("img", { name: "Acme Group" });
 		await expect.element(image).toBeVisible();
 		const { width, height } = image.element().getBoundingClientRect();
-		expect(height).toBe(28);
+		expect(height).toBe(32);
 		expect(width).toBeGreaterThan(height * 2);
+		expect(getComputedStyle(image.element()).backgroundColor).toBe("rgb(255, 255, 255)");
 	});
 });
