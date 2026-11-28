@@ -38,6 +38,7 @@ export const Permissions = {
 	"media:edit_any": Role.EDITOR,
 	"media:delete_own": Role.AUTHOR,
 	"media:delete_any": Role.EDITOR,
+	"media:import_storage": Role.ADMIN,
 
 	// Taxonomies
 	"taxonomies:read": Role.SUBSCRIBER,

@@ -274,6 +274,11 @@ export function injectCoreRoutes(
 	});
 
 	injectRoute({
+		pattern: "/_emdash/api/media/storage-import",
+		entrypoint: resolveRoute("api/media/storage-import.ts"),
+	});
+
+	injectRoute({
 		pattern: "/_emdash/api/media/file/[...key]",
 		entrypoint: resolveRoute("api/media/file/[...key].ts"),
 	});

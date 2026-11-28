@@ -185,7 +185,12 @@ export async function prepareMediaUsageCollectionCapture(
 				resuming: true,
 			};
 		}
-		throw new Error("Media usage collection lifecycle identity conflict");
+		if (
+			input.registeredCollectionId !== undefined ||
+			!(await discardOrphanedCollectionLifecycle(db, input.collectionSlug))
+		) {
+			throw new Error("Media usage collection lifecycle identity conflict");
+		}
 	}
 	if (input.registeredCollectionId !== undefined) {
 		throw new Error("Media usage collection lifecycle is missing");
@@ -211,6 +216,40 @@ export async function prepareMediaUsageCollectionCapture(
 		registrationExists: false,
 		resuming: false,
 	};
+}
+
+/**
+ * Removes a slug's lifecycle row left behind by a collection that no longer
+ * exists, so a new collection can claim the slug. Rows that belong to an
+ * in-flight create (`installing`/`ready`) or a tracked deletion are kept.
+ */
+async function discardOrphanedCollectionLifecycle(
+	db: Kysely<Database>,
+	collectionSlug: string,
+): Promise<boolean> {
+	const result = await db
+		.deleteFrom("_emdash_media_usage_index_status as status")
+		.where("status.adapter_id", "=", "content-media")
+		.where("status.scope_type", "=", "collection")
+		.where("status.scope_key", "=", collectionSlug)
+		.where((eb) =>
+			eb.or([eb("status.capture_state", "is", null), eb("status.capture_state", "=", "active")]),
+		)
+		.where(
+			sql<boolean>`NOT EXISTS (
+				SELECT 1 FROM _emdash_collections AS collection
+				WHERE collection.slug = ${collectionSlug}
+					OR collection.id = status.collection_id
+			)`,
+		)
+		.where(
+			sql<boolean>`NOT EXISTS (
+				SELECT 1 FROM _emdash_media_usage_collection_deletions AS deletion
+				WHERE deletion.collection_slug = ${collectionSlug}
+			)`,
+		)
+		.executeTakeFirst();
+	return Number(result.numDeletedRows ?? 0) > 0;
 }
 
 export async function installPreparedMediaUsageCollectionCapture(
@@ -572,6 +611,13 @@ async function prepareCollectionForActivation(
 						eb.or([
 							eb(existingCollectionId, "is", null),
 							eb(existingCollectionId, "=", collection.id),
+							sql<boolean>`NOT EXISTS (
+								SELECT 1 FROM _emdash_collections AS previous
+								WHERE previous.id = ${existingCollectionId}
+							) AND NOT EXISTS (
+								SELECT 1 FROM _emdash_media_usage_collection_deletions AS deletion
+								WHERE deletion.collection_slug = ${collection.slug}
+							)`,
 						]),
 						eb.or([
 							eb(existingCaptureState, "is", null),
