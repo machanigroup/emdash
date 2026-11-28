@@ -28,6 +28,7 @@ import { plural } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react/macro";
 import {
 	File as FileIcon,
+	Buildings,
 	Folder,
 	Images,
 	List,
@@ -38,7 +39,7 @@ import {
 	Upload,
 } from "@phosphor-icons/react";
 import type { Icon } from "@phosphor-icons/react";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useMutation, useQuery } from "@tanstack/react-query";
 import { type AnyRouter, useRouter } from "@tanstack/react-router";
 import * as React from "react";
 
@@ -61,6 +62,12 @@ import {
 	fetchMediaUsageActivationStatus,
 	fetchMediaUsageProgress,
 } from "../lib/api/media-usage-activation.js";
+import {
+	fetchSharedMedia,
+	isSharedMediaSourceId,
+	sharedMediaSourceId,
+	useSharedMediaSources,
+} from "../lib/api/shared-media.js";
 import { useDebouncedValue } from "../lib/hooks.js";
 import {
 	providerItemToMediaItem,
@@ -307,7 +314,25 @@ export function MediaLibrary({
 				limit: 50,
 				query: searchQuery || undefined,
 			}),
-		enabled: activeProvider !== "local",
+		enabled: activeProvider !== "local" && !isSharedMediaSourceId(activeProvider),
+	});
+
+	const sharedSources = useSharedMediaSources();
+	const activeSharedSite = sharedSources.find(
+		(site) => sharedMediaSourceId(site.id) === activeProvider,
+	);
+	const sharedSearch = debouncedSearch.trim();
+	const sharedQuery = useInfiniteQuery({
+		queryKey: ["shared-media", activeSharedSite?.id, "", sharedSearch],
+		queryFn: ({ pageParam }) =>
+			fetchSharedMedia(activeSharedSite!.id, {
+				cursor: pageParam,
+				limit: 50,
+				search: sharedSearch || undefined,
+			}),
+		initialPageParam: undefined as string | undefined,
+		getNextPageParam: (lastPage) => lastPage.nextCursor,
+		enabled: Boolean(activeSharedSite),
 	});
 
 	// Get active provider info
@@ -319,8 +344,15 @@ export function MediaLibrary({
 				capabilities: { browse: true, search: false, upload: true, delete: true },
 			};
 		}
+		if (activeSharedSite) {
+			return {
+				id: activeProvider,
+				name: activeSharedSite.name,
+				capabilities: { browse: true, search: true, upload: false, delete: false },
+			};
+		}
 		return providers?.find((p) => p.id === activeProvider);
-	}, [activeProvider, providers, t]);
+	}, [activeProvider, activeSharedSite, providers, t]);
 	const canUpload = activeProviderInfo?.capabilities.upload ?? false;
 	const canSearch = activeProviderInfo?.capabilities.search ?? false;
 	const canUploadHere = canUpload;
@@ -432,9 +464,12 @@ export function MediaLibrary({
 
 	// Build provider tabs
 	const providerTabs = React.useMemo(() => {
-		const tabs: Array<{ id: string; name: string; icon?: string }> = [
+		const tabs: Array<{ id: string; name: string; icon?: string; site?: boolean }> = [
 			{ id: "local", name: t`Library`, icon: undefined },
 		];
+		for (const site of sharedSources) {
+			tabs.push({ id: sharedMediaSourceId(site.id), name: site.name, site: true });
+		}
 		if (providers) {
 			for (const p of providers) {
 				if (p.id !== "local") {
@@ -443,12 +478,21 @@ export function MediaLibrary({
 			}
 		}
 		return tabs;
-	}, [providers, t]);
+	}, [providers, sharedSources, t]);
 
 	// Get current items based on active provider
 	const currentItems = activeProvider === "local" ? items : [];
-	const currentProviderItems = activeProvider !== "local" ? providerData?.items || [] : [];
-	const currentLoading = activeProvider === "local" ? isLoading : providerLoading;
+	const currentProviderItems = activeSharedSite
+		? (sharedQuery.data?.pages.flatMap((sharedPage) => sharedPage.items) ?? [])
+		: activeProvider !== "local"
+			? providerData?.items || []
+			: [];
+	const currentLoading =
+		activeProvider === "local"
+			? isLoading
+			: activeSharedSite
+				? sharedQuery.isLoading
+				: providerLoading;
 	// The new folder can render shorter while it loads, which clamps the scroll position, so the
 	// position is read before the navigation renders.
 	const router = useRouter({ warn: false }) as AnyRouter | undefined;
@@ -847,6 +891,7 @@ export function MediaLibrary({
 						value: tab.id,
 						label: (
 							<span className="flex items-center gap-2">
+								{tab.site && <Buildings className="h-4 w-4" aria-hidden="true" />}
 								{tab.icon &&
 									(tab.icon.startsWith("data:") ? (
 										<img src={tab.icon} alt="" className="h-4 w-4" aria-hidden="true" />
@@ -1238,6 +1283,19 @@ export function MediaLibrary({
 								))}
 					</tbody>
 				</DataTable>
+			)}
+
+			{activeSharedSite && sharedQuery.hasNextPage && (
+				<div className="flex justify-center">
+					<Button
+						variant="outline"
+						onClick={() => void sharedQuery.fetchNextPage()}
+						disabled={sharedQuery.isFetchingNextPage}
+						loading={sharedQuery.isFetchingNextPage}
+					>
+						{t`Load more`}
+					</Button>
+				</div>
 			)}
 
 			{activeProvider === "local" && pagination && pagination.totalCount > 0 && (

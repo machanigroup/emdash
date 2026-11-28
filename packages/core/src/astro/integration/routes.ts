@@ -1163,6 +1163,8 @@ export function injectMultiSiteRoutes(injectRoute: InjectRoute): void {
 			"/_emdash/api/multisite/sites/[siteId]/import-accounts",
 			"api/multisite/sites/[siteId]/import-accounts.ts",
 		],
+		["/_emdash/api/multisite/sites/[siteId]/media", "api/multisite/sites/[siteId]/media.ts"],
+		["/_emdash/api/multisite/media-sources", "api/multisite/media-sources.ts"],
 		["/_emdash/api/multisite/refs", "api/multisite/refs.ts"],
 		["/_emdash/api/multisite/orgs", "api/multisite/orgs/index.ts"],
 		["/_emdash/api/multisite/orgs/[orgId]", "api/multisite/orgs/[orgId]/index.ts"],

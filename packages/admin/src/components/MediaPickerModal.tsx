@@ -14,6 +14,7 @@ import { plural } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react/macro";
 import {
 	ArrowLeft,
+	Buildings,
 	Globe,
 	Image,
 	ImagesSquare,
@@ -52,6 +53,13 @@ import {
 	type MediaProviderItem,
 } from "../lib/api.js";
 import { useCurrentUser } from "../lib/api/current-user.js";
+import {
+	fetchSharedMedia,
+	isSharedMediaSourceId,
+	sharedItemToMediaItem,
+	sharedMediaSourceId,
+	useSharedMediaSources,
+} from "../lib/api/shared-media.js";
 import { useDebouncedValue } from "../lib/hooks.js";
 import { canonicalMediaProviderId, providerItemToMediaItem } from "../lib/media-utils.js";
 import { matchesMimeAllowlist, mimeFromUrl } from "../lib/mime-utils.js";
@@ -372,25 +380,32 @@ export function MediaPickerModal({
 		placeholderData: [],
 	});
 	const providers = providersQuery.data ?? [];
+	const sharedSources = useSharedMediaSources(open && !localOnly);
 	const urlSourceAvailable =
 		!hideUrlInput &&
 		!localOnly &&
 		(!filters || filters.some((mime) => filtersOverlap(mime, "image/")));
 	const sourceTabs = React.useMemo(() => {
-		const tabs: Array<{ id: string; name: string; icon?: string }> = [
+		const tabs: Array<{ id: string; name: string; icon?: string; site?: boolean }> = [
 			{ id: "local", name: t`Library` },
 		];
+		for (const site of sharedSources) {
+			tabs.push({ id: sharedMediaSourceId(site.id), name: site.name, site: true });
+		}
 		for (const provider of providers) {
 			if (provider.id !== "local") tabs.push(provider);
 		}
 		if (urlSourceAvailable) tabs.push({ id: URL_SOURCE, name: t`From URL` });
 		return tabs;
-	}, [providers, t, urlSourceAvailable]);
+	}, [providers, sharedSources, t, urlSourceAvailable]);
 	React.useEffect(() => {
 		if (sourceTabs.some((source) => source.id === activeSource)) return;
 		if (activeSource === URL_SOURCE) invalidateUrlProbe();
 		setActiveSource("local");
 	}, [activeSource, invalidateUrlProbe, sourceTabs]);
+	const activeSharedSite = sharedSources.find(
+		(site) => sharedMediaSourceId(site.id) === activeSource,
+	);
 	const activeProviderInfo =
 		activeSource === "local"
 			? {
@@ -398,7 +413,13 @@ export function MediaPickerModal({
 					name: t`Library`,
 					capabilities: { browse: true, search: true, upload: true, delete: false },
 				}
-			: providers.find((provider) => provider.id === activeSource);
+			: activeSharedSite
+				? {
+						id: activeSource,
+						name: activeSharedSite.name,
+						capabilities: { browse: true, search: true, upload: false, delete: false },
+					}
+				: providers.find((provider) => provider.id === activeSource);
 
 	const typeItems = React.useMemo(() => {
 		const items: Record<string, string> = { all: t`All types` };
@@ -512,8 +533,28 @@ export function MediaPickerModal({
 				limit: 50,
 				query: searchQuery.trim() || undefined,
 			}),
-		enabled: open && !localOnly && activeSource !== "local" && activeSource !== URL_SOURCE,
+		enabled:
+			open &&
+			!localOnly &&
+			activeSource !== "local" &&
+			activeSource !== URL_SOURCE &&
+			!isSharedMediaSourceId(activeSource),
 	});
+	const sharedQuery = useInfiniteQuery({
+		queryKey: ["shared-media", activeSharedSite?.id, filters?.join(",") ?? "", activeSearch],
+		queryFn: ({ pageParam }) =>
+			fetchSharedMedia(activeSharedSite!.id, {
+				cursor: pageParam,
+				limit: PICKER_PAGE_SIZE,
+				search: activeSearch || undefined,
+				mimeType: filters,
+			}),
+		initialPageParam: undefined as string | undefined,
+		getNextPageParam: (lastSharedPage) => lastSharedPage.nextCursor,
+		enabled: open && Boolean(activeSharedSite),
+	});
+	const remoteQuery = activeSharedSite ? sharedQuery : providerQuery;
+	const sharedSiteName = activeSharedSite?.name;
 
 	const updateSelection = React.useCallback(
 		(providerId: string, item: MediaItem | MediaProviderItem) => {
@@ -545,16 +586,15 @@ export function MediaPickerModal({
 			}
 			const providerItem = selected.item as MediaProviderItem;
 			const dimensions = providerDimensions[selected.key];
-			return providerItemToMediaItem(
-				selected.providerId,
-				dimensions
-					? {
-							...providerItem,
-							width: providerItem.width ?? dimensions.width,
-							height: providerItem.height ?? dimensions.height,
-						}
-					: providerItem,
-			);
+			const measured = dimensions
+				? {
+						...providerItem,
+						width: providerItem.width ?? dimensions.width,
+						height: providerItem.height ?? dimensions.height,
+					}
+				: providerItem;
+			if (isSharedMediaSourceId(selected.providerId)) return sharedItemToMediaItem(measured);
+			return providerItemToMediaItem(selected.providerId, measured);
 		},
 		[providerDimensions],
 	);
@@ -889,10 +929,14 @@ export function MediaPickerModal({
 					? plural(selectedItems.length, { one: "Add # video", other: "Add # videos" })
 					: plural(selectedItems.length, { one: "Add # image", other: "Add # images" })
 			: t`Select`);
+	const sharedPages = sharedQuery.data?.pages;
 	const providerItems = React.useMemo(
 		() =>
-			(providerQuery.data?.items ?? []).filter((item) => matchesAnyFilter(item.mimeType, filters)),
-		[filters, providerQuery.data?.items],
+			(activeSharedSite
+				? (sharedPages?.flatMap((sharedPage) => sharedPage.items) ?? [])
+				: (providerQuery.data?.items ?? [])
+			).filter((item) => matchesAnyFilter(item.mimeType, filters)),
+		[activeSharedSite, filters, providerQuery.data?.items, sharedPages],
 	);
 	const localItems = isRecoveringPage
 		? []
@@ -904,9 +948,8 @@ export function MediaPickerModal({
 	const canUpload = activeProviderInfo?.capabilities.upload ?? false;
 	const hasSourceControls = sourceTabs.length > 1 || canUpload;
 	const canSearch = activeSource === "local" || Boolean(activeProviderInfo?.capabilities.search);
-	const currentLoading = activeSource === "local" ? localQuery.isPending : providerQuery.isPending;
-	const currentFetching =
-		activeSource === "local" ? localQuery.isFetching : providerQuery.isFetching;
+	const currentLoading = activeSource === "local" ? localQuery.isPending : remoteQuery.isPending;
+	const currentFetching = activeSource === "local" ? localQuery.isFetching : remoteQuery.isFetching;
 	const fetchedItems: Array<MediaItem | MediaProviderItem> =
 		activeSource === "local" ? localItems : providerItems;
 	const visibleItems = React.useMemo(() => {
@@ -1092,7 +1135,7 @@ export function MediaPickerModal({
 										onValueChange={changeSource}
 										tabs={sourceTabs.map((source) => ({
 											value: source.id,
-											className: `my-px h-[34px] rounded-[7px] ${source.id === "local" || source.id === URL_SOURCE || source.icon ? "ps-2.5 pe-3" : "px-3"}`,
+											className: `my-px h-[34px] rounded-[7px] ${source.id === "local" || source.id === URL_SOURCE || source.icon || source.site ? "ps-2.5 pe-3" : "px-3"}`,
 											render: (props) => <button {...props} disabled={uploadQueue.hasUnfinished} />,
 											label: (
 												<span className="flex items-center gap-2">
@@ -1100,6 +1143,8 @@ export function MediaPickerModal({
 														<ImagesSquare className="size-4" aria-hidden="true" />
 													) : source.id === URL_SOURCE ? (
 														<LinkSimple className="size-4" aria-hidden="true" />
+													) : source.site ? (
+														<Buildings className="size-4" aria-hidden="true" />
 													) : source.icon ? (
 														source.icon.startsWith("data:") ? (
 															<img src={source.icon} alt="" className="size-4" aria-hidden="true" />
@@ -1261,6 +1306,11 @@ export function MediaPickerModal({
 									</div>
 								)}
 
+								{sharedSiteName && (
+									<p className="text-sm text-kumo-subtle">
+										{t`Media from ${sharedSiteName} stays in its library. This site links to the file.`}
+									</p>
+								)}
 								<TableToolbar
 									trailing={
 										<div role="group" aria-label={t`View mode`}>
@@ -1435,7 +1485,7 @@ export function MediaPickerModal({
 													<Loader />
 													{t`Loading media`}
 												</div>
-											) : (activeSource === "local" ? localQuery.error : providerQuery.error) &&
+											) : (activeSource === "local" ? localQuery.error : remoteQuery.error) &&
 											  !hasVisibleItems ? (
 												<div className="flex min-h-48 flex-col items-center justify-center gap-3 text-center">
 													<p className="text-sm text-kumo-danger">{t`Could not load media.`}</p>
@@ -1444,7 +1494,7 @@ export function MediaPickerModal({
 														onClick={() =>
 															void (activeSource === "local"
 																? localQuery.refetch()
-																: providerQuery.refetch())
+																: remoteQuery.refetch())
 														}
 													>
 														{t`Retry`}
@@ -1460,11 +1510,13 @@ export function MediaPickerModal({
 																? t`Try another filename or clear your search.`
 																: folderId && activeSource === "local"
 																	? t`This folder is empty.`
-																	: isFileKind
-																		? t`Upload a file to get started`
-																		: isVideoKind
-																			? t`Upload a video to get started`
-																			: t`Upload an image to get started`}
+																	: sharedSiteName
+																		? t`${sharedSiteName} has no media of this kind yet.`
+																		: isFileKind
+																			? t`Upload a file to get started`
+																			: isVideoKind
+																				? t`Upload a video to get started`
+																				: t`Upload an image to get started`}
 														</p>
 													</div>
 												</div>
@@ -1563,6 +1615,18 @@ export function MediaPickerModal({
 												</div>
 											)}
 										</div>
+										{activeSharedSite && sharedQuery.hasNextPage && (
+											<div className="flex justify-center">
+												<Button
+													variant="outline"
+													onClick={() => void sharedQuery.fetchNextPage()}
+													disabled={sharedQuery.isFetchingNextPage}
+													loading={sharedQuery.isFetchingNextPage}
+												>
+													{t`Load more`}
+												</Button>
+											</div>
+										)}
 										{selectionTray}
 									</ScrollArea.Content>
 								</ScrollArea.Viewport>
