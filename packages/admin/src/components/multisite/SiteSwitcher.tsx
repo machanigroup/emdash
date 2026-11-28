@@ -11,10 +11,10 @@ import { useLingui } from "@lingui/react/macro";
 import { Buildings, CaretUpDown } from "@phosphor-icons/react";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
-import * as React from "react";
 
 import { fetchSwitcherSites, type SwitcherSite, switchToSite } from "../../lib/api";
 import { BrandIcon } from "../Logo.js";
+import { SiteLogoTile, siteDomain } from "./site-logo.js";
 
 interface SiteSwitcherProps {
 	currentSiteId: string | null;
@@ -22,17 +22,6 @@ interface SiteSwitcherProps {
 	logoUrl?: string;
 	/** The deployment's `admin.siteName`, used as the logo's accessible name. */
 	brandName?: string;
-}
-
-const LEADING_WWW = /^www\./;
-
-function siteDomain(site: SwitcherSite): string | null {
-	if (!site.url) return null;
-	try {
-		return new URL(site.url).host.replace(LEADING_WWW, "");
-	} catch {
-		return site.url;
-	}
 }
 
 function sameName(a: string, b: string): boolean {
@@ -50,34 +39,6 @@ function groupByOrganization(sites: SwitcherSite[]) {
 		const only = group.sites.length === 1 ? group.sites[0] : undefined;
 		return { id, ...group, showHeading: !only || !sameName(only.name, group.name) };
 	}).toSorted((a, b) => a.name.localeCompare(b.name));
-}
-
-function initial(name: string): string {
-	const [first] = new Intl.Segmenter().segment(name.trim());
-	return first ? first.segment.toLocaleUpperCase() : "";
-}
-
-function SiteLogoTile({ site }: { site: SwitcherSite }) {
-	const [failed, setFailed] = React.useState(false);
-	if (site.logoUrl && !failed) {
-		return (
-			<BrandIcon
-				logoUrl={site.logoUrl}
-				tile
-				className="size-8 shrink-0"
-				onError={() => setFailed(true)}
-			/>
-		);
-	}
-	return (
-		<span
-			data-testid="site-logo-fallback"
-			className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-kumo-tint text-sm font-semibold text-kumo-subtle ring-1 ring-kumo-line"
-			aria-hidden="true"
-		>
-			{initial(site.name)}
-		</span>
-	);
 }
 
 export function SiteSwitcher({ currentSiteId, logoUrl, brandName }: SiteSwitcherProps) {

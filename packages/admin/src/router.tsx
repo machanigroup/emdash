@@ -58,6 +58,7 @@ import { MenuEditor } from "./components/MenuEditor";
 import { MenuList } from "./components/MenuList";
 import { OrganizationPage } from "./components/multisite/OrganizationPage";
 import { OrganizationsPage } from "./components/multisite/OrganizationsPage";
+import { SiteContext } from "./components/multisite/SiteContext";
 import { PluginManager } from "./components/PluginManager";
 import { PluginSettings } from "./components/PluginSettings";
 import { Redirects } from "./components/Redirects";
@@ -4075,12 +4076,16 @@ function PluginPage() {
 	// Get plugin page component from context (trusted plugins with React)
 	const PluginComponent = usePluginPage(pluginId, pagePath);
 
-	if (PluginComponent) {
-		return <PluginComponent />;
-	}
-
-	// No React component — fall back to Block Kit rendering
-	return <SandboxedPluginPage pluginId={pluginId} page={pagePath} />;
+	return (
+		<>
+			<SiteContext className="mb-4" />
+			{PluginComponent ? (
+				<PluginComponent />
+			) : (
+				<SandboxedPluginPage pluginId={pluginId} page={pagePath} />
+			)}
+		</>
+	);
 }
 
 // Catch-all 404 route

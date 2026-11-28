@@ -49,6 +49,7 @@ import {
 	getPreviewUrl,
 	getDraftStatus,
 } from "../lib/api";
+import { WEBHOOK_PLUGIN_ID } from "../lib/api/publish-webhook.js";
 import {
 	blockIssueElementId,
 	type BlockValueIssue,
@@ -126,6 +127,7 @@ import { PluginFieldErrorBoundary } from "./PluginFieldErrorBoundary.js";
 import { FieldPresence } from "./presence/FieldPresence.js";
 import { PresenceAvatars } from "./presence/PresenceAvatars.js";
 import { PublishingScheduleDialog } from "./PublishingDateTimeEditor.js";
+import { PublishWebhookResult } from "./PublishWebhookResult.js";
 import { RepeaterField } from "./RepeaterField.js";
 import {
 	RequiredFieldMessage,
@@ -1295,6 +1297,7 @@ export function ContentEditor({
 	// and reference fields stay quiet until then.
 	const [saveAttempted, setSaveAttempted] = React.useState(false);
 	const isPublishingRef = React.useRef(false);
+	const [publishToken, setPublishToken] = React.useState(0);
 
 	// Synchronously reset form state when the underlying item changes (e.g. a
 	// translation switch where TanStack Router keeps ContentEditor mounted but
@@ -2275,6 +2278,7 @@ export function ContentEditor({
 				}
 				isPublishingRef.current = false;
 				setIsPublishing(false);
+				setPublishToken((token) => token + 1);
 				return undefined;
 			},
 			() => {
@@ -2844,6 +2848,18 @@ export function ContentEditor({
 								onDraftResponse={handleEditorDraftResponse}
 							/>
 						</fieldset>
+					) : null}
+					{item &&
+					!isNew &&
+					manifest?.plugins[WEBHOOK_PLUGIN_ID] &&
+					manifest.plugins[WEBHOOK_PLUGIN_ID].enabled !== false ? (
+						<PublishWebhookResult
+							collection={collection}
+							entryId={item.id}
+							isLive={isLive}
+							publishToken={publishToken}
+							liveUrl={liveViewUrl}
+						/>
 					) : null}
 					<EditorActions
 						collectionLabel={collectionLabel}

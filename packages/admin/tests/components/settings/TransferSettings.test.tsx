@@ -39,7 +39,10 @@ vi.mock("../../../src/lib/api/transfer.js", async () => {
 	return { ...actual, ...api };
 });
 vi.mock("../../../src/lib/api/current-user.js", () => ({ useCurrentUser: currentUserMock }));
-vi.mock("../../../src/lib/api/users.js", () => ({ fetchUsers: fetchUsersMock }));
+vi.mock("../../../src/lib/api/users.js", async () => ({
+	...(await vi.importActual<object>("../../../src/lib/api/users.js")),
+	fetchUsers: fetchUsersMock,
+}));
 const { TransferSettings } = await import("../../../src/components/settings/TransferSettings.js");
 
 function capabilities(portableDomain: Partial<TransferCapabilities["portableDomain"]> = {}) {
