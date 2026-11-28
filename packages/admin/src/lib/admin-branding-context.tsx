@@ -23,7 +23,7 @@ export interface AdminBranding {
 	/** Custom name displayed in place of "EmDash". */
 	siteName?: string;
 	/** Logos the sign-in page cycles through in place of `logo`. */
-	loginLogos?: { src: string; name: string }[];
+	loginLogos?: { src: string; name: string; background?: string }[];
 }
 
 const AdminBrandingContext = createContext<AdminBranding>({});

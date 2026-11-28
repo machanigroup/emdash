@@ -691,10 +691,10 @@ export interface EmDashConfig {
 		quickActions?: boolean;
 		/**
 		 * Logos the sign-in page cycles through, one at a time, in place of the single `logo` (for a group of companies sharing
-		 * one admin). Each needs a `src` and the company's `name`, which is the logo's text alternative. With reduced motion
-		 * the first stays still.
+		 * one admin). Each needs a `src` and the company's `name`, which is the logo's text alternative, and may set the
+		 * `background` of its rounded tile (a CSS colour; white by default). With reduced motion the first stays still.
 		 */
-		loginLogos?: { src: string; name: string }[];
+		loginLogos?: { src: string; name: string; background?: string }[];
 		/**
 		 * Build-time allowlist of admin UI locales to ship.
 		 *

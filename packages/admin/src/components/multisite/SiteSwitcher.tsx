@@ -70,9 +70,10 @@ export function SiteSwitcher({ currentSiteId, logoUrl, brandName }: SiteSwitcher
 						<BrandIcon
 							logoUrl={logoUrl}
 							siteName={brandName}
+							tile={Boolean(logoUrl)}
 							className={
 								logoUrl
-									? "h-7 w-auto max-w-20 shrink-0 object-contain group-data-[state=collapsed]/sidebar:h-5 group-data-[state=collapsed]/sidebar:max-w-5"
+									? "h-8 w-16 shrink-0 group-data-[state=collapsed]/sidebar:h-6 group-data-[state=collapsed]/sidebar:w-6"
 									: "size-5 shrink-0"
 							}
 							aria-hidden="true"
