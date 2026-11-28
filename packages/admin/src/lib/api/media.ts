@@ -238,6 +238,61 @@ export async function fetchMediaFolders(
 	);
 }
 
+export interface StorageScanItem {
+	key: string;
+	filename: string;
+	mimeType: string;
+	size: number;
+	directory: string | null;
+}
+
+export interface StorageScanResult {
+	items: StorageScanItem[];
+	scannedCount: number;
+	nextCursor?: string;
+}
+
+export type StorageImportFolder =
+	| { mode: "path" }
+	| { mode: "none" }
+	| { mode: "folder"; folderId: string };
+
+export interface StorageImportResult {
+	imported: string[];
+	skipped: Array<{ key: string; reason: "registered" | "excluded" | "unsupported" | "missing" }>;
+}
+
+/** Lists files in the site's storage that are not in the media library yet. */
+export async function scanMediaStorage(
+	options: { prefix?: string; exclude?: string[]; cursor?: string; limit?: number } = {},
+): Promise<StorageScanResult> {
+	const params = new URLSearchParams();
+	if (options.prefix) params.set("prefix", options.prefix);
+	if (options.exclude?.length) params.set("exclude", options.exclude.join("\n"));
+	if (options.cursor) params.set("cursor", options.cursor);
+	if (options.limit !== undefined) params.set("limit", String(options.limit));
+	const query = params.toString();
+	const response = await apiFetch(`${API_BASE}/media/storage-import${query ? `?${query}` : ""}`);
+	return parseApiResponse<StorageScanResult>(response, i18n._(msg`Failed to scan storage`));
+}
+
+/** Registers files already in the site's storage as media. */
+export async function importMediaFromStorage(input: {
+	keys: string[];
+	folder: StorageImportFolder;
+	exclude?: string[];
+}): Promise<StorageImportResult> {
+	const response = await apiFetch(`${API_BASE}/media/storage-import`, {
+		method: "POST",
+		headers: { "Content-Type": "application/json" },
+		body: JSON.stringify(input),
+	});
+	return parseApiResponse<StorageImportResult>(
+		response,
+		i18n._(msg`Failed to import files from storage`),
+	);
+}
+
 export async function fetchMediaFolder(id: string): Promise<MediaFolder> {
 	const response = await apiFetch(`${API_BASE}/media/folders/${encodeURIComponent(id)}`);
 	const data = await parseApiResponse<{ item: MediaFolder }>(

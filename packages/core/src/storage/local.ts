@@ -175,14 +175,15 @@ export class LocalStorage implements Storage {
 	async list(options: ListOptions = {}): Promise<ListResult> {
 		try {
 			const prefix = options.prefix || "";
-			const searchDir = path.resolve(this.directory, path.dirname(prefix));
+			const prefixDir = prefix.endsWith("/") ? prefix.slice(0, -1) || "." : path.dirname(prefix);
+			const searchDir = path.resolve(this.directory, prefixDir);
 
 			// Validate the search directory stays within the base directory
 			if (!searchDir.startsWith(this.directory + path.sep) && searchDir !== this.directory) {
 				throw new EmDashStorageError("Invalid list prefix", "INVALID_PATH");
 			}
 
-			const prefixBase = path.basename(prefix);
+			const prefixBase = prefix.endsWith("/") ? "" : path.basename(prefix);
 
 			// Ensure directory exists
 			try {
@@ -196,7 +197,7 @@ export class LocalStorage implements Storage {
 
 			for (const entry of entries) {
 				if (entry.isFile() && entry.name.startsWith(prefixBase)) {
-					const key = path.join(path.dirname(prefix), entry.name);
+					const key = path.join(prefixDir, entry.name);
 					const filePath = path.join(searchDir, entry.name);
 					const stat = await fs.stat(filePath);
 

@@ -29,6 +29,7 @@ import { useLingui } from "@lingui/react/macro";
 import {
 	File as FileIcon,
 	Buildings,
+	CloudArrowDown,
 	Folder,
 	Images,
 	List,
@@ -97,6 +98,7 @@ import {
 } from "./media/MediaBrowserItems.js";
 import { MediaDetailPanel } from "./MediaDetailPanel";
 import { MediaFolderDialog } from "./MediaFolderDialog.js";
+import { MediaStorageImportDialog } from "./MediaStorageImportDialog.js";
 import { LOCAL_MEDIA_UPLOAD_ACCEPT, MediaUploadDialog } from "./MediaUploadDialog.js";
 import { RouterLinkButton } from "./RouterLinkButton.js";
 import { TableToolbar, TableToolbarSearch } from "./TableToolbar.js";
@@ -133,6 +135,8 @@ export interface MediaLibraryProps {
 	/** Moves focus to the heading on mount, as when the library replaces an error screen after the folder changed. */
 	focusHeadingOnMount?: boolean;
 	onRetryFolders?: () => void;
+	/** Called after files already in storage were added to the library; enables Import from storage for administrators. */
+	onStorageImported?: () => void;
 	onCreateFolder?: (name: string) => Promise<MediaFolder>;
 	onRenameFolder?: (folder: MediaFolder, name: string) => Promise<MediaFolder>;
 	onDeleteFolder?: (folder: MediaFolder) => Promise<void>;
@@ -213,6 +217,7 @@ export function MediaLibrary({
 	onBackToMain,
 	focusHeadingOnMount = false,
 	onRetryFolders,
+	onStorageImported,
 	onCreateFolder,
 	onRenameFolder,
 	onDeleteFolder,
@@ -284,6 +289,7 @@ export function MediaLibrary({
 	const dragDepthRef = React.useRef(0);
 	const returnFocusRef = React.useRef<HTMLElement | null>(null);
 	const [folderDialogOpen, setFolderDialogOpen] = React.useState(false);
+	const [storageImportOpen, setStorageImportOpen] = React.useState(false);
 	const [editingFolder, setEditingFolder] = React.useState<MediaFolder | null>(null);
 	const folderDialogReturnFocusRef = React.useRef<HTMLElement | null>(null);
 	const [activeDragItem, setActiveDragItem] = React.useState<LocalMediaItem | null>(null);
@@ -825,6 +831,19 @@ export function MediaLibrary({
 					</h1>
 				</div>
 				<div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
+					{activeProvider === "local" && !folderId && isAdmin && onStorageImported && (
+						<Button
+							variant="secondary"
+							size="base"
+							icon={<CloudArrowDown className="hidden sm:block" aria-hidden="true" />}
+							aria-label={t`Import from storage`}
+							onClick={() => setStorageImportOpen(true)}
+							className="shrink-0"
+						>
+							<span className="sm:hidden">{t`Import`}</span>
+							<span className="hidden sm:inline">{t`Import from storage`}</span>
+						</Button>
+					)}
 					{activeProvider === "local" && !folderId && folderActionsAvailable && (
 						<Button
 							variant="secondary"
@@ -1356,6 +1375,14 @@ export function MediaLibrary({
 						});
 					}}
 					onDeleted={detailItem.provider ? undefined : onItemUpdated}
+				/>
+			)}
+
+			{isAdmin && onStorageImported && (
+				<MediaStorageImportDialog
+					open={storageImportOpen}
+					onClose={() => setStorageImportOpen(false)}
+					onImported={onStorageImported}
 				/>
 			)}
 

@@ -3037,6 +3037,10 @@ function MediaPage() {
 			onOpenFolder={handleOpenFolder}
 			onBackToMain={handleBackToMain}
 			onRetryFolders={() => void folderListQuery.refetch()}
+			onStorageImported={() => {
+				void queryClient.invalidateQueries({ queryKey: ["media"] });
+				void queryClient.invalidateQueries({ queryKey: ["media-folders"] });
+			}}
 			onCreateFolder={handleCreateFolder}
 			onRenameFolder={handleRenameFolder}
 			onDeleteFolder={handleDeleteFolder}

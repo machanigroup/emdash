@@ -112,6 +112,47 @@ export const mediaFolderBody = z
 	.object({ name: mediaFolderNameSchema })
 	.meta({ id: "MediaFolderBody" });
 
+const storagePatternList = z
+	.array(z.string().trim().min(1).max(200))
+	.max(50)
+	.meta({ description: "Key prefixes, or patterns where * matches any characters" });
+
+export const mediaStorageScanQuery = cursorPaginationQuery
+	.extend({
+		prefix: z
+			.string()
+			.max(512)
+			.optional()
+			.meta({ description: "Only list keys under this prefix" }),
+		exclude: z
+			.string()
+			.max(10_000)
+			.optional()
+			.transform((value) =>
+				(value ?? "")
+					.split("\n")
+					.map((line) => line.trim())
+					.filter((line) => line.length > 0),
+			)
+			.pipe(storagePatternList)
+			.meta({ description: "Newline-separated key prefixes or * patterns to leave out" }),
+	})
+	.meta({ id: "MediaStorageScanQuery" });
+
+export const mediaStorageImportBody = z
+	.object({
+		keys: z.array(z.string().min(1).max(1024)).min(1).max(100),
+		folder: z
+			.discriminatedUnion("mode", [
+				z.object({ mode: z.literal("path") }),
+				z.object({ mode: z.literal("none") }),
+				z.object({ mode: z.literal("folder"), folderId: mediaFolderIdSchema }),
+			])
+			.default({ mode: "path" }),
+		exclude: storagePatternList.optional(),
+	})
+	.meta({ id: "MediaStorageImportBody" });
+
 /** Default maximum allowed file upload size (50 MB). */
 export const DEFAULT_MAX_UPLOAD_SIZE = 50 * 1024 * 1024;
 

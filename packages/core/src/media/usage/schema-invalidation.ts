@@ -22,6 +22,7 @@ export async function markContentMediaUsageCollectionStale(
 		scopeKey: collectionSlug,
 	};
 	const existing = await repo.findIndexStatus(identity);
+	if (!existing && !(await isCollectionRegistered(db, collectionSlug))) return;
 	await repo.upsertIndexStatus({
 		...identity,
 		status: "stale",
@@ -33,6 +34,18 @@ export async function markContentMediaUsageCollectionStale(
 		failedSourceCount: existing?.failedSourceCount ?? 0,
 		lastErrorCode,
 	});
+}
+
+async function isCollectionRegistered(
+	db: Kysely<Database>,
+	collectionSlug: string,
+): Promise<boolean> {
+	const row = await db
+		.selectFrom("_emdash_collections")
+		.select("id")
+		.where("slug", "=", collectionSlug)
+		.executeTakeFirst();
+	return row !== undefined;
 }
 
 export async function invalidateContentMediaUsageSchemaChange(

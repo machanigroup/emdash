@@ -227,6 +227,30 @@ describe("MediaLibrary", () => {
 		});
 	});
 
+	describe("Import from storage", () => {
+		it("offers administrators the storage import on the main library only", async () => {
+			setupMocks.role = 50;
+			const screen = await renderLibrary({ onStorageImported: vi.fn() });
+
+			await screen.getByRole("button", { name: "Import from storage" }).click();
+			await expect
+				.element(screen.getByRole("dialog", { name: "Import from storage" }))
+				.toBeInTheDocument();
+		});
+
+		it("does not offer the storage import to editors", async () => {
+			setupMocks.role = 40;
+			const screen = await renderLibrary({ onStorageImported: vi.fn() });
+
+			await expect
+				.element(screen.getByRole("heading", { name: "Media Library" }).first())
+				.toBeInTheDocument();
+			await expect
+				.element(screen.getByRole("button", { name: "Import from storage" }))
+				.not.toBeInTheDocument();
+		});
+	});
+
 	describe("Media Usage setup discovery", () => {
 		it("shows an administrator one setup action while activation is off", async () => {
 			setupMocks.role = 50;
