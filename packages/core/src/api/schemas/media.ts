@@ -44,6 +44,19 @@ export const mediaListQuery = cursorPaginationQuery
 	})
 	.meta({ id: "MediaListQuery" });
 
+/** Query for another site's media library: the media list query without folders or usage. */
+export const sharedMediaListQuery = cursorPaginationQuery
+	.extend({
+		page: z.coerce.number().int().min(1).max(Number.MAX_SAFE_INTEGER).optional(),
+		mimeType: mimeTypeFilter,
+		q: z.string().trim().min(1).max(200).optional(),
+	})
+	.refine(({ cursor, page }) => cursor === undefined || page === undefined, {
+		message: "cursor and page cannot be used together",
+		path: ["page"],
+	})
+	.meta({ id: "SharedMediaListQuery" });
+
 export const mediaGetQuery = z
 	.object({
 		includeUsage: z.literal("1").optional().meta({
