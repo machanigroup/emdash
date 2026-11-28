@@ -173,16 +173,21 @@ interface BrandIconProps {
 	logoUrl?: string;
 	siteName?: string;
 	className?: string;
+	/** Sets the logo on a light rounded tile, like an app icon, so a logo drawn for light backgrounds reads in dark mode. */
+	tile?: boolean;
 }
 
-export function BrandIcon({ logoUrl, siteName, className }: BrandIconProps) {
+/** A logo tile's light surface. Company logos are drawn for white, whatever the admin's theme. */
+export const LOGO_TILE_BACKGROUND = "#ffffff";
+
+export function BrandIcon({ logoUrl, siteName, className, tile = false }: BrandIconProps) {
 	if (logoUrl) {
 		return (
 			<img
 				src={logoUrl}
 				alt={siteName || ""}
-				className={className}
-				style={{ objectFit: "contain" }}
+				className={cn(tile && "rounded-lg p-1 shadow-sm ring-1 ring-kumo-line", className)}
+				style={{ objectFit: "contain", ...(tile ? { backgroundColor: LOGO_TILE_BACKGROUND } : {}) }}
 			/>
 		);
 	}
@@ -194,14 +199,15 @@ const LOGO_INTERVAL_MS = 2600;
 interface SignInLogoProps {
 	logoUrl?: string;
 	siteName?: string;
-	logos?: { src: string; name: string }[];
+	logos?: { src: string; name: string; background?: string }[];
 	className?: string;
 }
 
 /**
- * The sign-in page's logo: the brand logo, or with several `logos` each in turn, crossfading, larger than a single brand
- * logo since each company's mark has to read on its own. Every logo stays in the page,
- * stacked, so none loads late; only the one showing is exposed to assistive technology. Reduced motion keeps the first.
+ * The sign-in page's logo: the brand logo, or with several `logos` each in turn, crossfading on a rounded tile like an
+ * app icon (white unless a logo sets its own `background`), so every company's mark reads in light and dark mode. Every
+ * logo stays in the page, stacked, so none loads late; only the one showing is exposed to assistive technology. Reduced
+ * motion keeps the first.
  */
 export function SignInLogo({ logoUrl, siteName, logos, className }: SignInLogoProps) {
 	const [shown, setShown] = React.useState(0);
@@ -216,7 +222,10 @@ export function SignInLogo({ logoUrl, siteName, logos, className }: SignInLogoPr
 	if (!logos || count < 2)
 		return <BrandLogo logoUrl={logoUrl} siteName={siteName} className={className} />;
 	return (
-		<div className={cn("relative w-full", className, "mb-6 h-28 sm:h-32")}>
+		<div
+			className="relative mx-auto mb-6 size-32 overflow-hidden rounded-[22%] shadow-lg ring-1 ring-kumo-line transition-colors duration-700 motion-reduce:transition-none sm:size-36"
+			style={{ backgroundColor: logos[shown]?.background ?? LOGO_TILE_BACKGROUND }}
+		>
 			{logos.map((logo, i) => (
 				<img
 					key={logo.src}
@@ -224,7 +233,7 @@ export function SignInLogo({ logoUrl, siteName, logos, className }: SignInLogoPr
 					alt={i === shown ? logo.name : ""}
 					aria-hidden={i === shown ? undefined : true}
 					className={cn(
-						"absolute inset-0 size-full object-contain transition-all duration-700 ease-out motion-reduce:transition-none",
+						"absolute inset-[6%] size-[88%] object-contain transition-all duration-700 ease-out motion-reduce:transition-none",
 						i === shown ? "scale-100 opacity-100" : "scale-95 opacity-0",
 					)}
 				/>
